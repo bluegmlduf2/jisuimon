@@ -1,16 +1,18 @@
 <template>
-<div class="card-deck" v-for="i in Math.ceil(parseFloat(posts.length/4))" :key="i">
-    <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !posts[((i-1)*4)+x-1] }">
-        <div v-if="posts[((i-1)*4)+x-1]">
-            <img :src="require(`@/${posts[((i-1)*4)+x-1].postImage}`)" class="card-img-top" alt="">
-            <div class="card-body">
-                <h5 class="card-title">{{posts[((i-1)*4)+x-1].title}}</h5>
-                <p class="card-text card-content">{{posts[((i-1)*4)+x-1].content}}</p>
-                <p class="card-text card-date"><small class="text-muted">{{posts[((i-1)*4)+x-1].date}}</small></p>
+    <div class="card-deck" v-for="i in Math.ceil(parseFloat(posts.length/4))" :key="i">
+        <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !posts[((i-1)*4)+x-1] }">
+            <div v-if="posts[((i-1)*4)+x-1]">
+                <router-link :to="`/post/${posts[((i-1)*4)+x-1].postId}`">
+                    <img :src="require(`@/${posts[((i-1)*4)+x-1].postImage}`)" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">{{posts[((i-1)*4)+x-1].title}}</h5>
+                        <p class="card-text card-content">{{posts[((i-1)*4)+x-1].content}}</p>
+                        <p class="card-text card-date"><small class="text-muted">{{posts[((i-1)*4)+x-1].date}}</small></p>
+                    </div>
+                </router-link>
             </div>
         </div>
     </div>
-</div>
 </template>
 
 <script>

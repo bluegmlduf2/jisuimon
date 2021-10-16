@@ -1,6 +1,7 @@
 <template>
   <Nav />
   <Main />
+  <div class="aaa">paddingTest</div>
 </template>
 
 <script>
@@ -24,7 +25,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   background: rgb(248, 249, 250);
-  height: 100vh;
+  height: 100%;
 }
 @media (min-width: 992px){
   /* 넓이가 992px 이상 여백추가*/
@@ -32,5 +33,9 @@ export default {
     padding-left:80px;
     padding-right:80px;
   }
+}
+.aaa{
+  padding: 2rem;
+  margin:2rem;
 }
 </style>
