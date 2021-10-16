@@ -1,7 +1,6 @@
 <template>
   <Nav />
   <Main />
-  <div class="aaa">paddingTest</div>
 </template>
 
 <script>
@@ -33,9 +32,5 @@ export default {
     padding-left:80px;
     padding-right:80px;
   }
-}
-.aaa{
-  padding: 2rem;
-  margin:2rem;
 }
 </style>
