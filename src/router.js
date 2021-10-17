@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from "vue-router";
 // import Main from './components/Main.vue'
 import Post from './components/Post.vue'
 import Card from './components/Card.vue'
+import Comment from './components/Comment.vue'
 import Write from './components/Write.vue'
 
 //$route : 경로관련
@@ -15,10 +16,12 @@ const routes = [
     }
   },
   {
-    path: '/post/:id',
+    path: '/post/:postId',
     components: {
-      Post:Post
-    }
+      Post:Post,
+      Comment:Comment
+    },
+    props:true
   },
   {
     path: "/write",

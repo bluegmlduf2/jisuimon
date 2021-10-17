@@ -20,7 +20,7 @@
       <div class="postCont_index_list" @click="listShow=!listShow">{{listShow?"▲ 숨기기":"▼ 목록보기"}} </div>
     </div>
     <div class="postCont_article">
-      <p v-for="i in 4" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
+      <p v-for="i in 5" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
       "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..."
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
       Fusce a libero vel enim congue volutpat. Fusce pulvinar maximus facilisis. 
@@ -44,26 +44,24 @@ export default {
 
 <style>
 .postCont{
-  padding-bottom: 80px;
-
+  padding-bottom: 40px;
 }
-.postCont *{
-  text-align: left;
-  margin-bottom: 20px;
-}
-
 .postCont_title{
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 30px;
 }
 .postCont_writer{
-  
+  margin-bottom: 20px;
+}
+.postCont_ingredient{
+  margin-bottom: 20px;
 }
 .postCont_ingredient span{
   background: rgb(241, 243, 245);
   display: inline-flex;
   align-items: center;
+  cursor: pointer;
   color: rgb(12, 166, 120);
   text-decoration: none;
   font-weight: 500;
@@ -72,7 +70,7 @@ export default {
   border-radius: 0.75rem;
   padding: 1rem;
   margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .postCont_index{
@@ -83,19 +81,25 @@ export default {
   box-shadow: rgb(0 0 0 / 6%) 0px 0px 4px 0px;
   position: relative;
   color: rgb(33, 37, 41);
+  margin-bottom: 20px;
+}
+.postCont_index h3{
+  margin-bottom: 20px;
 }
 .postCont_index ol{
   font-size: 0.875rem;
   margin-bottom: -1rem;
   padding-left: 1.7rem;
 }
+.postCont_index ol li{
+  margin-bottom: 0.5rem;
+}
 .postCont_index_list{
-  margin-top: 3rem;
-  margin-bottom: 0px;
+  margin-top: 2.5rem;
   cursor: pointer;
 }
 .postCont_article{
-  line-height: 1.75; /* 폰트사이즈*1.75 */
+  line-height: 1.75; /* 폰트사이즈16px*1.75 */
 }
 @media (min-width: 577px){
   /* 현재 넓이가 577px이상 */
@@ -103,12 +107,4 @@ export default {
     padding-top: 10vh;
   }
 }
-@media (min-width: 992px){
-  /* 넓이가 992px 이상 여백추가*/
-  .postCont{
-    padding-left:160px;
-    padding-right:160px;
-  }
-}
-
 </style>

@@ -44,6 +44,11 @@ export default {
   border: 0 !important;;
   outline: 0;
 }
+.card a{
+    /* anchor 태그 초기화 (Bootstrap때문에 important사용)*/
+    color: inherit !important; /* 상위에서 사용한 fontcolor사용 */
+    text-decoration: inherit !important; /* no underline */
+}
 .card-img-top{
     height: 230px;
 }

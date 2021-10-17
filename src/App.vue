@@ -17,6 +17,8 @@ export default {
 </script>
 
 <style>
+@import "./assets/css/font.css"; /* 구글 머티리얼 아이콘 클래스 */
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
