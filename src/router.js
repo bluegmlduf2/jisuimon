@@ -4,8 +4,6 @@ import Post from './components/Post.vue'
 import Card from './components/Card.vue'
 import Comment from './components/Comment.vue'
 import Write from './components/Write.vue'
-// import {publicPath} from '../vue.config.js';
-
 //$route : 경로관련
 //$router : 페이지이동관련
 
@@ -26,7 +24,9 @@ const routes = [
   },
   {
     path: "/write",
-    component: Write,
+    components: {
+      Write:Write
+    }
   },
 ];
 

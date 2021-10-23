@@ -1,17 +1,17 @@
 <template>
   <div class="commentCont">
-    <h4>{{ postsComments.length }}개의 댓글</h4>
+    <h4>{{ postsComments.length }}件のコメント</h4>
     <div class="commentCont_write">
       <textarea
         class="form-control"
         id="regCommentTa"
-        placeholder="댓글을 작성하세요"
+        placeholder="コメントを残してください"
         rows="3"
       />
     </div>
     <div class="commentCont_reg">
       <button class="btn btn-success" id="regCommentBtn">
-        <b>댓글 작성</b>
+        <b>コメントを作成する</b>
       </button>
     </div>
     <!-- commentList -->
@@ -34,10 +34,10 @@
         <div class="commentCont_list_moreComment">
           <span v-if="e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_show">remove_circle_outline</span>
           <span v-if="!e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
-          <span @click="e.showState=!e.showState"> 1개의 답글</span>
+          <span @click="e.showState=!e.showState"> 1件のコメント</span>
           <!-- nestedComment 대댓글 -->
           <div class="nestedCommentCont" :class="{'nestedComment-show': e.showState,'nestedComment-hidden': !e.showState }">
-              <div>대댓글공간..</div>
+              <div>コメントのリプライ</div>
           </div>
         </div>
       </div>

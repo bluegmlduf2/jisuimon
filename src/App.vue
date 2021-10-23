@@ -17,10 +17,10 @@ export default {
 </script>
 
 <style>
-@import "./assets/css/font.css"; /* 구글 머티리얼 아이콘 클래스 */
+@import "./assets/css/common.css"; /* 구글 머티리얼 아이콘 클래스,구글웹폰트 */
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'M PLUS Rounded 1c', sans-serif!important;/* 구글 웹 폰트 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

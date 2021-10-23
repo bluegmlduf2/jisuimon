@@ -1,8 +1,9 @@
+/* 구글 머티리얼 아이콘 */
 @font-face {
     font-family: "Material Icons";
     font-style: normal;
     font-weight: 400;
-    src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
+    src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8, 크롬에서는 읽지않음 리소스 낭비없음*/
     src: local("Material Icons"), local("MaterialIcons-Regular"),
 }
 .material-icons {

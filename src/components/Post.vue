@@ -3,10 +3,10 @@
     <h1 class="postCont_title">제목</h1>
     <div class="postCont_writer"><b>작성자명</b>&nbsp;·&nbsp;날짜</div>
     <div class="postCont_ingredient">
-      <span >재료1</span>
-      <span>재료2</span>
-      <span>재료3</span>
-      <span>재료4</span>
+      <span>食品1</span>
+      <span>食品2</span>
+      <span>食品3</span>
+      <span>食品4</span>
     </div>
     <div class="postCont_index">
       <h3>김치찌게만들기 목록</h3>

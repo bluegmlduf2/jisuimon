@@ -5,6 +5,10 @@
     <!-- Post -->
     <router-view class="post" name="Post" :posts="posts"/>
     <router-view class="comment" name="Comment"/>
+    <!-- Write -->
+    <transition name="fade" mode="out-in">
+      <router-view class="write" name="Write"/>
+    </transition>
   </div>
 </template>
 
@@ -70,5 +74,24 @@ export default {
     padding-left:160px;
     padding-right:160px;
   }
+}
+
+/* transition의 페이지 이동시 fade 애니메이션
+transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1.0s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 요소에 포커스가 발생시 기존 부트스트랩 애니메이션 제거 (a태그이외) */
+*:focus:not(a) {
+  outline: none!important;
+  border-color: rgb(206, 212, 218)!important;
+  box-shadow: rgb(0 0 0 / 20%) 0px 0px 10px!important;
 }
 </style>
