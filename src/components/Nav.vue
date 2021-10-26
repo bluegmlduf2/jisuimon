@@ -12,10 +12,21 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
         </li>
+        <!-- 로그인 모바일 메뉴 -->
+        <li class="nav-item nav_profile_mobile" v-if="profileShow">
+          <a class="nav-link" href="#">My Post</a>
+        </li>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow">
+          <a class="nav-link" href="#">Setting</a>
+        </li>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow">
+          <a class="nav-link" href="#">Logout</a>
+        </li>
       </ul>
       <form class="form-inline mt-2 mt-md-0">
         <input class="form-control mr-sm-4" id="searchMaterial" type="text" placeholder="食材を入力してください">
       </form>
+        <!-- 로그인 메뉴 -->
         <button id="writePostBtn" v-if="profileShow" type="button" class="btn btn-light" @click="$router.push('/write')">New Post</button>
         <div class="nav_profile" v-if="profileShow">
           <div class="nav_profile_list" @click="profileMenuShow=!profileMenuShow">
@@ -24,19 +35,19 @@
           </div>
           <div class="nav_profile_list_showBg" @click="profileMenuShow=!profileMenuShow" v-if="profileMenuShow">
             <div class="nav_profile_list_show" v-if="profileMenuShow">
-              <router-link class="nav-link" to="#">Setting</router-link>
               <router-link class="nav-link" to="#">My Post</router-link>
+              <router-link class="nav-link" to="#">Setting</router-link>
               <router-link class="nav-link" to="#">Logout</router-link>
             </div>
           </div>
         </div>
     </div>
   </nav>
-  <!-- 고정 사용자메뉴-->
-  <div class="nav_profile_list_mobile" >
+  <!-- 모바일 로그인 상태화면-->
+  <!-- <div class="nav_profile_list_mobile" >
     <img :src="require(`@/assets/img/faceMan1.jpg`)" alt="profileImg" />
     <span class="material-icons nav_profile_arrow">arrow_drop_up</span>
-  </div>
+  </div> -->
 </template>
 
 <script>
@@ -88,6 +99,9 @@ export default {
     width: 100%;
     margin-top: 10px;
     border-radius:0.5rem!important;
+  }
+  .nav_profile_mobile{
+    display: block!important;
   }
   .nav_profile_list_mobile{
     display: inline-block!important;
@@ -149,6 +163,11 @@ export default {
     top: 6px;
 }
 
+.nav_profile_mobile{
+  display: none;
+}
+
+/* 모바일 로그인 상태화면 (현재 사용하지않지만 나중에 게시물 좋아요 개발예정) */
 .nav_profile_list_mobile{
   position: fixed;
   display: none;

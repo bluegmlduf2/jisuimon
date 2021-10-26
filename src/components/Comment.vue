@@ -36,7 +36,7 @@
           <span v-if="!e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
           <span @click="e.showState=!e.showState"> 1件のコメント</span>
           <!-- nestedComment 대댓글 -->
-          <div class="nestedCommentCont" :class="{'nestedComment-show': e.showState,'nestedComment-hidden': !e.showState }">
+          <div class="nestedCommentCont" :class="{'nestedComment_show': e.showState,'nestedComment_hidden': !e.showState }">
               <div>コメントのリプライ</div>
           </div>
         </div>
@@ -121,10 +121,10 @@ export default {
     position: relative;
     top: 2px;
 }
-.nestedComment-show{
+.nestedComment_show{
     display: block;
 }
-.nestedComment-hidden{
+.nestedComment_hidden{
     display: none;
 }
 </style>
