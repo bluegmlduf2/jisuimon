@@ -1,6 +1,6 @@
 # jisuimon
 
-## Project setup
+## VueJS setup
 ```
 yarn install
 ```
@@ -20,5 +20,17 @@ yarn build
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Python Server setup
+```
+pip install
+```
+```
+database_format.py → database.py
+```
+```
+key_format.ini → key.ini
+And write key to key.ini
+```
+
+### My
+See more this Website [Click Here](http://34.127.116.198/jisuimon/).
