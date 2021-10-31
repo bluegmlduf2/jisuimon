@@ -37,5 +37,11 @@ cd jisuimon
 python3 ./server/app.py
 ```
 
-### My
+## Dev Environment
+### Server
+```
+python 3.9.7 64bit
+```
+
+## My WebSite
 See more this Website [Click Here](http://34.127.116.198/jisuimon/).
