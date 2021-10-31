@@ -3,11 +3,12 @@ Flask설정
 '''
 from flask import Flask, render_template, request, redirect, url_for, Blueprint,session
 import traceback
-from controller import signup
-from controller import signin
-from controller import sell
+from controller import post
+# from controller import signup
+# from controller import signin
+# from controller import sell
 from controller import common
-from controller import main
+# from controller import main
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import configparser#환경설정파일parser
@@ -35,7 +36,7 @@ def create_app(config_mode="test"):
     jwt = JWTManager(app)
 
     #CORS(app,resources={r'*': {'origins': "*"}},supports_credentials=True)
-    CORS(app,resources={r'*': {'origins': ['http://127.0.0.1:3000','http://localhost:3000','http://34.82.122.40']}},supports_credentials=True)
+    CORS(app,resources={r'*': {'origins': ['http://localhost:8080/jisuimon/']}},supports_credentials=True)
     # API server ,View server 다른 도메인에서 사용할때 발생하는 에러 방지
     # console.log(location.origin) : 클라이언트의 오리진확인가능
     # origin이란 특정 페이지에 접근할 때 사용되는 URL의 Scheme(프로토콜), host(도메인), 포트를 말한다
@@ -47,11 +48,13 @@ def create_app(config_mode="test"):
     # supports_credentials :사용자가 인증된 요청을 할수있게함(쿠키,세션)
 
     #매개변수로 bluePrint객체를 받는다. 그러나 import해서 해당 컨트롤러에 blueprint객체를 가져와서 사용
-    app.register_blueprint(signup.signup_ab, url_prefix='/signup-data')
-    app.register_blueprint(signin.signin_ab, url_prefix='/signin-data')
-    app.register_blueprint(sell.sell_ab, url_prefix='/sell-data')
-    app.register_blueprint(common.common_ab, url_prefix='/common-data')
-    app.register_blueprint(main.main_ab, url_prefix='/main-data')
+    
+    app.register_blueprint(post.post_controller, url_prefix='/jisuimon/')
+    # app.register_blueprint(signup.signup_ab, url_prefix='/signup-data')
+    # app.register_blueprint(signin.signin_ab, url_prefix='/signin-data')
+    # app.register_blueprint(sell.sell_ab, url_prefix='/sell-data')
+    # app.register_blueprint(common.common_ab, url_prefix='/common-data')
+    # app.register_blueprint(main.main_ab, url_prefix='/main-data')
 
     return app
 

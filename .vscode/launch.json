@@ -8,11 +8,11 @@
             "type": "chrome",
             "request": "launch",
             "name": "vuejs: chrome",
-            "url": "http://localhost:8080",
+            "url": "http://localhost:8080/jisuimon",
             "webRoot": "${workspaceFolder}/src",
             "breakOnLoad": true,
             "sourceMapPathOverrides": {
-              "webpack:///src/*": "${webRoot}/*"
+                "webpack:///src/*": "${webRoot}/*"
             }
         },
         {
@@ -23,12 +23,9 @@
             "env": {
                 "FLASK_APP": "./server/app.py",
                 "FLASK_ENV": "development",
-                "FLASK_DEBUG": "1"// 0:off ,1:on
+                "FLASK_DEBUG": "1" // 0:off ,1:on
             },
-            "args": [
-                "run",
-                "--no-debugger"
-            ],
+            "args": ["run", "--no-debugger"],
             "jinja": false
         }
     ]

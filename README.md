@@ -31,6 +31,11 @@ database_format.py → database.py
 key_format.ini → key.ini
 And write key to key.ini
 ```
+### Run Server
+```
+cd jisuimon
+python3 ./server/app.py
+```
 
 ### My
 See more this Website [Click Here](http://34.127.116.198/jisuimon/).
