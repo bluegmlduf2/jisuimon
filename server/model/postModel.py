@@ -1,17 +1,29 @@
 from common import *
 
+
 def getPosts():
     conn = Connection()
     if conn:
         try:
-            #방정보가져오기
-            sql = '''SELECT post_id
-            , title
-            , create_date
-            , update_date
-            , title_image
-            , user_table_user_id
-            FROM jisuimon.post_table;
+            # 방정보가져오기
+            sql = '''SELECT
+                P.post_id,
+                P.title,
+                P.create_date,
+                P.update_date,
+                P.title_image,
+                P.user_table_user_id,
+                U.nickname ,
+                U.user_image ,
+                PD.content
+            FROM
+                jisuimon.post_table AS P
+            INNER JOIN jisuimon.user_table AS U ON
+                P.user_table_user_id = U.user_id
+            INNER JOIN jisuimon.post_detail_table AS PD ON
+                P.post_id = PD.post_table_post_id
+            ORDER BY
+                P.create_date DESC
             '''
 
             data = conn.executeAll(sql)
@@ -26,11 +38,12 @@ def getPosts():
         finally:
             conn.close()
 
+
 def getInputRooms(args):
     conn = Connection()
     if conn:
         try:
-            #방정보가져오기
+            # 방정보가져오기
             sql = '''SELECT
                 roomId,
                 houseType1,
@@ -54,11 +67,7 @@ def getInputRooms(args):
                 OR content LIKE "%%{content}%%"
                 AND adStatus=1
             '''.format(
-                city1=args['inputValue']
-                ,city2=args['inputValue']
-                ,city3=args['inputValue']
-                ,title=args['inputValue']
-                ,content=args['inputValue'])
+                city1=args['inputValue'], city2=args['inputValue'], city3=args['inputValue'], title=args['inputValue'], content=args['inputValue'])
 
             data = conn.executeAll(sql)
         except UserError as e:

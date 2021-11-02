@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import axios from 'axios'
 
 const store = createStore({
 // 데이터 저장하는곳 , $store.state
@@ -27,10 +28,11 @@ const store = createStore({
   },
   // Ajax데이터 요청등을 처리 , $store.dispatch()
   actions : { 
-    //context = 
-    showMoreVuex(context){
-      this.axios.get("https://codingapple1.github.io/vue/more1.json").then((result)=>{
-        context.commit('showMoreVuex',result.data);
+    // 메인 게시물 리스트 가져오기
+     getPosts(){
+      // await this.axios.post(`${this.$router.path}/post`).then((result)=>{
+      axios.post("http://localhost:5000/jisuimon/post").then(res=>{
+        console.log(res)
       })
     }
   }

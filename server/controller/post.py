@@ -14,13 +14,18 @@ def getPost():
         if request.method == 'POST':
             data=postModel.getPosts()
 
-            # '''이미지를 base64로변환'''
-            # for i,e in enumerate(data):
-            #     #이미지->바이너리(base64)->utf-8문자열
-            #     src =current_app.root_path+"/saveImage/"+e['fileNm1']
-            #     with open(src, "rb") as image_file:
-            #         #b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
-            #         data[i]['fileNm1']="data:image/jpeg;base64, "+base64.b64encode(image_file.read()).decode('utf-8')
+            # 이미지->바이너리(base64)->utf-8문자열
+            for i,e in enumerate(data):
+                # 타이틀 이미지
+                src =current_app.root_path+"/assets/contentImg/"+e['title_image']
+                with open(src, "rb") as image_file:
+                    #b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
+                    data[i]['title_image']="data:image/jpeg;base64, "+base64.b64encode(image_file.read()).decode('utf-8')
+                # 유저 이미지
+                src =current_app.root_path+"/assets/contentImg/"+e['user_image']
+                with open(src, "rb") as image_file:
+                    #b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
+                    data[i]['user_image']="data:image/jpeg;base64, "+base64.b64encode(image_file.read()).decode('utf-8')
 
     except UserError as e:
         return json.dumps({'status': False, 'message': e.msg}), 400

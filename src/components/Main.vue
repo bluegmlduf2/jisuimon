@@ -16,7 +16,7 @@
 
 <script>
 // import Card from './Card.vue'
-import postDatas from "@/assets/js/posts.js";
+// import postDatas from "@/assets/js/posts.js";
 
 export default {
   name: "Main",
@@ -26,18 +26,18 @@ export default {
   data() {
     return {
       loading: false,
-      posts: postDatas,
+      posts: null,
     };
+  },
+  // 데이터 초기화(페치)에 사용함 mounted보다 먼저실행됨
+  created() {
+    this.fetchData();
   },
   methods: {
     fetchData() {
-      this.posts = postDatas;
+      this.posts = this.$store.dispatch('getPosts');
       this.loading = true;
     },
-  },
-  // 데이터 초기화(페치)에 사용함 mounted보다 먼저실행됨
-  befroecreated() {
-    this.fetchData();
   },
 };
 </script>
