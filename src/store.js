@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 
 const store = createStore({
+// 해당영역(sotre.js)에서 vue의 전역변수사용 불가.
 // 데이터 저장하는곳 , $store.state
   state(){
     return {
@@ -29,11 +30,12 @@ const store = createStore({
   // Ajax데이터 요청등을 처리 , $store.dispatch()
   actions : { 
     // 메인 게시물 리스트 가져오기
-     getPosts(){
-      // await this.axios.post(`${this.$router.path}/post`).then((result)=>{
-      axios.post("http://localhost:5000/jisuimon/post").then(res=>{
-        console.log(res)
-      })
+    getPosts(){
+      return axios.post("http://localhost:5000/jisuimon/post");
+    },
+    // 게시물 상세정보 가져오기
+    getPostDetail(){
+      return axios.post("http://localhost:5000/jisuimon/postDetail");
     }
   }
 })

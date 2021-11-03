@@ -5,7 +5,7 @@ def getPosts():
     conn = Connection()
     if conn:
         try:
-            # 방정보가져오기
+            # 메인화면에 표시할 방정보 8개 가져오기
             sql = '''SELECT
                 P.post_id,
                 P.title,
@@ -24,6 +24,7 @@ def getPosts():
                 P.post_id = PD.post_table_post_id
             ORDER BY
                 P.create_date DESC
+            LIMIT 8
             '''
 
             data = conn.executeAll(sql)
@@ -38,6 +39,26 @@ def getPosts():
         finally:
             conn.close()
 
+def getPostDetail():
+    conn = Connection()
+    if conn:
+        try:
+            # 게시물의 상세정보
+
+            sql = '''
+            '''
+
+            data = conn.executeAll(sql)
+        except UserError as e:
+            return json.dumps({'status': False, 'message': e.msg}), 200
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            return data
+        finally:
+            conn.close()
 
 def getInputRooms(args):
     conn = Connection()

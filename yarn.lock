@@ -6006,6 +6006,11 @@
   dependencies:
     "minimist" "^1.2.5"
 
+"moment@^2.29.1":
+  "integrity" "sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ=="
+  "resolved" "https://registry.npmjs.org/moment/-/moment-2.29.1.tgz"
+  "version" "2.29.1"
+
 "move-concurrently@^1.0.1":
   "integrity" "sha1-viwAX9oy4LKa8fBdfEszIUxwH5I="
   "resolved" "https://registry.npm.taobao.org/move-concurrently/download/move-concurrently-1.0.1.tgz"
@@ -8263,6 +8268,11 @@
     "stable" "^0.1.8"
     "unquote" "~1.1.1"
     "util.promisify" "~1.0.0"
+
+"sweetalert2@^11.1.9":
+  "integrity" "sha512-ox+BjtAbO8mJrbQH9TsNwMwLeTfV+ve33CVz/kKn5D/DhRiSqnw2rWL4HuBlh9Z4yqYlTD5viR5Z2K5D3avM7Q=="
+  "resolved" "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.1.9.tgz"
+  "version" "11.1.9"
 
 "table@^5.2.3":
   "integrity" "sha1-EpLRlQDOP4YFOwXw6Ofko7shB54="
