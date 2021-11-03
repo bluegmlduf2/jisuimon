@@ -19,7 +19,7 @@
       <div v-for="(e, i) in postsComments" :key="i">
         <div class="commentCont_list_profile">
           <div class="commentCont_list_profileImg">
-            <img :src="require(`@/${e.userImage}`)" alt="profileImg" />
+            <!-- <img :src="require(`@/${e.userImage}`)" alt="profileImg" /> -->
           </div>
           <div class="commentCont_list_profileInfo">
             <div class="commentCont_list_profileInfo_name">

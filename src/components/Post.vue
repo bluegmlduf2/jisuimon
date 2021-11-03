@@ -1,6 +1,6 @@
 <template>
   <div class="postCont">
-    <h1 class="postCont_title">제목</h1>
+    <h1 class="postCont_title">{{posts[0].title}}</h1>
     <div class="postCont_writer"><b>작성자명</b>&nbsp;·&nbsp;날짜</div>
     <div class="postCont_ingredient">
       <span>食品1</span>
@@ -36,9 +36,32 @@ export default {
     name:"Post",
     data() {
       return {
-        listShow:false
+        loading: false, 
+        listShow:false,
+        posts:null
       }
     },
+    methods:{
+      // 선택 게시물 상세내용
+      async getPostDetail(){
+        this.loading = true;
+        const payload={param:this.$route.params.postId}
+        this.posts = await this.$store.dispatch('getPostDetail',payload).then((result) => {
+          return result.data;
+        }).catch((err) => {
+          this.$router.push("/")
+          this.message.errorMessage(err);
+        }).finally(()=>{
+          this.loading = false;
+        });
+      }
+    },
+    created(){
+      this.getPostDetail()
+      // console.log(this.$route.query)
+      // this.posts = await this.$store.dispatch('getPostDetail');//프로미스를 리턴 받기때문에 await로 처리함
+      // console.log(this.$route.params.postId)
+    }
 }
 </script>
 

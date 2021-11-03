@@ -35,7 +35,7 @@ import CKEditor from "@ckeditor/ckeditor5-vue";
 import '@ckeditor/ckeditor5-build-classic/build/translations/ja';// 일본어
 
 export default {
-  name: "app",
+  name: "Write",
   components: {
     ckeditor: CKEditor.component,
   },

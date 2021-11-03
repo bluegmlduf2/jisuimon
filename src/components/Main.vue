@@ -26,17 +26,20 @@ export default {
   data() {
     return {
       loading: false,
-      posts: null,
+      posts: this.getPosts(),
     };
   },
-  // 데이터 초기화(페치)에 사용함 mounted보다 먼저실행됨
-  created() {
-    this.fetchData();
-  },
   methods: {
-    fetchData() {
-      this.posts = this.$store.dispatch('getPosts');
+    // 메인게시물 호출
+    async getPosts() {  
       this.loading = true;
+      this.posts = await this.$store.dispatch('getPosts').then((result) => {
+        return result.data;
+      }).catch((err) => {
+        this.message.errorMessage(err);
+      }).finally(()=>{
+        this.loading = false;
+      });
     },
   },
 };
