@@ -11,6 +11,8 @@
         <component :is="Component" />
       </transition>
     </router-view>
+    <!-- Error -->
+    <router-view name="NotFound" />
   </div>
 </template>
 

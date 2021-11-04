@@ -38,7 +38,7 @@ export default {
       return {
         loading: false, 
         listShow:false,
-        posts:null
+        posts:null,
       }
     },
     methods:{
@@ -49,7 +49,6 @@ export default {
         this.posts = await this.$store.dispatch('getPostDetail',payload).then((result) => {
           return result.data;
         }).catch((err) => {
-          this.$router.push("/")
           this.message.errorMessage(err);
         }).finally(()=>{
           this.loading = false;

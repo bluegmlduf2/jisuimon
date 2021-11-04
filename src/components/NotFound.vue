@@ -1,5 +1,5 @@
 <template>
-  <div class="main_error">
+  <div class="main_error errorCont">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -129,6 +129,18 @@ export default {
 </script>
 
 <style>
+.errorCont{
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+  z-index: 9999;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:15px;
+}
 .fundo {
   animation: scales 3s alternate infinite;
   transform-origin: center;
@@ -198,10 +210,6 @@ export default {
 }
 
 .main_error {
-  min-height: 600px;
-  margin: 0px auto;
-  width: auto;
-  max-width: 460px;
   display: flex;
   align-items: center;
   justify-content: center;

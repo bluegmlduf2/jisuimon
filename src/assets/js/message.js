@@ -22,7 +22,9 @@ const errorMessage = (err) =>
         text: err,
         icon: "error",
         confirmButtonText: "Cool",
-    });
+    }).then(()=>{
+        location.href="/NotFound";
+    })
 
 export default Object.freeze({
     successMessage,
