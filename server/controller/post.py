@@ -44,7 +44,10 @@ def postDetail():
     '''게시물의 상세정보'''
     try:
         if request.method == 'POST':
-            data=postModel.getPostDetail()
+            args=request.get_json()
+            detailData=postModel.getPostDetail(args)
+            ingredientData=postModel.getPostIngredient(args)
+            commentData=postModel.getPostComment(args)
 
             # 이미지->바이너리(base64)->utf-8문자열
             for i,e in enumerate(data):

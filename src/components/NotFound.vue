@@ -119,6 +119,11 @@
         </g>
       </g>
     </svg>
+    <div>
+      <router-link class="btn btn-outline-secondary" id="errorGobackBtn" to="/">
+        <b>ホームに戻る</b>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -129,17 +134,17 @@ export default {
 </script>
 
 <style>
-.errorCont{
+.errorCont {
   width: 100vw;
   height: 100vh;
   background-color: white;
   z-index: 9999;
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:15px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 15px;
 }
 .fundo {
   animation: scales 3s alternate infinite;
@@ -211,8 +216,9 @@ export default {
 
 .main_error {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;/**가운데정렬 */
+  justify-content: center;/**가운데정렬 */
+  flex-direction: column;/**요소수직정렬 */
 }
 
 .path {
@@ -232,5 +238,10 @@ export default {
     fill: transparent;
     stroke-dashoffset: -200;
   }
+}
+#errorGobackBtn{
+  margin-top: 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 </style>

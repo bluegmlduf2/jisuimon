@@ -30,7 +30,7 @@ const routes = [
         },
     },
     {
-        path: "/NotFound",
+        path: "/:catchAll(.*)",
         components: {
             NotFound: NotFound,
         },
