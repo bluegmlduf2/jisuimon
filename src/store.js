@@ -34,8 +34,8 @@ const store = createStore({
       return axios.post("http://localhost:5000/jisuimon/post");
     },
     // 게시물 상세정보 가져오기
-    getPostDetail(){
-      return axios.post("http://localhost:5000/jisuimon/postDetail");
+    getPostDetail(context,payload){
+      return axios.post("http://localhost:5000/jisuimon/postDetail",payload);
     }
   }
 })

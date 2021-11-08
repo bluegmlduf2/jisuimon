@@ -45,7 +45,7 @@ export default {
       // 선택 게시물 상세내용
       async getPostDetail(){
         this.loading = true;
-        const payload={param:this.$route.params.postId}
+        const payload={postId:this.$route.params.postId}
         this.posts = await this.$store.dispatch('getPostDetail',payload).then((result) => {
           return result.data;
         }).catch((err) => {

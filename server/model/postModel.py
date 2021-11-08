@@ -40,6 +40,7 @@ def getPosts():
         finally:
             conn.close()
 
+
 def getPostDetail(args):
     conn = Connection()
     if conn:
@@ -53,14 +54,18 @@ def getPostDetail(args):
                 P.update_date,
                 P.title_image,
                 P.user_table_user_id,
-                PD.content
+                PD.content,
+                U.nickname,
+                U.user_image 
             FROM
                 jisuimon.post_table AS P
             INNER JOIN jisuimon.post_detail_table AS PD ON
                 P.post_id = PD.post_table_post_id
+            INNER JOIN jisuimon.user_table AS U ON
+                P.user_table_user_id = U.user_id 
             WHERE
-                post_id = "%%{post_id}%%"
-            '''.format(post_id=args['post_id'])
+                post_id = "{post_id}"
+            '''.format(post_id=args['postId'])
 
             data = conn.executeAll(sql)
         except UserError as e:
@@ -73,6 +78,7 @@ def getPostDetail(args):
             return data
         finally:
             conn.close()
+
 
 def getPostIngredient(args):
     conn = Connection()
@@ -88,9 +94,9 @@ def getPostIngredient(args):
                 INNER JOIN jisuimon.ingredient_table AS I ON
                     P.post_id = I.post_table_post_id
                 WHERE
-                    post_id = "%%{post_id}%%"
+                    post_id = "{post_id}"
                 '''.format(
-                post_id=args['post_id'])
+                post_id=args['postId'])
 
             data = conn.executeAll(sql)
         except UserError as e:
@@ -103,6 +109,7 @@ def getPostIngredient(args):
             return data
         finally:
             conn.close()
+
 
 def getPostComment(args):
     conn = Connection()
@@ -110,24 +117,30 @@ def getPostComment(args):
         try:
             # 게시물의 상세정보
             sql = '''
-                SELECT
+                 SELECT
                     C.comment_content ,
                     C.comment_create_date ,
                     C.comment_id ,
                     C.user_table_user_id ,
                     C.post_table_post_id ,
+                    U.user_image,
+                    U.nickname,
                     CR.comment_reply_content ,
                     CR.comment_reply_create_date ,
                     CR.commont_reply_id ,
-                    CR.user_table_user_id 
+                    CR.user_table_user_id,
+                    (SELECT user_image FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_image_CR,
+                    (SELECT nickname FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS nickname_CR
                 FROM
                     jisuimon.comment_table AS C
                 LEFT JOIN jisuimon.commont_reply_table AS CR ON
-                    C.comment_id = CR.comment_table_comment_id 
+                    C.comment_id = CR.comment_table_comment_id
+                LEFT JOIN jisuimon.user_table AS U ON
+                    C.user_table_user_id = U.user_id
                 WHERE
-                    C.post_table_post_id = "%%{post_id}%%"   
+                    C.post_table_post_id = "{post_id}"
                 '''.format(
-                post_id=args['post_id'])
+                post_id=args['postId'])
 
             data = conn.executeAll(sql)
         except UserError as e:
@@ -140,6 +153,7 @@ def getPostComment(args):
             return data
         finally:
             conn.close()
+
 
 def getInputRooms(args):
     conn = Connection()
