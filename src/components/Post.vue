@@ -1,12 +1,9 @@
 <template>
   <div class="postCont">
-    <h1 class="postCont_title">{{posts[0].title}}</h1>
-    <div class="postCont_writer"><b>작성자명</b>&nbsp;·&nbsp;날짜</div>
+    <h1 class="postCont_title">{{posts.title}}</h1>
+    <div class="postCont_writer"><b>{{posts.nickname}}</b>&nbsp;·&nbsp;{{moment(posts.create_date).format("MM月 DD日 dddd")}}</div>
     <div class="postCont_ingredient">
-      <span>食品1</span>
-      <span>食品2</span>
-      <span>食品3</span>
-      <span>食品4</span>
+      <span v-for="i in ingredient" :key="i.ingredient_id">{{i.ingredient_name}}</span>
     </div>
     <div class="postCont_index">
       <h3>김치찌게만들기 목록</h3>
@@ -20,13 +17,14 @@
       <div class="postCont_index_list" @click="listShow=!listShow">{{listShow?"▲ 숨기기":"▼ 목록보기"}} </div>
     </div>
     <div class="postCont_article">
-      <p v-for="i in 5" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
+      {{posts.content}}
+      <!-- <p v-for="i in 5" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
       "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..."
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
       Fusce a libero vel enim congue volutpat. Fusce pulvinar maximus facilisis. 
       Proin vitae odio ac lectus eleifend eleifend ut sed nisl. Nunc vulputate finibus eros vitae bibendum. Vestibulum imperdiet luctus nisl ut pellentesque. 
       Suspendisse semper ante fermentum libero suscipit finibus. Curabitur non imperdiet tellus. 
-      Mauris sed leo eget velit porttitor pulvinar ac quis ipsum. Vivamus tincidunt nunc sem, sit amet mattis felis malesuada ut.</p>
+      Mauris sed leo eget velit porttitor pulvinar ac quis ipsum. Vivamus tincidunt nunc sem, sit amet mattis felis malesuada ut.</p> -->
     </div> 
   </div>
 </template>
@@ -39,6 +37,8 @@ export default {
         loading: false, 
         listShow:false,
         posts:null,
+        comment:null,
+        ingredient:null,
       }
     },
     methods:{
@@ -46,8 +46,10 @@ export default {
       async getPostDetail(){
         this.loading = true;
         const payload={postId:this.$route.params.postId}
-        this.posts = await this.$store.dispatch('getPostDetail',payload).then((result) => {
-          return result.data;
+        await this.$store.dispatch('getPostDetail',payload).then((result) => {
+          this.posts=result.data[0]; //게시물 상세정보
+          this.comment=result.data[1]; //게시물 댓글정보
+          this.ingredient=result.data[2]; //게시물 재료정보
         }).catch((err) => {
           this.message.errorMessage(err);
         }).finally(()=>{
@@ -67,7 +69,15 @@ export default {
 <style>
 .postCont{
   padding-bottom: 40px;
+  height: 100vh;
 }
+@media (min-width: 577px) {
+  /* 현재 넓이가 577px이상 */
+  .postCont {
+    padding-top: 10vh;
+  }
+}
+
 .postCont_title{
   font-size: 3rem;
   font-weight: 700;

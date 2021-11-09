@@ -5,6 +5,7 @@ import configparser#환경설정파일parser
 import base64
 from database import Connection
 
+# 메소드데코레이터
 def decorate(func):
     print ("##### 메소드 시작 => ("+func.__name__+")#####")
     start = time.time()
@@ -12,6 +13,7 @@ def decorate(func):
     print ("##### 메소드 종료 #####")
     print ("소요시간: %5f" % (end-start))
 
+# 이미지파일을 base64형식변환
 def imageParser(src):
     with open(src, "rb") as image_file:
         # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
