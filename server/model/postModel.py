@@ -67,7 +67,7 @@ def getPostDetail(args):
                 post_id = "{post_id}"
             '''.format(post_id=args['postId'])
 
-            data = conn.executeAll(sql)
+            data = conn.executeOne(sql)
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -115,7 +115,7 @@ def getPostComment(args):
     conn = Connection()
     if conn:
         try:
-            # 게시물의 상세정보
+            # 게시물의 댓글정보
             sql = '''
                  SELECT
                     C.comment_content ,
