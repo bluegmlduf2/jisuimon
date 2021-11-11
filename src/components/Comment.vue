@@ -1,6 +1,6 @@
 <template>
   <div class="commentCont">
-    <h4>{{ postsComments.length }}件のコメント</h4>
+    <h4>{{ comment.length }}件のコメント</h4>
     <div class="commentCont_write">
       <textarea
         class="form-control"
@@ -16,30 +16,30 @@
     </div>
     <!-- commentList -->
     <div class="commentCont_list">
-      <div v-for="(e, i) in postsComments" :key="i">
+      <div v-for="(e, i) in comment" :key="i">
         <div class="commentCont_list_profile">
           <div class="commentCont_list_profileImg">
             <!-- <img :src="require(`@/${e.userImage}`)" alt="profileImg" /> -->
           </div>
           <div class="commentCont_list_profileInfo">
             <div class="commentCont_list_profileInfo_name">
-              <b>{{ e.name }}</b>
+              <b>{{ e.nickname }}</b>
             </div>
-            <div class="commentCont_list_profileInfo_date">{{ e.date }}</div>
+            <div class="commentCont_list_profileInfo_date">{{moment(e.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時mm分")}}</div>
           </div>
         </div>
         <div class="commentCont_list_content">
-          {{ e.content }}
+          {{ e.comment_content }}
         </div>
-        <div class="commentCont_list_moreComment">
+        <!-- <div class="commentCont_list_moreComment">
           <span v-if="e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_show">remove_circle_outline</span>
           <span v-if="!e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
-          <span @click="e.showState=!e.showState"> 1件のコメント</span>
+          <span @click="e.showState=!e.showState"> 1件のコメント</span> -->
           <!-- nestedComment 대댓글 -->
-          <div class="nestedCommentCont" :class="{'nestedComment_show': e.showState,'nestedComment_hidden': !e.showState }">
+          <!-- <div class="nestedCommentCont" :class="{'nestedComment_show': e.showState,'nestedComment_hidden': !e.showState }">
               <div>コメントのリプライ</div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@ import postsComments from "@/assets/js/postsComments.js";
 export default {
   name: "Comment",
   props: {
-    postId: String,
+    comment: Array,
   },
   data() {
     return {
@@ -62,10 +62,6 @@ export default {
 </script>
 
 <style>
-.commentCont {
-  padding-bottom: 80px;
-  text-align: left;
-}
 .commentCont h4 {
   margin-bottom: 20px;
 }

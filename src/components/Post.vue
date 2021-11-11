@@ -1,7 +1,7 @@
 <template>
   <div class="postCont">
     <h1 class="postCont_title">{{posts.title}}</h1>
-    <div class="postCont_writer"><b>{{posts.nickname}}</b>&nbsp;·&nbsp;{{moment(posts.create_date).format("MM月 DD日 dddd")}}</div>
+    <div class="postCont_writer"><b>{{posts.nickname}}</b>&nbsp;&nbsp;&nbsp;{{moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</div>
     <div class="postCont_ingredient">
       <span v-for="i in ingredient" :key="i.ingredient_id">{{i.ingredient_name}}</span>
     </div>
@@ -17,7 +17,7 @@
       <div class="postCont_index_list" @click="listShow=!listShow">{{listShow?"▲ 숨기기":"▼ 목록보기"}} </div>
     </div>
     <div class="postCont_article">
-      {{posts.content}}
+      <p v-html="posts.content"></p>
       <!-- <p v-for="i in 5" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
       "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..."
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
@@ -25,13 +25,20 @@
       Proin vitae odio ac lectus eleifend eleifend ut sed nisl. Nunc vulputate finibus eros vitae bibendum. Vestibulum imperdiet luctus nisl ut pellentesque. 
       Suspendisse semper ante fermentum libero suscipit finibus. Curabitur non imperdiet tellus. 
       Mauris sed leo eget velit porttitor pulvinar ac quis ipsum. Vivamus tincidunt nunc sem, sit amet mattis felis malesuada ut.</p> -->
-    </div> 
+    </div>
+    <Comment :comment="comment"/>
   </div>
+  
 </template>
 
 <script>
+import Comment from './Comment.vue'
+
 export default {
     name:"Post",
+    components:{
+      Comment:Comment
+    },
     data() {
       return {
         loading: false, 
@@ -68,8 +75,7 @@ export default {
 
 <style>
 .postCont{
-  padding-bottom: 40px;
-  height: 100vh;
+  text-align: left;
 }
 @media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
@@ -132,6 +138,7 @@ export default {
 }
 .postCont_article{
   line-height: 1.75; /* 폰트사이즈16px*1.75 */
+  padding-bottom: 70px;
 }
 @media (min-width: 577px){
   /* 현재 넓이가 577px이상 */

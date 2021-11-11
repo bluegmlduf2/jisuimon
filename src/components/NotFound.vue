@@ -136,7 +136,6 @@ export default {
 <style>
 .errorCont {
   width: 100vw;
-  height: 100vh;
   background-color: white;
   z-index: 9999;
   position: fixed;

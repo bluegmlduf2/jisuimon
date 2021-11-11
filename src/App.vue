@@ -33,6 +33,7 @@ export default {
   #app{
     padding-left:80px;
     padding-right:80px;
+    padding-bottom:40px ;
   }
 }
 </style>

@@ -4,7 +4,6 @@
     <router-view class="card" name="Card" :posts="posts" />
     <!-- Post -->
     <router-view class="post" name="Post" :posts="posts" />
-    <router-view class="comment" name="Comment" />
     <!-- Write -->
     <router-view class="write" name="Write" v-slot="{ Component }">
       <transition name="fade" mode="out-in">
@@ -76,8 +75,7 @@ export default {
 /* Post,Comment 공통 레이아웃 */
 @media (min-width: 992px) {
   /* 넓이가 992px 이상 여백추가*/
-  .postCont,
-  .commentCont {
+  .postCont{
     text-align: left;
     padding-left: 160px;
     padding-right: 160px;
