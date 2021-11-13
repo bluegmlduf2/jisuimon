@@ -1,4 +1,5 @@
 from common import *
+from flask import current_app
 import copy 
 
 def getPosts():
@@ -144,16 +145,35 @@ def getPostComment(args):
                 post_id=args['postId'])
             data=conn.executeAll(sql)
 
+            # 화면에 반환할 값 commentReturnData
             commentData=list({e['comment_id']:e for e in data}.values()) # 중복 제거한 댓글목록
             commentReturnData=copy.deepcopy(commentData) # ValueError: Circular reference detected 방지..
 
+            # 댓글과 대댓글에서 삭제할 칼럼목록
+            removeCommentCol=['comment_reply_content','comment_reply_create_date','commont_reply_id','comment_table_comment_id','user_image_CR','nickname_CR']
+            removeCommentReplyCol=['comment_content','comment_create_date','user_table_user_id','post_table_post_id','user_image','nickname']
+
+            # 이미지 경로
+            userImgPath=current_app.root_path + "/assets/userImg/" # 유저이미지 경로
+            userDefaultImg=current_app.root_path+"/assets/defaultImg/noUser.png" # 기본 유저이미지 경로            
+
             # 댓글에 대댓글 추가
+            # 댓글 (부모)
             for i,comment in enumerate(commentData):
-                commentReturnData[i].setdefault('comment_reply',[])# 대댓글에 키 추가
+                commentReturnData[i].setdefault('comment_reply',[])# 대댓글 추가에 필요한 키 추가
+                commentReturnData[i].setdefault('showState',False)# 댓글상태정의에 필요한 키 추가
+                [commentReturnData[i].pop(colNm) for colNm in removeCommentCol] # 불필요한 댓글의 칼럼제거
+                userImage=commentReturnData[i]['user_image'] # 유저 이미지 (댓글유저)
+                commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg)
+                # 대댓글(자식)
                 for commentReply in data:
+                    # 댓글과 대댓글이 부모자식관계가 맞을 시 해당 부모 댓글안에 자식 대댓글 딕셔너리를 넣어줌 
                     if comment['comment_id']==commentReply['comment_table_comment_id']:
-                        commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 일치하는 대댓글 추가
-                        
+                        userReplyImage=commentReply['user_image_CR'] # 유저 이미지 (대댓글유저)
+                        commentReply['user_image_CR']=imageParser(userImgPath+userReplyImage if userReplyImage else userDefaultImg) # 유저 이미지 (대댓글유저)
+                        [commentReply.pop(colNmRep) for colNmRep in removeCommentReplyCol] # 불필요한 대댓글의 칼럼제거
+                        commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 해당하는 대댓글 추가
+
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:

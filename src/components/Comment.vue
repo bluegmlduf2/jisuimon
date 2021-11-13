@@ -16,30 +16,30 @@
     </div>
     <!-- commentList -->
     <div class="commentCont_list">
-      <div v-for="(e, i) in comment" :key="i">
+      <div v-for="(comment) in comment" :key="comment.comment_id">
         <div class="commentCont_list_profile">
           <div class="commentCont_list_profileImg">
-            <img :src="`${e.user_image}`" alt="profileImg">
+            <img :src="`${comment.user_image}`" alt="profileImg">
           </div>
           <div class="commentCont_list_profileInfo">
             <div class="commentCont_list_profileInfo_name">
-              <b>{{ e.nickname }}</b>
+              <b>{{ comment.nickname }}</b>
             </div>
-            <div class="commentCont_list_profileInfo_date">{{moment(e.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
+            <div class="commentCont_list_profileInfo_date">{{moment(comment.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
           </div>
         </div>
         <div class="commentCont_list_content">
-          {{ e.comment_content }}
+          {{ comment.comment_content }}
         </div>
-        <!-- <div class="commentCont_list_moreComment">
-          <span v-if="e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_show">remove_circle_outline</span>
-          <span v-if="!e.showState" @click="e.showState=!e.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
-          <span @click="e.showState=!e.showState"> 1件のコメント</span> -->
+        <div class="commentCont_list_moreComment" >
+          <span v-if="comment.showState" @click="comment.showState=!comment.showState" class="material-icons commentCont_list_show">remove_circle_outline</span>
+          <span v-if="!comment.showState" @click="comment.showState=!comment.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
+          <span @click="comment.showState=!comment.showState">&nbsp;{{comment.comment_reply.length>0?`${comment.comment_reply.length}件のコメント`:"コメントを残す"}}</span>
           <!-- nestedComment 대댓글 -->
-          <!-- <div class="nestedCommentCont" :class="{'nestedComment_show': e.showState,'nestedComment_hidden': !e.showState }">
-              <div>コメントのリプライ</div>
+          <div class="nestedCommentCont" :class="{'nestedComment_show': comment.showState,'nestedComment_hidden': !comment.showState }">
+              <div v-for="commentReply in comment.comment_reply" :key="commentReply.commont_reply_id">&emsp;{{commentReply.comment_reply_content}}</div>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>

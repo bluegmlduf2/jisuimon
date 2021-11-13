@@ -49,33 +49,7 @@ def postDetail():
             args = request.get_json()
             detailData = postModel.getPostDetail(args)  # 게시물 상세정보
             commentData = postModel.getPostComment(args)  # 게시물 댓글정보
-            ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보
-
-            # 제목이미지 경로
-            titleImgPath=current_app.root_path + \
-            "/assets/contentImg/"
-            
-            # 유저이미지 경로
-            userImgPath=current_app.root_path + \
-            "/assets/userImg/"
-
-            # 기본 유저이미지 경로
-            userDefaultImg=current_app.root_path+"/assets/defaultImg/noUser.png"            
-            
-            # 게시물 상세정보에서 타이틀 이미지 추출
-            detailData['title_image']=imageParser(titleImgPath+detailData['title_image'])
-
-            # 게시물 상세정보에서 유저 이미지 추출 (기존 유저이미지가 존재하지 않을 경우 기본 유저이미지 출력)
-            userImage=detailData['user_image']
-            detailData['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg)
-            
-            # 게시물 댓글정보의 유저이미지 변환
-            for i, e in enumerate(commentData):
-                # 유저 이미지 (댓글유저)
-                commentData[i]['user_image']=imageParser(userImgPath+e['user_image'] if e['user_image'] else userDefaultImg)
-                # 유저 이미지 (대댓글유저)
-                commentData[i]['user_image_CR']=imageParser(userImgPath+e['user_image_CR'] if e['user_image_CR'] else userDefaultImg)
-                            
+            ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보                   
     except UserError as e:
         return json.dumps({'status': False, 'message': e.msg}), 400
     except Exception as e:
@@ -83,17 +57,3 @@ def postDetail():
         return jsonify({"message": "システムエラー", }), 400
     else:
         return jsonify(detailData,commentData,ingredientData), 200
-# @main_ab.route('/getInputRooms', methods=['POST'])
-# def getInputRooms():
-#     '''메인화면에서 검색한 결과 가져오기'''
-#     try:
-#         if request.method == 'POST':
-#             args=request.get_json()
-#             data=main.getInputRooms(args)
-#     except UserError as e:
-#         return json.dumps({'status': False, 'message': e.msg}), 400
-#     except Exception as e:
-#         traceback.print_exc()
-#         return jsonify({"message": "システムエラー", }), 400
-#     else:
-#         return jsonify (data), 200
