@@ -19,13 +19,13 @@
       <div v-for="(e, i) in comment" :key="i">
         <div class="commentCont_list_profile">
           <div class="commentCont_list_profileImg">
-            <!-- <img :src="require(`@/${e.userImage}`)" alt="profileImg" /> -->
+            <img :src="`${e.user_image}`" alt="profileImg">
           </div>
           <div class="commentCont_list_profileInfo">
             <div class="commentCont_list_profileInfo_name">
               <b>{{ e.nickname }}</b>
             </div>
-            <div class="commentCont_list_profileInfo_date">{{moment(e.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時mm分")}}</div>
+            <div class="commentCont_list_profileInfo_date">{{moment(e.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
           </div>
         </div>
         <div class="commentCont_list_content">

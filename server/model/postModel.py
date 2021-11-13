@@ -1,5 +1,5 @@
 from common import *
-
+import copy 
 
 def getPosts():
     conn = Connection()
@@ -128,7 +128,7 @@ def getPostComment(args):
                     CR.comment_reply_content ,
                     CR.comment_reply_create_date ,
                     CR.commont_reply_id ,
-                    CR.user_table_user_id,
+                    CR.comment_table_comment_id,
                     (SELECT user_image FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_image_CR,
                     (SELECT nickname FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS nickname_CR
                 FROM
@@ -139,10 +139,21 @@ def getPostComment(args):
                     C.user_table_user_id = U.user_id
                 WHERE
                     C.post_table_post_id = "{post_id}"
+                ORDER BY C.comment_create_date , CR.comment_reply_create_date
                 '''.format(
                 post_id=args['postId'])
+            data=conn.executeAll(sql)
 
-            data = conn.executeAll(sql)
+            commentData=list({e['comment_id']:e for e in data}.values()) # 중복 제거한 댓글목록
+            commentReturnData=copy.deepcopy(commentData) # ValueError: Circular reference detected 방지..
+
+            # 댓글에 대댓글 추가
+            for i,comment in enumerate(commentData):
+                commentReturnData[i].setdefault('comment_reply',[])# 대댓글에 키 추가
+                for commentReply in data:
+                    if comment['comment_id']==commentReply['comment_table_comment_id']:
+                        commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 일치하는 대댓글 추가
+                        
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -150,7 +161,7 @@ def getPostComment(args):
             conn.rollback()
             raise e
         else:
-            return data
+            return commentReturnData
         finally:
             conn.close()
 
