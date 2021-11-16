@@ -8,7 +8,7 @@
                     <div class="card-body">
                         <h5 class="card-title">{{posts[((i-1)*4)+x-1].title}}</h5>
                         <p class="card-text card-content">{{posts[((i-1)*4)+x-1].content}}</p>
-                        <p class="card-text card-date"><small class="text-muted">{{moment(posts[((i-1)*4)+x-1].create_date).format("MM月 DD日 dddd")}}</small></p>
+                        <p class="card-text card-date"><small class="text-muted">{{$moment(posts[((i-1)*4)+x-1].create_date).format("MM月 DD日 dddd")}}</small></p>
                     </div>
                 </router-link>
             </div>

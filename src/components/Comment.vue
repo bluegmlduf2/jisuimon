@@ -25,7 +25,7 @@
             <div class="commentCont_list_profileInfo_name">
               <b>{{ comment.nickname }}</b>
             </div>
-            <div class="commentCont_list_profileInfo_date">{{moment(comment.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
+            <div class="commentCont_list_profileInfo_date">{{$moment(comment.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
           </div>
         </div>
         <div class="commentCont_list_content">

@@ -34,10 +34,11 @@ export default {
     // 메인게시물 호출
     async getPosts() {  
       this.loading = true;
-      this.posts = await this.$store.dispatch('getPosts').then((result) => {
+      const payload = {method: "post"};
+      this.posts = await this.$store.dispatch('post',payload).then((result) => {
         return result.data;
       }).catch((err) => {
-        this.message.errorMessage(err);
+        this.$message.errorMessage(err);
       }).finally(()=>{
         this.loading = false;
       });

@@ -1,9 +1,16 @@
 <template>
   <div class="postCont">
-    <h1 class="postCont_title">{{posts.title}}</h1>
-    <div class="postCont_writer"><b>{{posts.nickname}}</b>&nbsp;&nbsp;&nbsp;{{moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</div>
+    <h1 class="postCont_title">{{ posts.title }}</h1>
+    <div class="postCont_writer">
+      <b>{{ posts.nickname }}</b
+      >&nbsp;&nbsp;&nbsp;{{
+        $moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")
+      }}
+    </div>
     <div class="postCont_ingredient">
-      <span v-for="i in ingredient" :key="i.ingredient_id">{{i.ingredient_name}}</span>
+      <span v-for="i in ingredient" :key="i.ingredient_id">{{
+        i.ingredient_name
+      }}</span>
     </div>
     <div class="postCont_index">
       <h3>김치찌게만들기 목록</h3>
@@ -14,7 +21,9 @@
         <li>순서4</li>
         <li>순서5</li>
       </ol>
-      <div class="postCont_index_list" @click="listShow=!listShow">{{listShow?"▲ 숨기기":"▼ 목록보기"}} </div>
+      <div class="postCont_index_list" @click="listShow = !listShow">
+        {{ listShow ? "▲ 숨기기" : "▼ 목록보기" }}
+      </div>
     </div>
     <div class="postCont_article">
       <p v-html="posts.content"></p>
@@ -26,55 +35,58 @@
       Suspendisse semper ante fermentum libero suscipit finibus. Curabitur non imperdiet tellus. 
       Mauris sed leo eget velit porttitor pulvinar ac quis ipsum. Vivamus tincidunt nunc sem, sit amet mattis felis malesuada ut.</p> -->
     </div>
-    <Comment :comment="comment"/>
+    <Comment :comment="comment" />
   </div>
-  
 </template>
 
 <script>
-import Comment from './Comment.vue'
+import Comment from "./Comment.vue";
 
 export default {
-    name:"Post",
-    components:{
-      Comment:Comment
-    },
-    data() {
-      return {
-        loading: false, 
-        listShow:false,
-        posts:null,
-        comment:null,
-        ingredient:null,
-      }
-    },
-    methods:{
-      // 선택 게시물 상세내용
-      async getPostDetail(){
-        this.loading = true;
-        const payload={postId:this.$route.params.postId}
-        await this.$store.dispatch('getPostDetail',payload).then((result) => {
-          this.posts=result.data[0]; //게시물 상세정보
-          this.comment=result.data[1]; //게시물 댓글정보
-          this.ingredient=result.data[2]; //게시물 재료정보
-        }).catch((err) => {
-          this.message.errorMessage(err);
-        }).finally(()=>{
+  name: "Post",
+  components: {
+    Comment: Comment,
+  },
+  setup(){
+
+  },
+  data() {
+    return {
+      loading: false,
+      listShow: false,
+      posts: {},
+      comment: {},
+      ingredient: null,
+    };
+  },
+  methods: {
+    // 선택 게시물 상세내용
+    async getPostDetail() {
+      this.loading = true;
+      const payload = {method: "post", postId: this.$route.params.postId};
+      await this.$store
+        .dispatch("postDetail", payload)
+        .then((result) => {
+          this.posts = result.data[0]; //게시물 상세정보
+          this.comment = result.data[1]; //게시물 댓글정보
+          this.ingredient = result.data[2]; //게시물 재료정보
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
           this.loading = false;
         });
-      }
     },
-    created(){
-      this.getPostDetail()
-      // console.log(this.$route.query)
-      // this.posts = await this.$store.dispatch('getPostDetail');//프로미스를 리턴 받기때문에 await로 처리함
-      // console.log(this.$route.params.postId)
-    }
-}
+  },
+  created() {
+    this.getPostDetail();
+  },
+};
 </script>
 
 <style>
-.postCont{
+.postCont {
   text-align: left;
 }
 @media (min-width: 577px) {
@@ -84,18 +96,18 @@ export default {
   }
 }
 
-.postCont_title{
+.postCont_title {
   font-size: 3rem;
   font-weight: 700;
   margin-bottom: 30px;
 }
-.postCont_writer{
+.postCont_writer {
   margin-bottom: 20px;
 }
-.postCont_ingredient{
+.postCont_ingredient {
   margin-bottom: 20px;
 }
-.postCont_ingredient span{
+.postCont_ingredient span {
   background: rgb(241, 243, 245);
   display: inline-flex;
   align-items: center;
@@ -111,7 +123,7 @@ export default {
   margin-bottom: 0.2rem;
 }
 
-.postCont_index{
+.postCont_index {
   padding: 1rem;
   margin-top: 2rem 0;
   background: rgb(242, 242, 242);
@@ -121,28 +133,28 @@ export default {
   color: rgb(33, 37, 41);
   margin-bottom: 20px;
 }
-.postCont_index h3{
+.postCont_index h3 {
   margin-bottom: 20px;
 }
-.postCont_index ol{
+.postCont_index ol {
   font-size: 0.875rem;
   margin-bottom: -1rem;
   padding-left: 1.7rem;
 }
-.postCont_index ol li{
+.postCont_index ol li {
   margin-bottom: 0.5rem;
 }
-.postCont_index_list{
+.postCont_index_list {
   margin-top: 2.5rem;
   cursor: pointer;
 }
-.postCont_article{
+.postCont_article {
   line-height: 1.75; /* 폰트사이즈16px*1.75 */
   padding-bottom: 70px;
 }
-@media (min-width: 577px){
+@media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
-  .postCont{
+  .postCont {
     padding-top: 10vh;
   }
 }
