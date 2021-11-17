@@ -8,8 +8,6 @@ export default {
             str = str.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/gi,"");
             str = str.replace(/(<([^>]+)>)/gi, "");
             str = str.replace(/&nbsp;/gi, "");
-
-            console.dir(str);
             return str;
         },
     },
