@@ -17,7 +17,15 @@ def getPosts():
                 P.user_table_user_id,
                 U.nickname ,
                 U.user_image ,
-                PD.content
+                PD.content ,
+                (
+                SELECT
+                    COUNT(L.post_table_post_id)
+                FROM
+                    jisuimon.post_like_table AS L
+                WHERE
+                    post_table_post_id = P.post_id) AS like_cnt 
+                    /*(최초에 8행의 결과가 나온후 각 행마다 위의 서브쿼리를 실행하기때문에 post_table_post_id = P.post_id가 가능하다)*/
             FROM
                 jisuimon.post_table AS P
             INNER JOIN jisuimon.user_table AS U ON
