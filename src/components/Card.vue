@@ -1,22 +1,24 @@
 <template>
+    <!-- 게시물의 행 ~ 2 -->
     <div class="card-deck" v-for="i in Math.ceil(parseFloat(posts.length/4))" :key="i">
-        <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !posts[((i-1)*4)+x-1] }">
-            <div v-if="posts[((i-1)*4)+x-1]">
-                <router-link :to="`/post/${posts[((i-1)*4)+x-1].post_id}`">
-                    <!-- <img :src="require(`/${posts[((i-1)*4)+x-1].title_image}`)" class="card-img-top" alt=""> -->
-                    <img :src="`${posts[((i-1)*4)+x-1].title_image}`" class="card-img-top" alt="">
+        <!-- 게시물의 열 ~ 4 -->
+        <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !getPostObj(posts,i,x) }">
+            <div v-if="getPostObj(posts,i,x)">
+                <router-link :to="`/post/${getPostObj(posts,i,x).post_id}`">
+                    <!-- <img :src="require(`/${getPostObj(posts,i,x).title_image}`)" class="card-img-top" alt=""> -->
+                    <img :src="`${getPostObj(posts,i,x).title_image}`" class="card-img-top" alt="">
                     <div class="card-body">
-                        <h5 class="card-title">{{removeHtml(posts[((i-1)*4)+x-1].title)}}</h5>
-                        <p class="card-text card-content" v-text="removeHtml(posts[((i-1)*4)+x-1].content)"/>
-                        <p class="card-text card-date"><small class="text-muted">{{$moment(posts[((i-1)*4)+x-1].create_date).fromNow()}}</small></p>
+                        <h5 class="card-title">{{removeHtml(getPostObj(posts,i,x).title)}}</h5>
+                        <p class="card-text card-content" v-text="removeHtml(getPostObj(posts,i,x).content)"/>
+                        <p class="card-text card-date"><small class="text-muted">{{$moment(getPostObj(posts,i,x).create_date).fromNow()}}</small></p>
                     </div>
                     <div class="card-bottom">
                         <div class="card-writer">
-                            <img :src="`${posts[((i-1)*4)+x-1].user_image}`" alt="postWriterImg">
-                            <small>by {{posts[((i-1)*4)+x-1].nickname}}</small>
+                            <img :src="`${getPostObj(posts,i,x).user_image}`" alt="postWriterImg">
+                            <small>by {{getPostObj(posts,i,x).nickname}}</small>
                         </div>
                         <div class="card-like">
-                            <span class="material-icons">favorite</span>{{posts[((i-1)*4)+x-1].like_cnt}}
+                            <span class="material-icons">favorite</span>{{getPostObj(posts,i,x).like_cnt}}
                         </div>
                     </div>
                 </router-link>
@@ -39,6 +41,12 @@ export default {
     },
     props:{
         posts:Array
+    },
+    methods:{
+        // 게시물의 행과 열에 맞는 데이터를 반환한다
+        getPostObj(post,i,x){
+            return post[((i-1)*4)+x-1]
+        }
     }
 }
 </script>
