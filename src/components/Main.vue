@@ -27,16 +27,16 @@ export default {
   data() {
     return {
       loading: false,
-      posts: this.getPosts(),
+      posts: [],
     };
   },
   methods: {
     // 메인게시물 호출
-    async getPosts() {  
+    getPosts() {  
       this.loading = true;
       const payload = {method: "post"};
-      this.posts = await this.$store.dispatch('post',payload).then((result) => {
-        return result.data;
+      this.$store.dispatch('post',payload).then((result) => {
+        this.posts=result.data
       }).catch((err) => {
         this.$message.errorMessage(err);
       }).finally(()=>{
@@ -44,6 +44,9 @@ export default {
       });
     },
   },
+  created(){
+    this.getPosts()
+  }
 };
 </script>
 

@@ -1,27 +1,30 @@
 <template>
-    <!-- 게시물의 행 ~ 2 -->
-    <div class="card-deck" v-for="i in Math.ceil(parseFloat(posts.length/4))" :key="i">
-        <!-- 게시물의 열 ~ 4 -->
-        <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !getPostObj(posts,i,x) }">
-            <div v-if="getPostObj(posts,i,x)">
-                <router-link :to="`/post/${getPostObj(posts,i,x).post_id}`">
-                    <!-- <img :src="require(`/${getPostObj(posts,i,x).title_image}`)" class="card-img-top" alt=""> -->
-                    <img :src="`${getPostObj(posts,i,x).title_image}`" class="card-img-top" alt="">
-                    <div class="card-body">
-                        <h5 class="card-title">{{removeHtml(getPostObj(posts,i,x).title)}}</h5>
-                        <p class="card-text card-content" v-text="removeHtml(getPostObj(posts,i,x).content)"/>
-                        <p class="card-text card-date"><small class="text-muted">{{$moment(getPostObj(posts,i,x).create_date).fromNow()}}</small></p>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="card-writer">
-                            <img :src="`${getPostObj(posts,i,x).user_image}`" alt="postWriterImg">
-                            <small>by {{getPostObj(posts,i,x).nickname}}</small>
+    <!-- 아래의 <div class="card-deck".. 에서 v-for을 사용하면 vue의 태그로써 사용되기때문에 그 위에 root div를 사용해야한다. 아니면 경고남. -->
+    <div>
+        <!-- 게시물의 행 ~ 2 -->
+        <div class="card-deck" v-for="i in Math.ceil(parseFloat(posts.length/4))" :key="i">
+            <!-- 게시물의 열 ~ 4 -->
+            <div class="card" v-for="x in 4" :key="x" :class="{'card-hidden': !getPostObj(posts,i,x) }">
+                <div v-if="getPostObj(posts,i,x)">
+                    <router-link :to="`/post/${getPostObj(posts,i,x).post_id}`">
+                        <!-- <img :src="require(`/${getPostObj(posts,i,x).title_image}`)" class="card-img-top" alt=""> -->
+                        <img :src="`${getPostObj(posts,i,x).title_image}`" class="card-img-top" alt="">
+                        <div class="card-body">
+                            <h5 class="card-title">{{removeHtml(getPostObj(posts,i,x).title)}}</h5>
+                            <p class="card-text card-content" v-text="removeHtml(getPostObj(posts,i,x).content)"/>
+                            <p class="card-text card-date"><small class="text-muted">{{$moment(getPostObj(posts,i,x).create_date).fromNow()}}</small></p>
                         </div>
-                        <div class="card-like">
-                            <span class="material-icons">favorite</span>{{getPostObj(posts,i,x).like_cnt}}
+                        <div class="card-bottom">
+                            <div class="card-writer">
+                                <img :src="`${getPostObj(posts,i,x).user_image}`" alt="postWriterImg">
+                                <small>by {{getPostObj(posts,i,x).nickname}}</small>
+                            </div>
+                            <div class="card-like">
+                                <span class="material-icons">favorite</span>{{getPostObj(posts,i,x).like_cnt}}
+                            </div>
                         </div>
-                    </div>
-                </router-link>
+                    </router-link>
+                </div>
             </div>
         </div>
     </div>

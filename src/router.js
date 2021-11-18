@@ -44,11 +44,11 @@ const router = createRouter({
 });
 
 //모든 라우터 들이 실행되기 전에 실행되는 녀석을 추가 (navigation guard)
-router.beforeEach((to, from, next) => {
-
-  console.log(to)
-  console.log(from)
-  console.log(next())
+// router.beforeEach((to, from, next) => {
+router.beforeEach(() => {
+//   console.log(to)
+//   console.log(from)
+//   console.log(next())
     // if (!isNaN(to.params.id)) {
     //     next();
     // } else {
