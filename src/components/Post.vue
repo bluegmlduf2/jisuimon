@@ -27,15 +27,10 @@
     </div>
     <div class="postCont_article">
       <p v-html="posts.content"></p>
-      <!-- <p v-for="i in 5" :key="i">Ipsum"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."
-      "There is no one who loves pain itself, who seeks after it and wants to have it, simply because it is pain..."
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-      Fusce a libero vel enim congue volutpat. Fusce pulvinar maximus facilisis. 
-      Proin vitae odio ac lectus eleifend eleifend ut sed nisl. Nunc vulputate finibus eros vitae bibendum. Vestibulum imperdiet luctus nisl ut pellentesque. 
-      Suspendisse semper ante fermentum libero suscipit finibus. Curabitur non imperdiet tellus. 
-      Mauris sed leo eget velit porttitor pulvinar ac quis ipsum. Vivamus tincidunt nunc sem, sit amet mattis felis malesuada ut.</p> -->
     </div>
-    <Comment :comment="comment" />
+    <div>
+      <Comment :comment="comment" />
+    </div>
   </div>
 </template>
 
@@ -61,12 +56,13 @@ export default {
   },
   methods: {
     // 선택 게시물 상세내용
-    async getPostDetail() {
+    getPostDetail() {
       this.loading = true;
       const payload = {method: "post", postId: this.$route.params.postId};
-      await this.$store
+      this.$store
         .dispatch("postDetail", payload)
         .then((result) => {
+          console.log(result)
           this.posts = result.data[0]; //게시물 상세정보
           this.comment = result.data[1]; //게시물 댓글정보
           this.ingredient = result.data[2]; //게시물 재료정보
