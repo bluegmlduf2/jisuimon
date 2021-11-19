@@ -91,6 +91,15 @@ export default {
     padding-top: 10vh;
   }
 }
+/* Post,Comment 공통 레이아웃 */
+@media (min-width: 992px) {
+  /* 넓이가 992px 이상 여백추가*/
+  .postCont{
+    padding-left: 160px;
+    padding-right: 160px;
+  }
+}
+
 
 .postCont_title {
   font-size: 3rem;

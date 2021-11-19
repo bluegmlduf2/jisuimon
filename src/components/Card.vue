@@ -68,6 +68,23 @@ export default {
   border: 0 !important;;
   outline: 0;
 }
+.card {
+  transition: transform 250ms;
+}
+.card:hover {
+  transform: translateY(-10px);
+  /* offset-x | offset-y | blur-radius | spread-radius | color */
+  box-shadow: 45px 45px 40px -30px rgb(240, 240, 245);
+}
+/* Card 애니메이션*/
+@keyframes slide {
+  from {
+    bottom: 0;
+  }
+  to {
+    bottom: 12px;
+  }
+}
 .card a{
     /* anchor 태그 초기화 (Bootstrap때문에 important사용)*/
     color: inherit !important; /* 상위에서 사용한 fontcolor사용 */

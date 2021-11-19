@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid">
     <!-- Main -->
-    <router-view class="card" name="Card" :posts="posts" />
+    <router-view name="Card" :posts="posts" />
     <!-- Post -->
-    <router-view class="post" name="Post" :posts="posts" />
+    <router-view name="Post" :posts="posts" />
     <!-- Write -->
-    <router-view class="write" name="Write" v-slot="{ Component }">
+    <router-view name="Write" v-slot="{ Component }">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
@@ -55,34 +55,6 @@ export default {
 @media (max-width: 576.98px) {
   .container-fluid {
     padding-top: 80px;
-  }
-}
-
-/* Card 애니메이션*/
-@keyframes slide {
-  from {
-    bottom: 0;
-  }
-  to {
-    bottom: 12px;
-  }
-}
-.card {
-  transition: transform 250ms;
-}
-.card:hover {
-  transform: translateY(-10px);
-  /* offset-x | offset-y | blur-radius | spread-radius | color */
-  box-shadow: 45px 45px 40px -30px rgb(240, 240, 245);
-}
-
-/* Post,Comment 공통 레이아웃 */
-@media (min-width: 992px) {
-  /* 넓이가 992px 이상 여백추가*/
-  .postCont{
-    text-align: left;
-    padding-left: 160px;
-    padding-right: 160px;
   }
 }
 

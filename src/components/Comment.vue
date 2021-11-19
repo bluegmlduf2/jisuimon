@@ -40,7 +40,7 @@
           <!-- nestedComment 대댓글 -->
           <div class="nestedCommentCont" :class="{'nestedComment_show': comment.showState,'nestedComment_hidden': !comment.showState }">
               <div class="nestedCommentCont_background">
-                <div v-for="commentReply in comment.comment_reply" :key="commentReply.commont_reply_id">
+                <div class="nestedCommentCont_hr" v-for="commentReply in comment.comment_reply" :key="commentReply.commont_reply_id">
                   <!-- 대댓글 프로필 -->
                   <div class="nestedCommentCont_profile">
                     <div class="commentCont_profileImg">
@@ -55,11 +55,22 @@
                   </div>
                   <!-- 대댓글 코멘트 -->
                   <div class="nestedCommentCont_comment">&emsp;{{commentReply.comment_reply_content}}</div>
-                  <!-- 대댓글 글쓰기버튼 -->
-                  <div class="nestedCommentCont_buttons"></div>
                 </div>
+                <!-- 대댓글 작성창 -->
                 <div class="nestedCommentCont_newcomment">
-                  <button id="writeNestedCommentBtn" type="button" class="btn btn-outline-success">コメント作成</button>
+                  <button id="writeNestedCommentBtn" type="button" class="btn btn-outline-success"><b>コメント作成</b></button>
+                  <div class="nestedCommentCont_write">
+                    <textarea
+                      class="form-control"
+                      id="regNewCommentTa"
+                      placeholder="コメントを残してください"
+                      rows="3"
+                    />
+                  </div>
+                  <div class="nestedCommentCont_write_buttons">
+                    <button class="btn btn-secondary" id="writeNestedCommentCancelBtn"><b>キャンセル</b></button>
+                    <button class="btn btn-success" id="writeNestedCommentConfirmBtn"><b>コメントを作成する</b></button>
+                  </div>
                 </div>
               </div>
           </div>
@@ -86,6 +97,9 @@ export default {
 </script>
 
 <style>
+.commentCont{
+  height: 100%;
+}
 .commentCont h4 {
   margin-bottom: 20px;
 }
@@ -108,8 +122,11 @@ export default {
 .commentCont_list_profile {
   display: flex; /* 자식 div자측정렬 */
 }
-.commentCont_list > div:not(:first-of-type) {
-  border-top: 1px solid rgb(233, 236, 239);
+.commentCont_list> div{
+  margin-top: 1rem;
+}
+.commentCont_list > div:not(:last-of-type) {
+  border-bottom: 1px solid rgb(233, 236, 239);
 }
 .commentCont_profileImg > img {
   height: 2.5rem;
@@ -154,12 +171,16 @@ export default {
   border-radius: 4px;
   margin-top: 1.3125rem;
 }
+.nestedCommentCont_hr{
+  margin-bottom:1rem;
+  border-bottom: 1px solid rgb(233, 236, 239);
+}
 .nestedCommentCont_profile {
   display: flex; /* 자식 div자측정렬,flex의 default가 행정렬 */
   padding-bottom:1.5rem;
 }
 .nestedCommentCont_comment{
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.7rem;
 }
 #writeNestedCommentBtn{
   width: 100%;
@@ -167,9 +188,23 @@ export default {
   border-color:rgb(18, 184, 134);
   background: rgb(255, 255, 255);
 }
-
 #writeNestedCommentBtn:hover , #writeNestedCommentBtn:active{
   color: rgb(255, 255, 255);
   background: rgb(18, 184, 134);
+}
+.nestedCommentCont_write {
+  margin-bottom: 20px;
+}
+.nestedCommentCont_write #regNewCommentTa {
+  resize: none;
+  border: 1px solid rgb(233, 236, 239);
+  line-height: 1.75;
+}
+.nestedCommentCont_write_buttons{
+  display: flex;
+  justify-content: flex-end;
+}
+#writeNestedCommentCancelBtn{
+  margin-right: 0.7rem;
 }
 </style>
