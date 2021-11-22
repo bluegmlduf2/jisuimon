@@ -30,3 +30,18 @@
     /* Support for IE. */
     font-feature-settings: "liga";
 }
+/* 공통버튼 */
+.confirm_btn{
+    background: rgb(18, 184, 134)!important;
+    border: none!important;
+}
+.confirm_btn:hover,.confirm_btn:focus{
+    background: rgb(32, 201, 151)!important;
+}
+.cancel_btn{
+    background:rgb(134, 142, 150)!important;
+    border: none!important;
+}
+.cancel_btn:hover,.cancel_btn:focus{
+    background: rgb(173, 181, 189)!important;
+}

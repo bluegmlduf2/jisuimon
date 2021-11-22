@@ -10,7 +10,7 @@
       />
     </div>
     <div class="commentCont_reg">
-      <button class="btn btn-success" id="regCommentBtn">
+      <button class="btn btn-success confirm_btn" id="regCommentBtn">
         <b>コメントを作成する</b>
       </button>
     </div>
@@ -58,8 +58,8 @@
                 </div>
                 <!-- 대댓글 작성창 -->
                 <div class="nestedCommentCont_newcomment">
-                  <button id="writeNestedCommentBtn" type="button" class="btn btn-outline-success"><b>コメント作成</b></button>
-                  <div class="nestedCommentCont_write">
+                  <button id="writeNestedCommentBtn" v-if="comment.showReplyState" @click="comment.showReplyState=!comment.showReplyState" type="button" class="btn btn-outline-success"><b>コメント作成</b></button>
+                  <div class="nestedCommentCont_write" v-if="!comment.showReplyState">
                     <textarea
                       class="form-control"
                       id="regNewCommentTa"
@@ -67,9 +67,9 @@
                       rows="3"
                     />
                   </div>
-                  <div class="nestedCommentCont_write_buttons">
-                    <button class="btn btn-secondary" id="writeNestedCommentCancelBtn"><b>キャンセル</b></button>
-                    <button class="btn btn-success" id="writeNestedCommentConfirmBtn"><b>コメントを作成する</b></button>
+                  <div class="nestedCommentCont_write_buttons" v-if="!comment.showReplyState">
+                    <button class="btn btn-secondary cancel_btn" id="writeNestedCommentCancelBtn" @click="comment.showReplyState=!comment.showReplyState" ><b>キャンセル</b></button>
+                    <button class="btn btn-success confirm_btn" id="writeNestedCommentConfirmBtn" @click="comment.showReplyState=!comment.showReplyState"><b>コメントを作成する</b></button>
                   </div>
                 </div>
               </div>
@@ -97,9 +97,6 @@ export default {
 </script>
 
 <style>
-.commentCont{
-  height: 100%;
-}
 .commentCont h4 {
   margin-bottom: 20px;
 }
@@ -117,7 +114,6 @@ export default {
 }
 #regCommentBtn {
   margin-left: auto; /* flex의 왼쪽정렬 */
-  background: rgb(18, 184, 134);
 }
 .commentCont_list_profile {
   display: flex; /* 자식 div자측정렬 */

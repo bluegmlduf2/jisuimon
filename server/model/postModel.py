@@ -170,12 +170,12 @@ def getPostComment(args):
             for i,comment in enumerate(commentData):
                 commentReturnData[i].setdefault('comment_reply',[])# 대댓글 추가에 필요한 키 추가
                 commentReturnData[i].setdefault('showState',False)# 댓글 접고 펼치기에 필요한 키 추가
+                commentReturnData[i].setdefault('showReplyState',False)# 대댓글 작성창 접고 펼치기에 필요한 키 추가
                 [commentReturnData[i].pop(colNm) for colNm in removeCommentCol] # 불필요한 댓글의 칼럼제거
                 userImage=commentReturnData[i]['user_image'] # 유저 이미지 (댓글유저)
                 commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg)
                 # 대댓글(자식)
                 for commentReply in data:
-                    commentReply.setdefault('showState',False)# 댓글 작성창 접고 펼치기에 필요한 키 추가
                     # 댓글과 대댓글이 부모자식관계가 맞을 시 해당 부모 댓글안에 자식 대댓글 딕셔너리를 넣어줌 
                     if comment['comment_id']==commentReply['comment_table_comment_id']:
                         userReplyImage=commentReply['user_image_CR'] # 유저 이미지 (대댓글유저)

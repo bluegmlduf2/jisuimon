@@ -21,7 +21,7 @@
         </span>
       </div>
       <div class="writeCont_write">
-        <button class="btn btn-success" id="writeContPostBtn">
+        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="listShow">
           <b>投稿する</b>
         </button>
       </div>
@@ -48,12 +48,29 @@ export default {
       editorData:[]
     };
   },
+  methods:{
+    getPostDetail() {
+      this.loading = true;
+      const payload = {method: "post", postId: this.$route.params.postId};
+      this.$store
+        .dispatch("postDetail", payload)
+        .then((result) => {
+          console.log(result)
+          this.posts = result.data[0]; //게시물 상세정보
+          this.comment = result.data[1]; //게시물 댓글정보
+          this.ingredient = result.data[2]; //게시물 재료정보
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+  }
 };
 </script>
 <style>
-.writeCont{
-  height: 100vh;
-}
 @media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
   .writeCont {
@@ -98,6 +115,5 @@ export default {
 #writeContPostBtn{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-  background: rgb(18, 184, 134);
 }
 </style>

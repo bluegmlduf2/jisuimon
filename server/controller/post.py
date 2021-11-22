@@ -8,11 +8,11 @@ import base64
 post_controller = Blueprint('post', __name__)
 
 
-@post_controller.route('/post', methods=['POST'])
+@post_controller.route('/post', methods=['GET'])
 def getPost():
     '''메인화면에 표시할 방정보 8개 가져오기'''
     try:
-        if request.method == 'POST':
+        if request.method == 'GET':
             data=postModel.getPosts()
 
             # 이미지->바이너리(base64)->utf-8문자열
@@ -41,12 +41,12 @@ def getPost():
         return jsonify(data), 200
 
 
-@post_controller.route('/postDetail', methods=['POST'])
+@post_controller.route('/postDetail', methods=['GET'])
 def postDetail():
     '''게시물의 상세정보'''
     try:
-        if request.method == 'POST':
-            args = request.get_json()
+        if request.method == 'GET':
+            args = request.args
             detailData = postModel.getPostDetail(args)  # 게시물 상세정보
             commentData = postModel.getPostComment(args)  # 게시물 댓글정보
             ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보                   

@@ -17,16 +17,16 @@ export default {
 </script>
 
 <style>
-@import "./assets/css/common.css"; /* 구글 머티리얼 아이콘 클래스,구글웹폰트 */
-
+@import "./assets/css/common.css"; /* 구글 머티리얼 아이콘 클래스,구글웹폰트,공통css */
+body{
+  background: rgb(248, 249, 250)!important;
+}
 #app {
   font-family: 'M PLUS Rounded 1c', sans-serif!important;/* 구글 웹 폰트 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background: rgb(248, 249, 250);
-  height: 100%;
 }
 @media (min-width: 992px){
   /* 넓이가 992px 이상 여백추가*/

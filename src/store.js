@@ -36,6 +36,7 @@ const store = createStore({
             return axios({
                 url: `${rootUrl}/post`,
                 method: payload.method,
+                params: payload,
                 data: payload,
             });
         },
@@ -44,6 +45,7 @@ const store = createStore({
             return axios({
                 url: `${rootUrl}/postDetail`,
                 method: payload.method,
+                params: payload,
                 data: payload,
             });
         },

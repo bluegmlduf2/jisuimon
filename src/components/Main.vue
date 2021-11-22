@@ -16,9 +16,6 @@
 </template>
 
 <script>
-// import Card from './Card.vue'
-// import postDatas from "@/assets/js/posts.js";
-
 export default {
   name: "Main",
   components: {
@@ -34,7 +31,7 @@ export default {
     // 메인게시물 호출
     getPosts() {  
       this.loading = true;
-      const payload = {method: "post"};
+      const payload = {method: "get"};
       this.$store.dispatch('post',payload).then((result) => {
         this.posts=result.data
       }).catch((err) => {

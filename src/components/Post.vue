@@ -58,7 +58,7 @@ export default {
     // 선택 게시물 상세내용
     getPostDetail() {
       this.loading = true;
-      const payload = {method: "post", postId: this.$route.params.postId};
+      const payload = {method: "get", postId: this.$route.params.postId};
       this.$store
         .dispatch("postDetail", payload)
         .then((result) => {
