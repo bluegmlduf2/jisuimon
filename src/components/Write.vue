@@ -44,7 +44,7 @@ export default {
       editorConfig:{
         language: 'ja',
       },
-      editorData:[], // 글내용
+      editorData:"", // 글내용
       foodList:[], // 검색한 음식리스트
       ingredientList:[] // 재료리스트
     };
