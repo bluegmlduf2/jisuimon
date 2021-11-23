@@ -4,14 +4,13 @@
       <input type="text" class="form-control" placeholder="タイトルを入力してください">
     </div>
     <div class="writeCont_materialList">
-      <span>食品1</span>
-      <span>食品2</span>
-      <span>食品3</span>
-      <span>食品4</span>
-      <span>食品5</span>
+      <span v-for="(ingredient,i) in ingredientList" :key="i" @click="removeIngredient">{{ingredient.food_name}}</span>
     </div>
     <div class="input-group input-group-sm mb-3">
-      <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood">
+      <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood" @change="selectFood" list="foodDataList">
+        <datalist id="foodDataList">
+          <option v-for="(food,i) in foodList" :key="i" >{{food['food_name']}}</option>
+        </datalist>
     </div>
     <ckeditor id="writeCont_content" :editor="editor" v-model="editorData" :config="editorConfig" tag-name="textarea"/>
     <div class="writeCont_buttons">
@@ -45,25 +44,21 @@ export default {
       editorConfig:{
         language: 'ja',
       },
-      editorData:[]
+      editorData:[], // 글내용
+      foodList:[], // 검색한 음식리스트
+      ingredientList:[] // 재료리스트
     };
   },
   methods:{
     // 음식 검색 결과리스트 가져오기
     getFood(event) {
-      console.log(event)
       const INPUT_FOOD_NAME=event.target.value
-      // if (!INPUT_FOOD_NAME) {
-      //   return
-      // }
       this.loading = true;
       const payload = {method: "get", food_name: INPUT_FOOD_NAME};
       this.$store
         .dispatch("food", payload)
         .then((result) => {
-          console.log(11111111111)
-          console.log(result)
-          // this.posts = result.data[0]; //게시물 상세정보
+          this.foodList=result.data
         })
         .catch((err) => {
           this.$message.errorMessage(err);
@@ -71,6 +66,21 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    // 음식 선택시 추가
+    selectFood(event){
+      const SELECTED_OPTION = event.target // 선택한 옵션
+      const SELECTED_FOOD = this.foodList.find(e => e.food_name === SELECTED_OPTION.value) // 음식추가
+      // 초기화
+      this.foodList=[]
+      SELECTED_OPTION.value=""
+      // 재료추가 
+      this.ingredientList.push(SELECTED_FOOD)
+    },
+    // 재료삭제
+    removeIngredient(event){
+      const SELECTED_OPTION = event.target // 선택한 옵션
+      this.ingredientList = this.ingredientList.filter(e => e.food_name !== SELECTED_OPTION.textContent) // 재료삭제
     },
     insertPost() {
       this.loading = true;
@@ -119,11 +129,12 @@ export default {
   margin-right: 0.5rem;
   margin-bottom: 0.2rem;
 }
-
+.writeCont_materialList span:hover{
+  background: rgb(245, 245, 245);
+}
 .ck-content{
   height: 400px;
 }
-
 .writeCont_buttons{
   display: flex;
   justify-content: space-between; /** 요소가 일정한 간격을 두고 떨어짐, 2개 요소가 좌우로 최대한 멀어짐 */
@@ -134,7 +145,6 @@ export default {
   cursor: pointer;
   padding:10px
 }
-
 #writeContPostBtn{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
