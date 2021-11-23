@@ -4,6 +4,7 @@ Flask설정
 from flask import Flask, render_template, request, redirect, url_for, Blueprint,session
 import traceback
 from controller import post
+from controller import food
 # from controller import signup
 # from controller import signin
 # from controller import sell
@@ -50,6 +51,7 @@ def create_app(config_mode="test"):
     #매개변수로 bluePrint객체를 받는다. 그러나 import해서 해당 컨트롤러에 blueprint객체를 가져와서 사용
     
     app.register_blueprint(post.post_controller, url_prefix='/jisuimon/')
+    app.register_blueprint(food.food_controller, url_prefix='/jisuimon/')
     # app.register_blueprint(signup.signup_ab, url_prefix='/signup-data')
     # app.register_blueprint(signin.signin_ab, url_prefix='/signin-data')
     # app.register_blueprint(sell.sell_ab, url_prefix='/sell-data')

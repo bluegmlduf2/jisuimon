@@ -11,7 +11,7 @@
       <span>食品5</span>
     </div>
     <div class="input-group input-group-sm mb-3">
-      <input type="text" class="form-control" placeholder="食材を選んでください">
+      <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood">
     </div>
     <ckeditor id="writeCont_content" :editor="editor" v-model="editorData" :config="editorConfig" tag-name="textarea"/>
     <div class="writeCont_buttons">
@@ -21,7 +21,7 @@
         </span>
       </div>
       <div class="writeCont_write">
-        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="listShow">
+        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="insertPost">
           <b>投稿する</b>
         </button>
       </div>
@@ -49,11 +49,34 @@ export default {
     };
   },
   methods:{
-    getPostDetail() {
+    // 음식 검색 결과리스트 가져오기
+    getFood(event) {
+      console.log(event)
+      const INPUT_FOOD_NAME=event.target.value
+      // if (!INPUT_FOOD_NAME) {
+      //   return
+      // }
+      this.loading = true;
+      const payload = {method: "get", food_name: INPUT_FOOD_NAME};
+      this.$store
+        .dispatch("food", payload)
+        .then((result) => {
+          console.log(11111111111)
+          console.log(result)
+          // this.posts = result.data[0]; //게시물 상세정보
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    insertPost() {
       this.loading = true;
       const payload = {method: "post", postId: this.$route.params.postId};
       this.$store
-        .dispatch("postDetail", payload)
+        .dispatch("insertPost", payload)
         .then((result) => {
           console.log(result)
           this.posts = result.data[0]; //게시물 상세정보

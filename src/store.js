@@ -49,6 +49,15 @@ const store = createStore({
                 data: payload,
             });
         },
+        // 음식리스트가져오기
+        food(context, payload) {
+            return axios({
+                url: `${rootUrl}/food`,
+                method: payload.method,
+                params: payload,
+                data: payload,
+            });
+        },
     },
 });
 
