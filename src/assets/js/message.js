@@ -24,9 +24,18 @@ const errorMessage = (err) =>
         confirmButtonText: "Cool",
     }).then(()=>{
         location.href="/NotFound";
-    })
+    });
+
+const infoMessage = (msg) =>
+    Swal.fire({
+        title: "お知らせ",
+        text: msg,
+        icon: "info",
+        confirmButtonText: "閉じる",
+    });
 
 export default Object.freeze({
     successMessage,
     errorMessage,
+    infoMessage
 });

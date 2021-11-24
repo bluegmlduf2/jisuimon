@@ -45,16 +45,20 @@ export default {
         language: 'ja',
       },
       editorData:"", // 글내용
-      foodList:[], // 검색한 음식리스트
-      ingredientList:[] // 재료리스트
+      foodList:[], // 검색한 재료리스트
+      ingredientList:[] // 추가한 재료리스트
     };
   },
   methods:{
-    // 음식 검색 결과리스트 가져오기
+    // 재료 검색 결과리스트 가져오기
     getFood(event) {
-      const INPUT_FOOD_NAME=event.target.value
+      const INPUT_FOOD=event.target.value // 입력한 재료
+      // 2글자 이상부터 검색
+      if(INPUT_FOOD.length<2){
+        return
+      }
       this.loading = true;
-      const payload = {method: "get", food_name: INPUT_FOOD_NAME};
+      const payload = {method: "get", food_name: INPUT_FOOD};
       this.$store
         .dispatch("food", payload)
         .then((result) => {
@@ -67,20 +71,27 @@ export default {
           this.loading = false;
         });
     },
-    // 음식 선택시 추가
+    // 선택한 재료 추가
     selectFood(event){
-      const SELECTED_OPTION = event.target // 선택한 옵션
-      const SELECTED_FOOD = this.foodList.find(e => e.food_name === SELECTED_OPTION.value) // 음식추가
+      const SELECTED_OPTION = event.target // 선택한 재료
+      const DUPLICATION_FOOD = this.ingredientList.filter(e => e.food_name === SELECTED_OPTION.value).length // 이미 추가한 재료 여부
+      // 이미 추가한 재료일 경우에 종료
+      if(DUPLICATION_FOOD){
+        this.$message.infoMessage("既に登録されている材料です。")
+        return
+      }
+      const SELECTED_FOOD = this.foodList.find(e => e.food_name === SELECTED_OPTION.value) // 선택한 재료의 정보 가져오기
+      
       // 초기화
       this.foodList=[]
       SELECTED_OPTION.value=""
-      // 재료추가 
+      // 선택한 재료추가 
       this.ingredientList.push(SELECTED_FOOD)
     },
     // 재료삭제
     removeIngredient(event){
-      const SELECTED_OPTION = event.target // 선택한 옵션
-      this.ingredientList = this.ingredientList.filter(e => e.food_name !== SELECTED_OPTION.textContent) // 재료삭제
+      const SELECTED_OPTION = event.target // 선택한 재료
+      this.ingredientList = this.ingredientList.filter(e => e.food_name !== SELECTED_OPTION.textContent) // 재료 삭제
     },
     insertPost() {
       this.loading = true;
