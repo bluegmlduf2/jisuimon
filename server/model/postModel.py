@@ -73,10 +73,10 @@ def getPostDetail(args):
             INNER JOIN jisuimon.user_table AS U ON
                 P.user_table_user_id = U.user_id 
             WHERE
-                post_id = "{post_id}"
-            '''.format(post_id=args['postId'])
+                post_id = %s
+            '''
 
-            data = conn.executeOne(sql)
+            data = conn.executeOne(sql,args['postId'])
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -103,11 +103,10 @@ def getPostIngredient(args):
                 INNER JOIN jisuimon.ingredient_table AS I ON
                     P.post_id = I.post_table_post_id
                 WHERE
-                    post_id = "{post_id}"
-                '''.format(
-                post_id=args['postId'])
+                    post_id = %s
+                '''
 
-            data = conn.executeAll(sql)
+            data = conn.executeAll(sql,args['postId'])
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -147,11 +146,10 @@ def getPostComment(args):
                 LEFT JOIN jisuimon.user_table AS U ON
                     C.user_table_user_id = U.user_id
                 WHERE
-                    C.post_table_post_id = "{post_id}"
+                    C.post_table_post_id = %s
                 ORDER BY C.comment_create_date , CR.comment_reply_create_date
-                '''.format(
-                post_id=args['postId'])
-            data=conn.executeAll(sql)
+                '''
+            data=conn.executeAll(sql,args['postId'])
 
             # 화면에 반환할 값 commentReturnData
             commentData=list({e['comment_id']:e for e in data}.values()) # 중복 제거한 댓글목록
@@ -191,48 +189,5 @@ def getPostComment(args):
             raise e
         else:
             return commentReturnData
-        finally:
-            conn.close()
-
-
-def getInputRooms(args):
-    conn = Connection()
-    if conn:
-        try:
-            # 방정보가져오기
-            sql = '''SELECT
-                roomId,
-                houseType1,
-                houseType2,
-                post,
-                city1,
-                city2,
-                city3,
-                title,
-                content,
-                memberId,
-                regDate,
-                adStatus
-            FROM
-                house.room
-            WHERE
-                city1 LIKE "%%{city1}%%"
-                OR city2 LIKE "%%{city2}%%"
-                OR city3 LIKE "%%{city3}%%"
-                OR title LIKE "%%{title}%%"
-                OR content LIKE "%%{content}%%"
-                AND adStatus=1
-            '''.format(
-                city1=args['inputValue'], city2=args['inputValue'], city3=args['inputValue'], title=args['inputValue'], content=args['inputValue'])
-
-            data = conn.executeAll(sql)
-        except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
-        except Exception as e:
-            traceback.print_exc()
-            conn.rollback()
-            raise e
-        else:
-            return data
         finally:
             conn.close()
