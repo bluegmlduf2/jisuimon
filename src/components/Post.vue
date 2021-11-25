@@ -13,16 +13,13 @@
       }}</span>
     </div>
     <div class="postCont_index">
-      <h3>김치찌게만들기 목록</h3>
-      <ol v-if="listShow">
-        <li>순서1</li>
-        <li>순서2</li>
-        <li>순서3</li>
-        <li>순서4</li>
-        <li>순서5</li>
-      </ol>
+      <h3>材料詳細</h3>
+      <ul v-if="listShow">
+        <li>ニンニク 5g</li>
+        <li>鶏肉 1kg</li>
+      </ul>
       <div class="postCont_index_list" @click="listShow = !listShow">
-        {{ listShow ? "▲ 숨기기" : "▼ 목록보기" }}
+        {{ listShow ? "▲ 閉じる" : "▼ 開く" }}
       </div>
     </div>
     <div class="postCont_article">

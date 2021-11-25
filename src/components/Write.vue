@@ -6,11 +6,32 @@
     <div class="writeCont_materialList">
       <span v-for="(ingredient,i) in ingredientList" :key="i" @click="removeIngredient">{{ingredient.food_name}}</span>
     </div>
-    <div class="input-group input-group-sm mb-3">
-      <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood" @change="selectFood" list="foodDataList">
+    <div class="writeCont_add_materialList mb-3">
+      <div class="writeCont_add_materialList_select input-group input-group-sm">
+        <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood" @change="selectFood" list="foodDataList">
         <datalist id="foodDataList">
           <option v-for="(food,i) in foodList" :key="i" >{{food['food_name']}}</option>
         </datalist>
+      </div>
+      <div class="writeCont_add_materialList_weight input-group input-group-sm ">
+        <input type="number" class="form-control" placeholder="数量を入力してください" >
+        <div class="input-group-append">
+          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">単位</button>
+          <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+            <a class="dropdown-item" href="#">個</a>
+            <a class="dropdown-item" href="#">ml</a>
+            <a class="dropdown-item" href="#">大さじ</a>
+            <a class="dropdown-item" href="#">小さじ</a>
+            <div role="separator" class="dropdown-divider"></div>
+            <div class="input-group input-group-sm">
+              <input type="text" class="form-control" style="margin-left:5px" placeholder="直接入力" aria-label="" aria-describedby="writeUnitBtn">
+              <div class="input-group-append" style="margin-right:5px">
+                <button class="btn btn-light" type="button" id="writeUnitBtn">選択</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <ckeditor id="writeCont_content" :editor="editor" v-model="editorData" :config="editorConfig" tag-name="textarea"/>
     <div class="writeCont_buttons">
@@ -99,7 +120,6 @@ export default {
       this.$store
         .dispatch("insertPost", payload)
         .then((result) => {
-          console.log(result)
           this.posts = result.data[0]; //게시물 상세정보
           this.comment = result.data[1]; //게시물 댓글정보
           this.ingredient = result.data[2]; //게시물 재료정보
@@ -143,6 +163,23 @@ export default {
 .writeCont_materialList span:hover{
   background: rgb(245, 245, 245);
 }
+.writeCont_add_materialList{
+  display: flex;
+}
+.writeCont_add_materialList_select{
+  flex-grow: 3;
+  flex-basis: 200px;
+}
+.writeCont_add_materialList_weight{
+  margin-left: 5px;
+  flex-grow: 1;
+  flex-basis: 180px;
+}
+#selectUnitBtn{
+  background-color: #fff;
+  border:1px solid #ced4da;
+  width: 80px;
+}
 .ck-content{
   height: 400px;
 }
@@ -159,5 +196,9 @@ export default {
 #writeContPostBtn{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+#writeUnitBtn{
+  background-color: #fff;
+  border:1px solid #ced4da;
 }
 </style>
