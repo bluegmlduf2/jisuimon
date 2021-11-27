@@ -4,33 +4,39 @@
       <input type="text" class="form-control" placeholder="タイトルを入力してください">
     </div>
     <div class="writeCont_materialList">
-      <span v-for="(ingredient,i) in ingredientList" :key="i" @click="removeIngredient">{{ingredient.food_name}}</span>
+        <span class="" v-for="(ingredient,i) in ingredientList" :key="i" @click="removeIngredient(ingredient)" @mouseover="ingredient.showCancelFlg = true" @mouseleave="ingredient.showCancelFlg = false">
+          {{`${ingredient.food_name}&emsp;/&nbsp;${ingredient.food_amt}${ingredient.food_unit}&emsp;${ingredient.showCancelFlg?"✖️":""}`}}
+        </span>
     </div>
-    <div class="writeCont_add_materialList mb-3">
-      <div class="writeCont_add_materialList_select input-group input-group-sm">
-        <input type="text" class="form-control" placeholder="食材を選んでください" @keyup="getFood" @change="selectFood" list="foodDataList">
+    <div class="writeCont_add_materialList mb-3 row">
+      <div class="writeCont_add_materialList_select input-group input-group-sm col-md-7">
+        <input type="text" class="form-control" placeholder="食材を選んでください" style="ime-mode: disabled" ref="foodInput" @keyup="getFood" @change="selectFood" list="foodDataList" :disabled="selectedFood.food_clicked">
+        <button class="btn btn-sm bg-transparent material-icons" type="button" @click="clearFood" v-if="selectedFood.food_clicked">clear</button>
         <datalist id="foodDataList">
           <option v-for="(food,i) in foodList" :key="i" >{{food['food_name']}}</option>
         </datalist>
       </div>
-      <div class="writeCont_add_materialList_weight input-group input-group-sm ">
-        <input type="number" class="form-control" placeholder="数量を入力してください" >
+      <div class="writeCont_add_materialList_input input-group input-group-sm col-md-4">
+        <input type="number" class="form-control" ref="foodAmout" @keyup="inputAmout" min="1" placeholder="数量を入力してください" >
         <div class="input-group-append">
-          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">単位</button>
+          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">{{selectedFood.food_unit?selectedFood.food_unit:"単位"}}</button>
           <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
-            <a class="dropdown-item" href="#">個</a>
-            <a class="dropdown-item" href="#">ml</a>
-            <a class="dropdown-item" href="#">大さじ</a>
-            <a class="dropdown-item" href="#">小さじ</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">個</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">ml</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">大さじ</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">小さじ</a>
             <div role="separator" class="dropdown-divider"></div>
             <div class="input-group input-group-sm">
-              <input type="text" class="form-control" style="margin-left:5px" placeholder="直接入力" aria-label="" aria-describedby="writeUnitBtn">
+              <input type="text" class="form-control" style="margin-left:5px" placeholder="直接入力" ref="foodUnit">
               <div class="input-group-append" style="margin-right:5px">
-                <button class="btn btn-light" type="button" id="writeUnitBtn">選択</button>
+                <button class="btn btn-light" type="button" id="writeUnitBtn" @click="selectUnit">選択</button>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="input-group-append input-group-sm col-md-1">
+        <button id="writeNestedCommentBtn" type="button" class="btn btn-sm btn-outline-success confirm_white_btn" @click="addIngredient"><b>追加</b></button>
       </div>
     </div>
     <ckeditor id="writeCont_content" :editor="editor" v-model="editorData" :config="editorConfig" tag-name="textarea"/>
@@ -53,24 +59,46 @@
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import '@ckeditor/ckeditor5-build-classic/build/translations/ja';// 일본어
+import UploadAdapter from '@/assets/js/uploadAdapter.js'; // 이미지 업로드 어댑터
+import common from '@/assets/js/common.js';
 
 export default {
   name: "Write",
   components: {
     ckeditor: CKEditor.component,
   },
+  mixins:[common],
   data() {
     return {
       editor: ClassicEditor,
       editorConfig:{
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'insertTable', '|', 'imageUpload', '|', 'undo', 'redo' ],
+        table: {
+            toolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
+        },
+        placeholder:"あなたの料理の作り方を教えてください", // ckEditor의 플레이스홀더
+        extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: 'ja',
-      },
+      },// Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음}) 
       editorData:"", // 글내용
       foodList:[], // 검색한 재료리스트
-      ingredientList:[] // 추가한 재료리스트
+      ingredientList:[], // 추가한 재료리스트
+      selectedFood: { // 선택중인 재료
+        food_id: null, //음식 ID
+        food_name: null, //음식 이름
+        food_amt: null, //음식 수량
+        food_unit: null, // 음식 단위
+        food_clicked: false, // 음식이 선택된지 여부
+      },
     };
   },
   methods:{
+    // 이미지 업로더 어뎁터
+    uploader(editor){
+        editor.plugins.get( 'FileRepository' ).createUploadAdapter = ( loader ) => {
+            return new UploadAdapter( loader );
+        };
+    },
     // 재료 검색 결과리스트 가져오기
     getFood(event) {
       const INPUT_FOOD=event.target.value // 입력한 재료
@@ -94,26 +122,90 @@ export default {
     },
     // 선택한 재료 추가
     selectFood(event){
-      const SELECTED_OPTION = event.target // 선택한 재료
-      const DUPLICATION_FOOD = this.ingredientList.filter(e => e.food_name === SELECTED_OPTION.value).length // 이미 추가한 재료 여부
+      const CLICKED_OPTION = event.target // 선택한 재료
+      const DUPLICATION_FOOD = this.ingredientList.filter(e => e.food_name === CLICKED_OPTION.value).length // 이미 추가한 재료 여부
+      
       // 이미 추가한 재료일 경우에 종료
       if(DUPLICATION_FOOD){
         this.$message.infoMessage("既に登録されている材料です。")
+        this.clearFood()
         return
       }
-      const SELECTED_FOOD = this.foodList.find(e => e.food_name === SELECTED_OPTION.value) // 선택한 재료의 정보 가져오기
-      
-      // 초기화
+
+      const SELECTED_FOOD = this.foodList.find(e => e.food_name === CLICKED_OPTION.value) // 선택한 재료의 정보 가져오기
+      SELECTED_FOOD.food_clicked=true // 선택중인 재료 입력금지 처리
+
+      // 선택중인 재료 임시로 넣기
+      Object.assign(this.selectedFood,SELECTED_FOOD)
+    },
+    // 선택중인 재료정보 삭제
+    clearFood(){
+      this.selectedFood.food_id=null
+      this.selectedFood.food_name=null
+      this.selectedFood.food_clicked=false
       this.foodList=[]
-      SELECTED_OPTION.value=""
-      // 선택한 재료추가 
-      this.ingredientList.push(SELECTED_FOOD)
+      this.$refs.foodInput.value=null
     },
     // 재료삭제
-    removeIngredient(event){
-      const SELECTED_OPTION = event.target // 선택한 재료
-      this.ingredientList = this.ingredientList.filter(e => e.food_name !== SELECTED_OPTION.textContent) // 재료 삭제
+    removeIngredient(ingredient){
+      // filter를 사용해서 food_name이 일치하지 않는것만 남긴다
+      this.ingredientList = this.ingredientList.filter(e => e.food_name !== ingredient.food_name) // 재료 삭제
     },
+    // 수량 입력
+    inputAmout(event){
+      const FOOD_AMT=event.target.value
+
+      // 수학기호를 허용하지않음 ['e', '-', '+', '.']
+      if(isNaN(Number(event.key))){
+        event.target.value=""
+        this.selectedFood.food_amt=null;
+        return
+      }
+      //정규식으로 입력된 문자열을 숫자만 허용,공백삭제
+      const FOOD_AMT_REGEX=this.allowNumber(FOOD_AMT)
+      // 수량입력
+      this.selectedFood.food_amt=FOOD_AMT_REGEX;
+    },
+    // 단위 입력
+    selectUnit(event){
+      const ELEMENT_TYPE=event.target.type // 이벤트 발생 요소의 속성
+
+      // 속성이 button인경우 단위 직접입력, 그외에 지정단위 선택
+      if(ELEMENT_TYPE==="button"){
+        this.selectedFood.food_unit=this.$refs.foodUnit.value // 단위명 추가
+      }else{
+        this.selectedFood.food_unit=event.target.outerText // 단위명 추가
+      }
+    },
+    // 선택한 재료 추가
+    addIngredient(){
+      // some함수, 배열의 결과 값이 1개라도 참일때 참을 반환함 ,true감정
+      // every함수, 배열의 결과 값이 1개라도 거짓일때 거짓을 반환함 ,false감정
+      // 추가한 재료의 객체에 값이 하나라도 비어있는 경우에는 false를 반환한다. 
+      const IS_EMPTY_FOOD=!Object.values(this.selectedFood).every(v=>v)
+      // 선택중인 재료의 입력정보가 부족할 경우 경고
+      if(IS_EMPTY_FOOD){
+        this.$message.warningMessage("材料 / 数量 / 単位を選んでください");
+        return
+      }
+
+      // 선택한 재료추가 
+      this.selectedFood.showCancelFlg=false // 추가된 음식의 삭제 아이콘 표시 여부
+      this.ingredientList.push(this.selectedFood) // 선택한 재료 추가
+
+      // 초기화
+      this.foodList=[]
+      this.$refs.foodInput.value=null
+      this.$refs.foodAmout.value=""
+      this.$refs.foodUnit.value=null
+      this.selectedFood={        
+        food_id: null,
+        food_name: null,
+        food_amt: null, 
+        food_unit: null,
+        food_clicked: false
+      }
+    },  
     insertPost() {
       this.loading = true;
       const payload = {method: "post", postId: this.$route.params.postId};
@@ -154,7 +246,7 @@ export default {
   text-decoration: none;
   font-weight: 500;
   height: 1.5rem;
-  font-size: 1rem;
+  /* font-size: 1rem; */
   border-radius: 0.75rem;
   padding: 1rem;
   margin-right: 0.5rem;
@@ -163,18 +255,15 @@ export default {
 .writeCont_materialList span:hover{
   background: rgb(245, 245, 245);
 }
-.writeCont_add_materialList{
-  display: flex;
+/* 넓이가 767px 이하가 될 경우, 마진을 준다. 
+ 부트스트랩의 col-md의 그리드 효과는 768px~ 부터 지속되므로
+ 767px에서 그리드 효과(12개칼럼)가 사라진다*/
+@media (max-width: 767px) {
+  .writeCont_add_materialList_select, .writeCont_add_materialList_input{
+    margin-bottom: 1rem;
+  }
 }
-.writeCont_add_materialList_select{
-  flex-grow: 3;
-  flex-basis: 200px;
-}
-.writeCont_add_materialList_weight{
-  margin-left: 5px;
-  flex-grow: 1;
-  flex-basis: 180px;
-}
+
 #selectUnitBtn{
   background-color: #fff;
   border:1px solid #ced4da;

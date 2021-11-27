@@ -18,12 +18,20 @@ const successMessage = () =>
 
 const errorMessage = (err) =>
     Swal.fire({
-        title: "Error!",
+        title: "エラー",
         text: err,
         icon: "error",
-        confirmButtonText: "Cool",
+        confirmButtonText: "確認",
     }).then(()=>{
         location.href="/NotFound";
+    });
+
+const warningMessage = (msg) =>
+    Swal.fire({
+        title: "お知らせ",
+        text: msg,
+        icon: "warning",
+        confirmButtonText: "閉じる",
     });
 
 const infoMessage = (msg) =>
@@ -37,5 +45,6 @@ const infoMessage = (msg) =>
 export default Object.freeze({
     successMessage,
     errorMessage,
+    warningMessage,
     infoMessage
 });

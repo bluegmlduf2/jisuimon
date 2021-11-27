@@ -58,7 +58,7 @@
                 </div>
                 <!-- 대댓글 작성창 -->
                 <div class="nestedCommentCont_newcomment">
-                  <button id="writeNestedCommentBtn" v-if="comment.showReplyState" @click="comment.showReplyState=!comment.showReplyState" type="button" class="btn btn-outline-success"><b>コメント作成</b></button>
+                  <button id="writeNestedCommentBtn" v-if="comment.showReplyState" @click="comment.showReplyState=!comment.showReplyState" type="button" class="btn btn-outline-success confirm_white_btn"><b>コメント作成</b></button>
                   <div class="nestedCommentCont_write" v-if="!comment.showReplyState">
                     <textarea
                       class="form-control"
@@ -180,13 +180,6 @@ export default {
 }
 #writeNestedCommentBtn{
   width: 100%;
-  color: rgb(18, 184, 134);
-  border-color:rgb(18, 184, 134);
-  background: rgb(255, 255, 255);
-}
-#writeNestedCommentBtn:hover , #writeNestedCommentBtn:active{
-  color: rgb(255, 255, 255);
-  background: rgb(18, 184, 134);
 }
 .nestedCommentCont_write {
   margin-bottom: 20px;

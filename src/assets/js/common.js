@@ -10,5 +10,12 @@ export default {
             str = str.replace(/&nbsp;/gi, "");
             return str;
         },
+        // 숫자만 허용,공백허용안함
+        allowNumber(str) {
+            const REGEX = /[^0-9]/g; // 정규식, [^0-9] 숫자허용안함, ^[0-9] 숫자만 허용
+            str=str.replace(REGEX, "") // 문자열에서 숫자가 아닌 모든 문자열을 빈 문자로 변경
+            str=Number(str) // 가장 문자열의 가장 앞의 0을 지움
+            return str;
+        }
     },
 };

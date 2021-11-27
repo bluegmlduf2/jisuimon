@@ -45,3 +45,12 @@
 .cancel_btn:hover,.cancel_btn:focus{
     background: rgb(173, 181, 189)!important;
 }
+.confirm_white_btn{
+    color: rgb(18, 184, 134)!important;
+    border-color:rgb(18, 184, 134)!important;
+    background: rgb(255, 255, 255)!important;
+}
+.confirm_white_btn:hover,.confirm_white_btn:active{
+    color: rgb(255, 255, 255)!important;
+    background: rgb(18, 184, 134)!important;
+}
