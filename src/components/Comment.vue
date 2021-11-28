@@ -81,7 +81,6 @@
 </template>
 
 <script>
-import postsComments from "@/assets/js/postsComments.js";
 
 export default {
   name: "Comment",
@@ -90,7 +89,6 @@ export default {
   },
   data() {
     return {
-      postsComments: postsComments,
     };
   },
 };

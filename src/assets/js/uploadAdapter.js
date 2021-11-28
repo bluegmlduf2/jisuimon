@@ -1,3 +1,5 @@
+import message from './message.js';
+
 export default class UploadAdapter {
     constructor( loader ) {
         // The file loader instance to use during the upload.
@@ -11,7 +13,7 @@ export default class UploadAdapter {
                 this._initRequest();
                 this._initListeners( resolve, reject, file );
                 this._sendRequest( file );
-            } ) );
+            } ) )
     }
 
     // Aborts the upload process.
@@ -23,8 +25,9 @@ export default class UploadAdapter {
 
     // Initializes the XMLHttpRequest object using the URL passed to the constructor.
     _initRequest() {
+        const rootUrl = process.env.VUE_APP_SERVER_URL; // env파일에 저장된 서버 Root_url
         const xhr = this.xhr = new XMLHttpRequest();
-        xhr.open( 'POST', '<url here>', true ); //xhr.open('POST', 'http://localhost:8000/api/image/upload', true);
+        xhr.open( 'POST', `${rootUrl}/imageUploadTemp`, true ); //xhr.open('POST', 'http://localhost:8000/api/image/upload', true); //imageUploadTemp
         xhr.responseType = 'json';
     }
 
@@ -37,12 +40,18 @@ export default class UploadAdapter {
         xhr.addEventListener( 'error', () => reject( genericErrorText ) );
         xhr.addEventListener( 'abort', () => reject() );
         xhr.addEventListener( 'load', () => {
-            const response = xhr.response;
+            const response = xhr.response; // 서버에서 전달받은 메세지
 
             if ( !response || response.error ) {
                 return reject( response && response.error ? response.error.message : genericErrorText );
             }
-
+            
+            // 400번 에러, 사용자 에러 처리
+            if (xhr.status==400) {
+                message.warningMessage(response.message)
+            }
+// eslint-disable-next-line no-debugger
+debugger
             resolve( {
                 default: response.url //업로드된 파일 주소
             } );
@@ -62,8 +71,8 @@ export default class UploadAdapter {
     _sendRequest( file ) {
         // Prepare the form data.
         const data = new FormData();
-
-        data.append( 'upload', file );
+        // 입력한 데이터를 imageFile라는 파라메터명으로 넣어서 보낸다
+        data.append( 'imageFile', file );
 
         // Send the request.
         this.xhr.send( data );

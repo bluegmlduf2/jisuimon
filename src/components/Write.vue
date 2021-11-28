@@ -72,10 +72,7 @@ export default {
     return {
       editor: ClassicEditor,
       editorConfig:{
-        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|', 'insertTable', '|', 'imageUpload', '|', 'undo', 'redo' ],
-        table: {
-            toolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
-        },
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', '|', 'imageUpload', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
         placeholder:"あなたの料理の作り方を教えてください", // ckEditor의 플레이스홀더
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: 'ja',

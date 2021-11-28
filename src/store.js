@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
 
-const rootUrl = process.env.VUE_APP_SERVER_URL; //
+const rootUrl = process.env.VUE_APP_SERVER_URL; // env파일에 저장된 서버 Root_url
 
 const store = createStore({
     // 해당영역(sotre.js)에서 vue의 전역변수사용 불가.
