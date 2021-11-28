@@ -47,14 +47,21 @@ export default class UploadAdapter {
             }
             
             // 400번 에러, 사용자 에러 처리
-            if (xhr.status==400) {
+            if (xhr.status >= 400 && xhr.status < 500) {
                 message.warningMessage(response.message)
+                reject()
             }
-// eslint-disable-next-line no-debugger
-debugger
-            resolve( {
-                default: response.url //업로드된 파일 주소
-            } );
+            // 500번 에러, 서버에러
+            if (xhr.status >= 500) {
+                message.warningMessage(response.message)
+                reject()
+            }
+            // 성공시에 메세지 표시
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve( {
+                    default: response.url //업로드된 파일 주소
+                } );
+            }
         } );
 
         if ( xhr.upload ) {

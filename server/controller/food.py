@@ -16,6 +16,6 @@ def getFood():
         return json.dumps({'status': False, 'message': e.msg}), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 400
+        return jsonify({"message": "システムエラー", }), 500
     else:
         return jsonify(data), 200

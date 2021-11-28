@@ -39,7 +39,7 @@ def getPost():
         return json.dumps({'status': False, 'message': e.msg}), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 400
+        return jsonify({"message": "システムエラー", }), 500
     else:
         return jsonify(data), 200
 
@@ -57,7 +57,7 @@ def postDetail():
         return json.dumps({'status': False, 'message': e.msg}), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 400
+        return jsonify({"message": "システムエラー", }), 500
     else:
         return jsonify(detailData,commentData,ingredientData), 200
 
@@ -97,6 +97,6 @@ def imageUploadTemp():
             return json.dumps({'status': False, 'message': e.msg}), 400
         except Exception as e:
             traceback.print_exc()
-            return jsonify({"message": "システムエラー", }), 400
+            return jsonify({"message": "システムエラー", }), 500
         else:
-            return jsonify ({ "message": "イメージを登録しました。","fileNm":resize_image_fileNm}), 200
+            return jsonify (), 200
