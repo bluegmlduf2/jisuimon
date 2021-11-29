@@ -6,7 +6,7 @@ from common import *
 food_controller = Blueprint('food', __name__)
 
 @food_controller.route('/food', methods=['GET'])
-def getFood():
+def food():
     '''음식검색결과'''
     try:
         if request.method == 'GET':

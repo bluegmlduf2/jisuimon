@@ -31,7 +31,7 @@ const store = createStore({
     },
     // Ajax데이터 요청등을 처리 , $store.dispatch()
     actions: {
-        // 메인 게시물 리스트 가져오기
+        // 메인 게시물 리스트 가져오기 , 게시물 등록
         post(context, payload) {
             return axios({
                 url: `${rootUrl}/post`,

@@ -10,11 +10,10 @@ import random
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성
 post_controller = Blueprint('post', __name__)
 
-
-@post_controller.route('/post', methods=['GET'])
-def getPost():
-    '''메인화면에 표시할 방정보 8개 가져오기'''
+@post_controller.route('/post', methods=['GET','POST'])
+def post():
     try:
+        '''메인화면의 게시물 8개 가져오기'''
         if request.method == 'GET':
             data=postModel.getPosts()
 
@@ -34,6 +33,33 @@ def getPost():
                 with open(src, "rb") as image_file:
                     #b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                     data[i]['user_image']="data:image/jpeg;base64, "+base64.b64encode(image_file.read()).decode('utf-8')
+        
+        '''게시물 등록'''
+        if request.method == 'POST':
+            args=request.get_json()
+            ### 유효성검사###########
+            
+            # #파일존재유무체크
+            # for i in range(1,3):
+            #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
+            #     if os.path.isfile(source) == False:
+            #         raise FileNotFoundError
+
+            # '''유저아이디 획득'''
+            # args['userId']=sell.getMemberId(args)
+            
+            # '''등록한 방의 수 확인 '''
+            # if sell.chekRegRoomCnt(args)>0:
+            #     raise UserError('一般顧客が登録できる物件は一件のみです。')
+
+            # '''방정보입력'''
+            # sell.insertRoom(args)
+
+            # #파일이동
+            # for i in range(1,3):
+            #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
+            #     dest =current_app.root_path+"/saveImage/"+args['fileNm'+str(i)]#최종저장경로
+            #     shutil.move(source,dest)# 파일이동
                     
     except UserError as e:
         return json.dumps({'status': False, 'message': e.msg}), 400
@@ -41,7 +67,7 @@ def getPost():
         traceback.print_exc()
         return jsonify({"message": "システムエラー", }), 500
     else:
-        return jsonify(data), 200
+        return jsonify ({ "message": "あなたの料理レシピを登録しました"}), 200
 
 
 @post_controller.route('/postDetail', methods=['GET'])

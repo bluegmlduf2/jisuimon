@@ -7,14 +7,14 @@ const successMessageList = {
     delete: "削除しました。",
 };
 
-const successMessage = () =>
+const successMessage = (msg) =>
     Swal.fire({
-        title: "Your work has been saved",
-        text: successMessageList.regist,
+        title: successMessageList.regist,
+        text: msg,
         icon: "success",
         showConfirmButton: false,
         timer: 1500,
-    });
+    })
 
 const errorMessage = (err) =>
     Swal.fire({
