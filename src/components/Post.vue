@@ -39,9 +39,6 @@ export default {
   components: {
     Comment: Comment,
   },
-  setup(){
-
-  },
   data() {
     return {
       loading: false,
@@ -55,11 +52,14 @@ export default {
     // 선택 게시물 상세내용
     getPostDetail() {
       this.loading = true;
-      const payload = {method: "get", postId: this.$route.params.postId};
+      const payload = {
+        method: "get",
+        sendData: { postId: this.$route.params.postId },
+      };
       this.$store
         .dispatch("postDetail", payload)
         .then((result) => {
-          console.log(result)
+          console.log(result);
           this.posts = result.data[0]; //게시물 상세정보
           this.comment = result.data[1]; //게시물 댓글정보
           this.ingredient = result.data[2]; //게시물 재료정보
@@ -91,12 +91,11 @@ export default {
 /* Post,Comment 공통 레이아웃 */
 @media (min-width: 992px) {
   /* 넓이가 992px 이상 여백추가*/
-  .postCont{
+  .postCont {
     padding-left: 160px;
     padding-right: 160px;
   }
 }
-
 
 .postCont_title {
   font-size: 3rem;

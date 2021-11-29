@@ -36,8 +36,8 @@ const store = createStore({
             return axios({
                 url: `${rootUrl}/post`,
                 method: payload.method,
-                params: payload,
-                data: payload,
+                params: payload.sendData,
+                data: payload.sendData,
             });
         },
         // 게시물 상세정보 가져오기
@@ -45,8 +45,8 @@ const store = createStore({
             return axios({
                 url: `${rootUrl}/postDetail`,
                 method: payload.method,
-                params: payload,
-                data: payload,
+                params: payload.sendData,
+                data: payload.sendData,
             });
         },
         // 음식리스트가져오기
@@ -54,8 +54,8 @@ const store = createStore({
             return axios({
                 url: `${rootUrl}/food`,
                 method: payload.method,
-                params: payload,
-                data: payload,
+                params: payload.sendData,
+                data: payload.sendData,
             });
         },
     },

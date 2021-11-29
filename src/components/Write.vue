@@ -1,10 +1,10 @@
 <template>
   <div class="writeCont">
     <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="タイトルを入力してください">
+      <input type="text" class="form-control" placeholder="タイトルを入力してください" v-model="formData.title">
     </div>
     <div class="writeCont_materialList">
-        <span class="" v-for="(ingredient,i) in ingredientList" :key="i" @click="removeIngredient(ingredient)" @mouseover="ingredient.showCancelFlg = true" @mouseleave="ingredient.showCancelFlg = false">
+        <span class="" v-for="(ingredient,i) in formData.ingredientList" :key="i" @click="removeIngredient(ingredient)" @mouseover="ingredient.showCancelFlg = true" @mouseleave="ingredient.showCancelFlg = false">
           {{`${ingredient.food_name}&emsp;/&nbsp;${ingredient.food_amt}${ingredient.food_unit}&emsp;${ingredient.showCancelFlg?"✖️":""}`}}
         </span>
     </div>
@@ -17,7 +17,7 @@
         </datalist>
       </div>
       <div class="writeCont_add_materialList_input input-group input-group-sm col-md-4">
-        <input type="number" class="form-control" ref="foodAmout" @keyup="inputAmout" min="1" placeholder="数量を入力してください" >
+        <input type="number" class="form-control" ref="foodAmout" @input="inputAmout" min="1" placeholder="数量を入力してください" >
         <div class="input-group-append">
           <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">{{selectedFood.food_unit?selectedFood.food_unit:"単位"}}</button>
           <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
@@ -39,7 +39,7 @@
         <button id="writeNestedCommentBtn" type="button" class="btn btn-sm btn-outline-success confirm_white_btn" @click="addIngredient"><b>追加</b></button>
       </div>
     </div>
-    <ckeditor id="writeCont_content" :editor="editor" v-model="editorData" :config="editorConfig" tag-name="textarea"/>
+    <ckeditor id="writeCont_content" :editor="editor" v-model="formData.content" :config="editorConfig" tag-name="textarea"/>
     <div class="writeCont_buttons">
       <div id="writeCont_back" @click="$router.go(-1)">
         <span class="material-icons">
@@ -47,7 +47,7 @@
         </span>
       </div>
       <div class="writeCont_write">
-        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="insertPost">
+        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="registerPost">
           <b>投稿する</b>
         </button>
       </div>
@@ -77,9 +77,7 @@ export default {
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: 'ja',
       },// Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음}) 
-      editorData:"", // 글내용
       foodList:[], // 검색한 재료리스트
-      ingredientList:[], // 추가한 재료리스트
       selectedFood: { // 선택중인 재료
         food_id: null, //음식 ID
         food_name: null, //음식 이름
@@ -87,6 +85,11 @@ export default {
         food_unit: null, // 음식 단위
         food_clicked: false, // 음식이 선택된지 여부
       },
+      formData:{ // 서버에 전송할 데이터
+        title:"", // 글제목
+        content:"", // 글내용
+        ingredientList:[], // 추가한 재료
+      }
     };
   },
   methods:{
@@ -104,9 +107,12 @@ export default {
         return
       }
       this.loading = true;
-      const payload = {method: "get", food_name: INPUT_FOOD};
+      const payload = {
+        method: "get", 
+        sendData: {food_name: INPUT_FOOD}
+      };
       this.$store
-        .dispatch("food", payload)
+        .dispatch("food",payload)
         .then((result) => {
           this.foodList=result.data
         })
@@ -120,7 +126,13 @@ export default {
     // 선택한 재료 추가
     selectFood(event){
       const CLICKED_OPTION = event.target // 선택한 재료
-      const DUPLICATION_FOOD = this.ingredientList.filter(e => e.food_name === CLICKED_OPTION.value).length // 이미 추가한 재료 여부
+      const DUPLICATION_FOOD = this.formData.ingredientList.filter(e => e.food_name === CLICKED_OPTION.value).length // 이미 추가한 재료 여부
+      const SELECTED_FOOD = this.foodList.find(e => e.food_name === CLICKED_OPTION.value) // 선택한 재료의 정보 가져오기
+
+      // 음식목록에서 선택한것이 아닌 일반 입력은 막기
+      if(!SELECTED_FOOD){
+        return
+      }
       
       // 이미 추가한 재료일 경우에 종료
       if(DUPLICATION_FOOD){
@@ -129,8 +141,7 @@ export default {
         return
       }
 
-      const SELECTED_FOOD = this.foodList.find(e => e.food_name === CLICKED_OPTION.value) // 선택한 재료의 정보 가져오기
-      SELECTED_FOOD.food_clicked=true // 선택중인 재료 입력금지 처리
+      SELECTED_FOOD.food_clicked=true // 선택중인 재료 입력창 입력금지 처리
 
       // 선택중인 재료 임시로 넣기
       Object.assign(this.selectedFood,SELECTED_FOOD)
@@ -146,18 +157,18 @@ export default {
     // 재료삭제
     removeIngredient(ingredient){
       // filter를 사용해서 food_name이 일치하지 않는것만 남긴다
-      this.ingredientList = this.ingredientList.filter(e => e.food_name !== ingredient.food_name) // 재료 삭제
+      this.formData.ingredientList = this.formData.ingredientList.filter(e => e.food_name !== ingredient.food_name) // 재료 삭제
     },
     // 수량 입력
     inputAmout(event){
       const FOOD_AMT=event.target.value
 
       // 수학기호를 허용하지않음 ['e', '-', '+', '.']
-      if(isNaN(Number(event.key))){
-        event.target.value=""
-        this.selectedFood.food_amt=null;
+      if(isNaN(Number(event.data))&&event.data){
+        event.target.value=this.selectedFood.food_amt
         return
       }
+
       //정규식으로 입력된 문자열을 숫자만 허용,공백삭제
       const FOOD_AMT_REGEX=this.allowNumber(FOOD_AMT)
       // 수량입력
@@ -181,6 +192,7 @@ export default {
       // 추가한 재료의 객체에 값이 하나라도 비어있는 경우에는 false를 반환한다. 
       const IS_EMPTY_FOOD=!Object.values(this.selectedFood).every(v=>v)
       // 선택중인 재료의 입력정보가 부족할 경우 경고
+      
       if(IS_EMPTY_FOOD){
         this.$message.warningMessage("材料 / 数量 / 単位を選んでください");
         return
@@ -188,7 +200,7 @@ export default {
 
       // 선택한 재료추가 
       this.selectedFood.showCancelFlg=false // 추가된 음식의 삭제 아이콘 표시 여부
-      this.ingredientList.push(this.selectedFood) // 선택한 재료 추가
+      this.formData.ingredientList.push(this.selectedFood) // 선택한 재료 추가
 
       // 초기화
       this.foodList=[]
@@ -202,12 +214,23 @@ export default {
         food_unit: null,
         food_clicked: false
       }
-    },  
-    insertPost() {
+    },
+    // 게시글 등록
+    registerPost() {
       this.loading = true;
-      const payload = {method: "post", postId: this.$route.params.postId};
+
+      // 입력값의 유효성체크
+      if(this.validation())return
+      
+      const payload = { 
+        method: "post",
+        sendData: {}
+      };
+
+      payload.sendData=this.formData // 입력정보를 서버전송데이터에 넣음
+      
       this.$store
-        .dispatch("insertPost", payload)
+        .dispatch("registerPost", payload)
         .then((result) => {
           this.posts = result.data[0]; //게시물 상세정보
           this.comment = result.data[1]; //게시물 댓글정보
@@ -220,6 +243,32 @@ export default {
           this.loading = false;
         });
     },
+    // 입력값의 유효값 체크
+    validation(){
+      const TITLE = this.formData.title // 제목
+      const CONTENT = this.formData.content // 글내용
+      const INGREDIENT_LIST = this.formData.ingredientList // 재료
+
+      // 제목 필수값체크
+      if (!TITLE) {
+        this.$message.warningMessage("タイトルを入力してください");
+        return true
+      }
+
+      // 내용 필수값체크
+      if (INGREDIENT_LIST.length === 0) {
+        this.$message.warningMessage("材料を追加してください");
+        return true
+      }
+
+      // 내용 필수값체크
+      if (!CONTENT) {
+        this.$message.warningMessage("作り方を入力してください");
+        return true
+      }
+
+      return false
+    }
   }
 };
 </script>
