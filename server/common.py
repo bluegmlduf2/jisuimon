@@ -21,7 +21,7 @@ def imageParser(src):
             base64.b64encode(image_file.read()).decode('utf-8')
 
 # 코드와 맵핑된 메세지 반환
-def getMessage(code, param):
+def getMessage(code, param=None):
     MESSAGE = {
         # 성공
         601: "成功しました",
