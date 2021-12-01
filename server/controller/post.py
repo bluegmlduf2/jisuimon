@@ -37,8 +37,24 @@ def post():
         '''게시물 등록'''
         if request.method == 'POST':
             args=request.get_json()
-            ### 유효성검사###########
+            args=request.form
             
+            # 화면에서 받은 값
+            title=args['title'] # 제목
+            content=args['content'] # 글내용
+            ingredient=args['ingredientList'] # 재료정보
+
+            ### 유효성검사###########
+            # 공백 및 비어있는지 체크
+            if not title:
+                raise UserError(100,'タイトル')
+            if not content:
+                raise UserError(100,'作り方')
+            if not ingredient:
+                raise UserError(100,'材料')
+            
+
+
             # #파일존재유무체크
             # for i in range(1,3):
             #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
@@ -60,14 +76,16 @@ def post():
             #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
             #     dest =current_app.root_path+"/saveImage/"+args['fileNm'+str(i)]#최종저장경로
             #     shutil.move(source,dest)# 파일이동
-                    
+            data={ "message": "あなたの料理レシピを登録しました"}
+
     except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 400
+        return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 500
+        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
     else:
-        return jsonify ({ "message": "あなたの料理レシピを登録しました"}), 200
+        return jsonify(data), 200
+
 
 
 @post_controller.route('/postDetail', methods=['GET'])
@@ -80,10 +98,10 @@ def postDetail():
             commentData = postModel.getPostComment(args)  # 게시물 댓글정보
             ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보                   
     except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 400
+        return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 500
+        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
     else:
         return jsonify(detailData,commentData,ingredientData), 200
 
@@ -120,9 +138,9 @@ def imageUploadTemp():
             # RGB형식으로 변경후 , 이미지 파일 저장
             image.convert('RGB').save(source) # resize사용시 image -> resize_image
         except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 400
+            return jsonify(e.errorInfo), 400
         except Exception as e:
             traceback.print_exc()
-            return jsonify({"message": "システムエラー", }), 500
+            return jsonify({"errCode": 501,"message":"システムエラー"}), 500
         else:
             return jsonify (), 200

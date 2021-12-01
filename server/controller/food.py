@@ -13,9 +13,9 @@ def food():
             args = request.args
             data = foodModel.getFood(args)  # 음식검색결과정보             
     except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 400
+        return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"message": "システムエラー", }), 500
+        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
     else:
         return jsonify(data), 200
