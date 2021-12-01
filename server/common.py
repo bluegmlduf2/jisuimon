@@ -20,23 +20,28 @@ def imageParser(src):
         return "data:image/jpeg;base64, " + \
             base64.b64encode(image_file.read()).decode('utf-8')
 
-# 코드와 맵핑된 에러메세지 반환
-def getErrorMessager(errCode, param):
-    ERROR_MESSAGE = {
-        100: f"{param}を入力してください",
-        101: "エラーメッセージてすと",
-        200: "エラーメッセージてすと",
+# 코드와 맵핑된 메세지 반환
+def getMessage(code, param):
+    MESSAGE = {
+        # 성공
+        601: "成功しました",
+        # 실패 (사용자)
+        701: f"{param}を入力してください",
+        702: "ファイル名が存在しません。\nファイルアップロード失敗しました",
+        703: "空きファイルです。\nファイルアップロード失敗しました",
+        # 실패 (서버)
+        801: "システムエラー"
     }
     return {
-        "errCode": errCode,
-        "message": ERROR_MESSAGE[errCode]
+        "code": code,
+        "message": MESSAGE[code]
     }
 
 # 유저에러_Exception상속
 class UserError(Exception):
     # 인스턴스 생성시 리턴되는 인스턴스변수
     def __init__(self, errCode, param):
-        self.errorInfo = getErrorMessager(errCode, param)
+        self.errorInfo = getMessage(errCode, param)
         
     # 객체가 print함수에 호출될때 표시되는 함수
     def __str__(self):

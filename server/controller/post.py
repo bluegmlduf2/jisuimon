@@ -44,14 +44,14 @@ def post():
             content=args['content'] # 글내용
             ingredient=args['ingredientList'] # 재료정보
 
-            ### 유효성검사###########
+            ### 유효성검사 ###
             # 공백 및 비어있는지 체크
             if not title:
-                raise UserError(100,'タイトル')
+                raise UserError(701,'タイトル')
             if not content:
-                raise UserError(100,'作り方')
+                raise UserError(701,'作り方')
             if not ingredient:
-                raise UserError(100,'材料')
+                raise UserError(701,'材料')
             
 
 
@@ -76,13 +76,13 @@ def post():
             #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
             #     dest =current_app.root_path+"/saveImage/"+args['fileNm'+str(i)]#최종저장경로
             #     shutil.move(source,dest)# 파일이동
-            data={ "message": "あなたの料理レシピを登録しました"}
+            data=getMessage(601)
 
     except UserError as e:
         return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
+        return jsonify(getMessage(801)), 500
     else:
         return jsonify(data), 200
 
@@ -101,7 +101,7 @@ def postDetail():
         return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
+        return jsonify(getMessage(801)), 500
     else:
         return jsonify(detailData,commentData,ingredientData), 200
 
@@ -114,14 +114,14 @@ def imageUploadTemp():
             f = request.files['imageFile']
             # 파일이름 존재체크
             if f.filename=='':
-                raise UserError('ファイル名が存在しません。\nファイルアップロード失敗しました。')
+                raise UserError(702)
 
             #파일 사이즈 체크
             size = len(f.read())
             
             # 빈파일체크
             if size==0:
-                raise UserError('空きファイルです。\nファイルアップロード失敗しました。')
+                raise UserError(703)
 
             # 파일명변경
             now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))) # 일본시간
@@ -141,6 +141,6 @@ def imageUploadTemp():
             return jsonify(e.errorInfo), 400
         except Exception as e:
             traceback.print_exc()
-            return jsonify({"errCode": 501,"message":"システムエラー"}), 500
+            return jsonify(getMessage(801)), 500
         else:
             return jsonify (), 200

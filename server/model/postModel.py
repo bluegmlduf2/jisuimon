@@ -38,6 +38,7 @@ def getPosts():
             '''
 
             data = conn.executeAll(sql)
+            
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -77,8 +78,10 @@ def getPostDetail(args):
             '''
 
             data = conn.executeOne(sql,args['postId'])
+
         except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
+            conn.rollback()
+            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -107,8 +110,10 @@ def getPostIngredient(args):
                 '''
 
             data = conn.executeAll(sql,args['postId'])
+            
         except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
+            conn.rollback()
+            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -182,7 +187,8 @@ def getPostComment(args):
                         commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 해당하는 대댓글 추가
 
         except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
+            conn.rollback()
+            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()

@@ -20,10 +20,11 @@ def getFood(args):
                 -- 공백구분가능한 fulltext인덱스 
                 -- ALTER TABLE jisuimon.food_table ADD FULLTEXT INDEX idx_foodName_full_text(food_name) WITH PARSER NGRAM
             '''
-
+            
             data = conn.executeAll(sql,args['food_name'])
         except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
+            conn.rollback()
+            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()

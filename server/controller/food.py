@@ -16,6 +16,6 @@ def food():
         return jsonify(e.errorInfo), 400
     except Exception as e:
         traceback.print_exc()
-        return jsonify({"errCode": 501,"message":"システムエラー"}), 500
+        return jsonify(getMessage(801)), 500
     else:
         return jsonify(data), 200
