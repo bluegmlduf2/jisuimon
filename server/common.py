@@ -6,6 +6,7 @@ import configparser  # 환경설정파일parser
 import base64
 from database import Connection
 from functools import wraps
+from jinja2 import utils # xssFilter
 
 '''
  아래는 예외처리에 관련된 공통항목이다
@@ -76,3 +77,11 @@ def imageParser(src):
         # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
         return "data:image/jpeg;base64, " + \
             base64.b64encode(image_file.read()).decode('utf-8')
+
+'''
+ 아래는 보안에 관련된 공통항목이다
+ imageParser
+'''
+# jinja를 이용한 xss필터함수
+def xssFilter(args):
+    return str(utils.escape(args))  

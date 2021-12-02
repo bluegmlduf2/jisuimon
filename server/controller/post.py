@@ -42,11 +42,10 @@ def post():
     '''게시물 등록'''
     if request.method == 'POST':
         args = request.get_json()
-        args = request.form
 
         # 화면에서 받은 값
-        title = args['title']  # 제목
-        content = args['content']  # 글내용
+        title = xssFilter(args['title'])  # 제목
+        content = xssFilter(args['content'])  # 글내용
         ingredient = args['ingredientList']  # 재료정보
 
         ### 유효성검사 ###
