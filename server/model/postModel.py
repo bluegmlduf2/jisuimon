@@ -167,8 +167,8 @@ def getPostComment(args):
             removeCommentReplyCol=['comment_content','comment_create_date','user_table_user_id','post_table_post_id','user_image','nickname']
 
             # 이미지 경로
-            userImgPath=current_app.root_path + "/assets/userImg/" # 유저이미지 경로
-            userDefaultImg=current_app.root_path+"/assets/defaultImg/noUser.png" # 기본 유저이미지 경로            
+            userImgPath=current_app.root_path + "/static/userImg/" # 유저이미지 경로
+            userDefaultImg=current_app.root_path+"/static/defaultImg/noUser.png" # 기본 유저이미지 경로            
 
             # 댓글에 대댓글 추가
             # 댓글 (부모)

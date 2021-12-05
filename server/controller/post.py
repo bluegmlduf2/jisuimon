@@ -21,7 +21,7 @@ def post():
         # 이미지->바이너리(base64)->utf-8문자열
         for i, e in enumerate(data):
             # 타이틀 이미지
-            src = current_app.root_path+"/assets/contentImg/"+e['title_image']
+            src = current_app.root_path+"/static/contentImg/"+e['title_image']
             with open(src, "rb") as image_file:
                 # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                 data[i]['title_image'] = "data:image/jpeg;base64, " + \
@@ -29,9 +29,9 @@ def post():
 
             # 유저 이미지
             if not e['user_image']:
-                src = current_app.root_path+"/assets/defaultImg/noUser.png"
+                src = current_app.root_path+"/static/defaultImg/noUser.png"
             else:
-                src = current_app.root_path+"/assets/userImg/"+e['user_image']
+                src = current_app.root_path+"/static/userImg/"+e['user_image']
             with open(src, "rb") as image_file:
                 # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                 data[i]['user_image'] = "data:image/jpeg;base64, " + \
@@ -125,9 +125,12 @@ def imageUploadTemp():
         image = Image.open(f)
         # resize_image = image.resize((286,180)) # 286,180 이미지 사이즈변경
 
-        source = current_app.root_path+'/assets/temp/'+resize_image_fileNm  # 임시파일저장경로
+        source = current_app.root_path+'/static/temp/'+resize_image_fileNm  # 임시파일저장경로
 
         # RGB형식으로 변경후 , 이미지 파일 저장
         image.convert('RGB').save(source)  # resize사용시 image -> resize_image
 
-        return jsonify(), 200
+        # 나중에 같은 서버 사용하면 변경해야함
+        dest='http://localhost:5000/static/temp/'+resize_image_fileNm # 임시 저장 경로
+        
+        return jsonify({"url":dest}), 200

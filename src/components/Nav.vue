@@ -30,7 +30,7 @@
         <button id="writePostBtn" v-if="profileShow" type="button" class="btn btn-light" @click="$router.push('/write')">New Post</button>
         <div class="nav_profile" v-if="profileShow">
           <div class="nav_profile_list" @click="profileMenuShow=!profileMenuShow">
-            <!-- <img :src="require(`@/assets/img/faceMan1.jpg`)" alt="profileImg" /> -->
+            <!-- <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" /> -->
             <span class="material-icons nav_profile_arrow">arrow_drop_down</span>
           </div>
           <div class="nav_profile_list_showBg" @click="profileMenuShow=!profileMenuShow" v-if="profileMenuShow">
@@ -45,7 +45,7 @@
   </nav>
   <!-- 모바일 로그인 상태화면-->
   <!-- <div class="nav_profile_list_mobile" >
-    <img :src="require(`@/assets/img/faceMan1.jpg`)" alt="profileImg" />
+    <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" />
     <span class="material-icons nav_profile_arrow">arrow_drop_up</span>
   </div> -->
 </template>
