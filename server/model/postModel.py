@@ -1,18 +1,19 @@
 from common import *
 from flask import current_app
-import copy 
+import copy
+
 
 def getPosts():
     conn = Connection()
     if conn:
         try:
-            # 메인화면에 표시할 방정보 8개 가져오기
+            # 메인화면에 표시할 게시물 8개 가져오기 (타임존때문에 -9 시간값을 반환)
             sql = '''
             SELECT
                 P.post_id,
                 P.title,
-                P.create_date,
-                P.update_date,
+                CONVERT_TZ(P.create_date, '+00:00', '-09:00') as create_date,
+                CONVERT_TZ(P.update_date, '+00:00', '-09:00') as update_date,
                 P.title_image,
                 P.user_table_user_id,
                 U.nickname ,
@@ -38,7 +39,7 @@ def getPosts():
             '''
 
             data = conn.executeAll(sql)
-            
+
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -60,8 +61,8 @@ def getPostDetail(args):
             SELECT
                 P.post_id,
                 P.title,
-                P.create_date,
-                P.update_date,
+                CONVERT_TZ(P.create_date, '+00:00', '-09:00') as create_date,
+                CONVERT_TZ(P.update_date, '+00:00', '-09:00') as update_date,
                 P.title_image,
                 P.user_table_user_id,
                 PD.content,
@@ -77,7 +78,7 @@ def getPostDetail(args):
                 post_id = %s
             '''
 
-            data = conn.executeOne(sql,args['postId'])
+            data = conn.executeOne(sql, args['postId'])
 
         except UserError as e:
             conn.rollback()
@@ -109,8 +110,8 @@ def getPostIngredient(args):
                     post_id = %s
                 '''
 
-            data = conn.executeAll(sql,args['postId'])
-            
+            data = conn.executeAll(sql, args['postId'])
+
         except UserError as e:
             conn.rollback()
             raise e
@@ -133,13 +134,14 @@ def getPostComment(args):
                  SELECT
                     C.comment_content ,
                     C.comment_create_date ,
+                    CONVERT_TZ(C.comment_create_date, '+00:00', '-09:00') as comment_create_date,
                     C.comment_id ,
                     C.user_table_user_id ,
                     C.post_table_post_id ,
                     U.user_image,
                     U.nickname,
                     CR.comment_reply_content ,
-                    CR.comment_reply_create_date ,
+                    CONVERT_TZ(CR.comment_reply_create_date, '+00:00', '-09:00') as comment_reply_create_date,
                     CR.commont_reply_id ,
                     CR.comment_table_comment_id,
                     (SELECT user_image FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_image_CR,
@@ -195,5 +197,82 @@ def getPostComment(args):
             raise e
         else:
             return commentReturnData
+        finally:
+            conn.close()
+
+
+def insertPost(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 게시물의 정보
+            sql = '''
+            INSERT
+                INTO
+                jisuimon.post_table (
+                title,
+                create_date,
+                update_date,
+                title_image,
+                user_table_user_id)
+            VALUES(
+                %s,
+                CURRENT_TIMESTAMP,
+                CURRENT_TIMESTAMP,
+                'defaultImage..',
+                1);
+            '''
+
+            conn.execute(sql, (args['title']))
+            insertedPostId = conn.insertLastKey()  # 입력한 부모게시글의 PK
+
+            # 게시물의 상세정보
+            sql = '''
+            INSERT
+                INTO
+                jisuimon.post_detail_table (
+                post_table_post_id,
+                content
+                )
+            VALUES(
+                %s,
+                %s
+            );
+            '''
+
+            conn.execute(sql, (insertedPostId, args['content']))
+
+            # 게시물의 재료정보
+            sql = '''
+            INSERT
+                INTO
+                jisuimon.ingredient_table (
+                post_table_post_id,
+                ingredient_id,
+                ingredient_name,
+                ingredient_amt,
+                ingredient_unit
+                )
+            VALUES(
+                %s,
+                %s,
+                %s,
+                %s,
+                %s);
+            '''
+
+            # 재료를 한번에 입력하기 (리스트->튜플)
+            ingredientList = [(insertedPostId, e['food_id'], e['food_name'],
+                               e['food_amt'], e['food_unit']) for e in args['ingredientList']]
+            conn.executeMany(
+                sql, ingredientList)
+        except UserError as e:
+            return json.dumps({'status': False, 'message': e.msg}), 200
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            conn.commit()
         finally:
             conn.close()

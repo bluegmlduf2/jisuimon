@@ -42,7 +42,9 @@ def post():
     '''게시물 등록'''
     if request.method == 'POST':
         args = request.get_json()
-
+        ################
+        # args = request.form
+        ################
         # 화면에서 받은 값
         title = xssFilter(args['title'])  # 제목
         content = xssFilter(args['content'])  # 글내용
@@ -57,6 +59,8 @@ def post():
         if not ingredient:
             raise UserError(701, '材料')
 
+        '''게시물 입력'''
+        postModel.insertPost(args)
         # #파일존재유무체크
         # for i in range(1,3):
         #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로

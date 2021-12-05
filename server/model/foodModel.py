@@ -14,7 +14,7 @@ def getFood(args):
                     jisuimon.food_table AS FT
                 WHERE
                     MATCH(FT.food_name) AGAINST("%s*" IN BOOLEAN MODE)
-                LIMIT 15
+                LIMIT 50
                 -- 검색어 4글자에서 2글자로
                 -- mysql --help | grep my.cnf 에서 ft_min_word_len=2추가
                 -- 공백구분가능한 fulltext인덱스 
