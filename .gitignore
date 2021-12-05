@@ -36,6 +36,8 @@ server/instance/.gitignore
 server/.webassets-cache
 server/.env
 server/static/temp/*
+server/static/contentImg/*
+server/static/userImg/*
 
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files

@@ -219,7 +219,7 @@ def insertPost(args):
                 %s,
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP,
-                'defaultImage..',
+                'gukbab.jpg',
                 1);
             '''
 
@@ -264,9 +264,25 @@ def insertPost(args):
             # 재료를 한번에 입력하기 (리스트->튜플)
             ingredientList = [(insertedPostId, e['food_id'], e['food_name'],
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
-            conn.executeMany(
-                sql, ingredientList)
+            conn.executeMany(sql, ingredientList)
+
+            # 글에서 파일명 추출 temp->contentImg
+            removeStringBetween=re.findall(r'/static/contentImg/.+?&#34',args['content']) # 특정 문자열 사이의 단어를 반환
+            removeStringPath=[x.replace('/static/contentImg/','') for x in removeStringBetween] # 문자열의 패스제거
+            imageFileNames=[x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
+            
+            # 파일 이동
+            fileSource = current_app.root_path+'/static/temp/' #　임시파일위치
+            fileDest = current_app.root_path+'/static/contentImg/' # 저장용폴더위치
+            imageForder = os.listdir(fileSource) # 임시파일이 위치한 폴더
+            
+            # 파일 이동 실행 부분
+            for imageFile in imageForder:
+                if imageFile in imageFileNames:
+                    shutil.move(fileSource + imageFile, fileDest + imageFile) # 파일이동
+
         except UserError as e:
+            conn.rollback()
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()

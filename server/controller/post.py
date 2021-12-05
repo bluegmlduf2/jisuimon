@@ -45,43 +45,29 @@ def post():
         ################
         # args = request.form
         ################
-        # 화면에서 받은 값
-        title = xssFilter(args['title'])  # 제목
-        content = xssFilter(args['content'])  # 글내용
-        ingredient = args['ingredientList']  # 재료정보
+
+        # 글내용의 이미지 url변경
+        filteredContent = args['content'].replace('/static/temp/','/static/contentImg/')
+        args['content'] = filteredContent
+
+        # xssFilter처리된 값
+        filteredArgs={}
+        filteredArgs['title'] = xssFilter(args['title'])  # 제목
+        filteredArgs['content'] = xssFilter(args['content'])  # 글내용
+        filteredArgs['ingredientList'] = args['ingredientList']  # 재료정보
 
         ### 유효성검사 ###
         # 공백 및 비어있는지 체크
-        if not title:
+        if not filteredArgs['title']:
             raise UserError(701, 'タイトル')
-        if not content:
+        if not filteredArgs['content']:
             raise UserError(701, '作り方')
-        if not ingredient:
+        if not filteredArgs['ingredientList']:
             raise UserError(701, '材料')
 
         '''게시물 입력'''
-        postModel.insertPost(args)
-        # #파일존재유무체크
-        # for i in range(1,3):
-        #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
-        #     if os.path.isfile(source) == False:
-        #         raise FileNotFoundError
-
-        # '''유저아이디 획득'''
-        # args['userId']=sell.getMemberId(args)
-
-        # '''등록한 방의 수 확인 '''
-        # if sell.chekRegRoomCnt(args)>0:
-        #     raise UserError('一般顧客が登録できる物件は一件のみです。')
-
-        # '''방정보입력'''
-        # sell.insertRoom(args)
-
-        # #파일이동
-        # for i in range(1,3):
-        #     source=current_app.root_path+'/temp/'+args['fileNm'+str(i)]#임시파일저장경로
-        #     dest =current_app.root_path+"/saveImage/"+args['fileNm'+str(i)]#최종저장경로
-        #     shutil.move(source,dest)# 파일이동
+        postModel.insertPost(filteredArgs)
+        
         return jsonify(getMessage(601)), 200
 
 
@@ -129,8 +115,13 @@ def imageUploadTemp():
 
         # RGB형식으로 변경후 , 이미지 파일 저장
         image.convert('RGB').save(source)  # resize사용시 image -> resize_image
-
+        
+        # 개발환경용 url 설정
+        url=""
+        if current_app.env == 'development':
+            url="http://localhost:5000"
+        
         # 나중에 같은 서버 사용하면 변경해야함
-        dest='http://localhost:5000/static/temp/'+resize_image_fileNm # 임시 저장 경로
+        dest=url+'/static/temp/'+resize_image_fileNm # 임시 저장 경로
         
         return jsonify({"url":dest}), 200
