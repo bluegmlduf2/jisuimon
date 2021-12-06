@@ -1,6 +1,7 @@
 from common import *
 from flask import current_app
 import copy
+import random
 
 
 def getPosts():
@@ -205,6 +206,23 @@ def insertPost(args):
     conn = Connection()
     if conn:
         try:
+            # 글에서 파일명 추출 temp -> contentImg
+            removeStringBetween=re.findall(r'/static/contentImg/.+?&#34',args['content']) # 특정 문자열 사이의 단어를 반환
+            removeStringPath=[x.replace('/static/contentImg/','') for x in removeStringBetween] # 문자열의 패스제거
+            imageFileNames=[x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
+            
+            # 파일 이동에 필요한 설정부분
+            fileSource = current_app.root_path+'/static/temp/' #　임시파일위치
+            fileDest = current_app.root_path+'/static/contentImg/' # 저장용폴더위치
+            imageForder = os.listdir(fileSource) # 임시파일이 위치한 폴더
+            titleImage = 'defaultImg/titleImage_'+str(random.randrange(1,8))+'.jpg' # 타이틀 이미지 , 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
+
+            # 게시글 타이틀이미지 추출
+            for imageFile in imageForder:
+                if imageFile in imageFileNames:
+                    titleImage= imageFile
+                    break
+
             # 게시물의 정보
             sql = '''
             INSERT
@@ -219,11 +237,11 @@ def insertPost(args):
                 %s,
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP,
-                'gukbab.jpg',
+                %s,
                 1);
             '''
 
-            conn.execute(sql, (args['title']))
+            conn.execute(sql, (args['title'],titleImage))
             insertedPostId = conn.insertLastKey()  # 입력한 부모게시글의 PK
 
             # 게시물의 상세정보
@@ -265,16 +283,6 @@ def insertPost(args):
             ingredientList = [(insertedPostId, e['food_id'], e['food_name'],
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
             conn.executeMany(sql, ingredientList)
-
-            # 글에서 파일명 추출 temp->contentImg
-            removeStringBetween=re.findall(r'/static/contentImg/.+?&#34',args['content']) # 특정 문자열 사이의 단어를 반환
-            removeStringPath=[x.replace('/static/contentImg/','') for x in removeStringBetween] # 문자열의 패스제거
-            imageFileNames=[x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
-            
-            # 파일 이동
-            fileSource = current_app.root_path+'/static/temp/' #　임시파일위치
-            fileDest = current_app.root_path+'/static/contentImg/' # 저장용폴더위치
-            imageForder = os.listdir(fileSource) # 임시파일이 위치한 폴더
             
             # 파일 이동 실행 부분
             for imageFile in imageForder:

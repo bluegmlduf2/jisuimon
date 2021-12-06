@@ -30,13 +30,15 @@ pnpm-debug.log*
 # Created by https://www.toptal.com/developers/gitignore/api/flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=flask
 
-### Flask ###
+### Flask ### 
+#!을 가장 앞에 붙이면 해당 파일은 깃무시에서 제외처리함
 server/instance/*
 server/instance/.gitignore
 server/.webassets-cache
 server/.env
 server/static/temp/*
 server/static/contentImg/*
+!server/static/contentImg/defaultImg
 server/static/userImg/*
 
 ### Flask.Python Stack ###

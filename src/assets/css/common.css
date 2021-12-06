@@ -54,3 +54,8 @@
     color: rgb(255, 255, 255)!important;
     background: rgb(18, 184, 134)!important;
 }
+
+/* CKEdito placeholder 설정*/
+.ck-placeholder{
+    white-space: pre; /* pre를 사용하면 입력한 그대로 출력함 */
+}
