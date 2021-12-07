@@ -20,8 +20,11 @@ def post():
 
         # 이미지->바이너리(base64)->utf-8문자열
         for i, e in enumerate(data):
-            # 타이틀 이미지
+            #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
+            if not e['title_image']:
+                e['title_image']=getTitleImage()
             src = current_app.root_path+"/static/contentImg/"+e['title_image']
+            # 타이틀 이미지
             with open(src, "rb") as image_file:
                 # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                 data[i]['title_image'] = "data:image/jpeg;base64, " + \
@@ -116,8 +119,8 @@ def imageUploadTemp():
         # RGB형식으로 변경후 , 이미지 파일 저장
         image.convert('RGB').save(source)  # resize사용시 image -> resize_image
         
+        url=request.host_url # 홈 URL
         # 개발환경용 url 설정
-        url=""
         if current_app.env == 'development':
             url="http://localhost:5000"
         

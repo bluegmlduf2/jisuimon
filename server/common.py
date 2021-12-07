@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import jsonify ,current_app
 import time
 import traceback
 import simplejson as json  # dumps(객체) ->json문자열 , loads(json문자열) ->객체
@@ -10,6 +10,7 @@ from jinja2 import utils # xssFilter
 import re # 특정 문자열 사이 문자열 찾기 (정규식)
 import shutil # 파일 이동용
 import os # 파일 이동용
+import random # 디폴트 이미지명 난수생성
 
 '''
  아래는 예외처리에 관련된 공통항목이다
@@ -71,9 +72,22 @@ class UserError(Exception):
         return self.errorInfo['message']
 
 '''
- 아래는 이미지 파싱에 관련된 공통항목이다
+ 아래는 이미지에 관련된 공통항목이다
+ imageConfig
  imageParser
+ imageFromContent
+ getTitleImage
+ moveImageTempToDest
 '''
+# 이미지 함수에 필요한 설정부분
+def imageConfig():
+    # 파일 이동에 필요한 설정부분
+    fileSource = current_app.root_path+'/static/temp/' #　임시파일위치
+    fileDest = current_app.root_path+'/static/contentImg/' # 저장용폴더위치
+    imageForder = os.listdir(fileSource) # 임시파일이 위치한 폴더
+
+    return imageForder, fileSource, fileDest 
+
 # 이미지파일을 base64형식변환
 def imageParser(src):
     with open(src, "rb") as image_file:
@@ -81,9 +95,29 @@ def imageParser(src):
         return "data:image/jpeg;base64, " + \
             base64.b64encode(image_file.read()).decode('utf-8')
 
+# 게시글에서 이미지 추출
+def imageFromContent(content):
+    # 글에서 파일명 추출 temp -> contentImg
+    removeStringBetween=re.findall(r'/static/contentImg/.+?&#34',content) # 특정 문자열 사이의 단어를 반환
+    removeStringPath=[x.replace('/static/contentImg/','') for x in removeStringBetween] # 문자열의 패스제거
+    return [x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
+    
+# 게시글의 타이틀 이미지 추출
+def getTitleImage():
+    return'defaultImg/titleImage_'+str(random.randrange(1,8))+'.jpg' # 타이틀 이미지 , 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
+
+# 임시이미지 파일을 저장용 폴더에 이동
+def moveImageTempToDest(imageFileNames):
+    imageForder, fileSource, fileDest = imageConfig() # 이미지 설정부분
+    # 파일 이동 실행 부분
+    for imageFile in imageForder:
+        if imageFile in imageFileNames:
+            shutil.move(fileSource + imageFile, fileDest + imageFile) # 파일이동
+
+
 '''
  아래는 보안에 관련된 공통항목이다
- imageParser
+ xssFilter
 '''
 # jinja를 이용한 xss필터함수
 def xssFilter(args):
