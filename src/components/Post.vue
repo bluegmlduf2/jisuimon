@@ -8,15 +8,16 @@
       }}
     </div>
     <div class="postCont_ingredient">
-      <span v-for="i in ingredient" :key="i.ingredient_id">{{
-        i.ingredient_name
-      }}</span>
+      <span v-for="i in ingredient" :key="i.ingredient_id">
+      {{`${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`}}
+      </span>
     </div>
     <div class="postCont_index">
       <h3>材料詳細</h3>
       <ul v-if="listShow">
-        <li>ニンニク 5g</li>
-        <li>鶏肉 1kg</li>
+        <li v-for="i in ingredient" :key="i.ingredient_id">
+          {{`${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`}}
+        </li>
       </ul>
       <div class="postCont_index_list" @click="listShow = !listShow">
         {{ listShow ? "▲ 閉じる" : "▼ 開く" }}

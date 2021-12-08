@@ -99,7 +99,9 @@ def getPostIngredient(args):
             sql = '''
                 SELECT
                     I.ingredient_id ,
-                    I.ingredient_name
+                    I.ingredient_name ,
+                    I.ingredient_amt ,
+                    I.ingredient_unit
                 FROM
                     jisuimon.post_table AS P
                 INNER JOIN jisuimon.ingredient_table AS I ON
@@ -173,7 +175,6 @@ def getPostComment(args):
             for i,comment in enumerate(commentData):
                 commentReturnData[i].setdefault('comment_reply',[])# 대댓글 추가에 필요한 키 추가
                 commentReturnData[i].setdefault('showState',False)# 댓글 접고 펼치기에 필요한 키 추가
-                commentReturnData[i].setdefault('showReplyState',False)# 대댓글 작성창 접고 펼치기에 필요한 키 추가
                 [commentReturnData[i].pop(colNm) for colNm in removeCommentCol] # 불필요한 댓글의 칼럼제거
                 userImage=commentReturnData[i]['user_image'] # 유저 이미지 (댓글유저)
                 commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg)
@@ -185,6 +186,9 @@ def getPostComment(args):
                         commentReply['user_image_CR']=imageParser(userImgPath+userReplyImage if userReplyImage else userDefaultImg) # 유저 이미지 (대댓글유저)
                         [commentReply.pop(colNmRep) for colNmRep in removeCommentReplyCol] # 불필요한 대댓글의 칼럼제거
                         commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 해당하는 대댓글 추가
+                
+                showReplyState=True if commentReturnData[i]['comment_reply'] else False # 대댓글이 존재하면 작성창 펼친상태 없으면 닫힌상태
+                commentReturnData[i].setdefault('showReplyState',showReplyState)# 대댓글 작성창 접고 펼치기에 필요한 키 추가
 
         except UserError as e:
             conn.rollback()
