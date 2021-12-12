@@ -30,8 +30,8 @@ def insertComment(args):
                 1);
             '''
 
+            insertedPostId=getUUID() # 부모게시글의 PK
             conn.execute(sql, (args['title'],titleImage))
-            insertedPostId = conn.insertLastKey()  # 입력한 부모게시글의 PK
 
             # 게시물의 상세정보
             sql = '''

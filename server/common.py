@@ -11,6 +11,7 @@ import re # 특정 문자열 사이 문자열 찾기 (정규식)
 import shutil # 파일 이동용
 import os # 파일 이동용
 import random # 디폴트 이미지명 난수생성
+import uuid # PK작성을 위한 UUID 생성
 
 '''
  아래는 예외처리에 관련된 공통항목이다
@@ -114,7 +115,6 @@ def moveImageTempToDest(imageFileNames):
         if imageFile in imageFileNames:
             shutil.move(fileSource + imageFile, fileDest + imageFile) # 파일이동
 
-
 '''
  아래는 보안에 관련된 공통항목이다
  xssFilter
@@ -122,3 +122,11 @@ def moveImageTempToDest(imageFileNames):
 # jinja를 이용한 xss필터함수
 def xssFilter(args):
     return str(utils.escape(args))  
+
+'''
+ 아래는 유일키 생성 항목이다
+ getUUID
+'''
+# UUID 추출 (36글자)
+def getUUID():
+    return str(uuid.uuid4()) # 랜덤 uuid반환

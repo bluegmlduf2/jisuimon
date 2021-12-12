@@ -41,7 +41,7 @@
           <!-- nestedComment 대댓글 -->
           <div class="nestedCommentCont" :class="{'nestedComment_show': comment.showState,'nestedComment_hidden': !comment.showState }">
               <div class="nestedCommentCont_background">
-                <div class="nestedCommentCont_hr" v-for="commentReply in comment.comment_reply" :key="commentReply.commont_reply_id">
+                <div class="nestedCommentCont_hr" v-for="commentReply in comment.comment_reply" :key="commentReply.comment_reply_id">
                   <!-- 대댓글 프로필 -->
                   <div class="nestedCommentCont_profile">
                     <div class="commentCont_profileImg">

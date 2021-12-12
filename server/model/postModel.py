@@ -142,13 +142,13 @@ def getPostComment(args):
                     U.nickname,
                     CR.comment_reply_content ,
                     CONVERT_TZ(CR.comment_reply_create_date, '+00:00', '-09:00') as comment_reply_create_date,
-                    CR.commont_reply_id ,
+                    CR.comment_reply_id ,
                     CR.comment_table_comment_id,
                     (SELECT user_image FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_image_CR,
                     (SELECT nickname FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS nickname_CR
                 FROM
                     jisuimon.comment_table AS C
-                LEFT JOIN jisuimon.commont_reply_table AS CR ON
+                LEFT JOIN jisuimon.comment_reply_table AS CR ON
                     C.comment_id = CR.comment_table_comment_id
                 LEFT JOIN jisuimon.user_table AS U ON
                     C.user_table_user_id = U.user_id
@@ -163,7 +163,7 @@ def getPostComment(args):
             commentReturnData=copy.deepcopy(commentData) # ValueError: Circular reference detected 방지..
 
             # 댓글과 대댓글에서 삭제할 칼럼목록
-            removeCommentCol=['comment_reply_content','comment_reply_create_date','commont_reply_id','comment_table_comment_id','user_image_CR','nickname_CR']
+            removeCommentCol=['comment_reply_content','comment_reply_create_date','comment_reply_id','comment_table_comment_id','user_image_CR','nickname_CR']
             removeCommentReplyCol=['comment_content','comment_create_date','user_table_user_id','post_table_post_id','user_image','nickname']
 
             # 이미지 경로
@@ -220,6 +220,7 @@ def insertPost(args):
             INSERT
                 INTO
                 jisuimon.post_table (
+                post_id,
                 title,
                 create_date,
                 update_date,
@@ -227,30 +228,33 @@ def insertPost(args):
                 user_table_user_id)
             VALUES(
                 %s,
+                %s,
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP,
                 %s,
                 1);
             '''
-
-            conn.execute(sql, (args['title'],titleImage))
-            insertedPostId = conn.insertLastKey()  # 입력한 부모게시글의 PK
+            postId=getUUID() # 게시글 PK
+            conn.execute(sql, (postId,args['title'],titleImage))
 
             # 게시물의 상세정보
             sql = '''
             INSERT
                 INTO
                 jisuimon.post_detail_table (
+                post_detail_id,
                 post_table_post_id,
                 content
                 )
             VALUES(
                 %s,
+                %s,
                 %s
             );
             '''
 
-            conn.execute(sql, (insertedPostId, args['content']))
+            postDetailId=getUUID() # 게시글 상세 PK
+            conn.execute(sql, (postDetailId, postId, args['content']))
 
             # 게시물의 재료정보
             sql = '''
@@ -272,7 +276,7 @@ def insertPost(args):
             '''
 
             # 재료를 한번에 입력하기 (리스트->튜플)
-            ingredientList = [(insertedPostId, e['food_id'], e['food_name'],
+            ingredientList = [(postId, e['food_id'], e['food_name'],
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
             conn.executeMany(sql, ingredientList)
             
