@@ -88,6 +88,10 @@ const store = createStore({
         food(context, payload) {
             return this.state.getRequest('/food',payload);
         },
+        // 댓글 등록
+        comment(context, payload) {
+            return this.state.getRequest('/comment',payload);
+        },
     },
 });
 

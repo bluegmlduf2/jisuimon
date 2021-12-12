@@ -7,10 +7,11 @@
         id="regCommentTa"
         placeholder="コメントを残してください"
         rows="3"
+        v-model="inputComment"
       />
     </div>
     <div class="commentCont_reg">
-      <button class="btn btn-success confirm_btn" id="regCommentBtn">
+      <button class="btn btn-success confirm_btn" id="regCommentBtn" @click="registerComment">
         <b>コメントを作成する</b>
       </button>
     </div>
@@ -86,11 +87,51 @@ export default {
   name: "Comment",
   props: {
     comment: Object,
+    postId: Number,
   },
   data() {
     return {
+      inputComment : ""
     };
   },
+  methods:{
+    // 댓글등록
+    registerComment(){
+      const COMMENT_CONTENT=this.inputComment
+      console.log(this.inputComment)
+      console.log(this.postId)
+
+      this.loading = true;
+
+      // 입력값의 유효성체크
+      if (!COMMENT_CONTENT) {
+        this.$message.warningMessage("コメントを入力してください");
+        return false
+      }
+
+      // 입력정보를 서버전송데이터에 넣음
+      const payload = { 
+        method: "post",
+        sendData: {
+          userId:"1",
+          commentContent:COMMENT_CONTENT
+        }
+      };
+      
+      this.$store
+        .dispatch("comment", payload)
+        .then(() => {
+          this.$message.successMessage()
+          this.$router.push('/');
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    }
+  }
 };
 </script>
 
