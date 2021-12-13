@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from model import commentModel
 from common import *
+import copy
 
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성
 comment_controller = Blueprint('comment', __name__)
@@ -13,8 +14,7 @@ def comment():
         args = request.get_json()
 
         # xssFilter처리된 값
-        filteredArgs={}
-        filteredArgs['userId'] = xssFilter(args['userId'])  # 유저아이디
+        filteredArgs=copy.deepcopy(args)
         filteredArgs['commentContent'] = xssFilter(args['commentContent'])  # 댓글내용
 
         ### 유효성검사 ###
@@ -24,7 +24,7 @@ def comment():
         if not filteredArgs['commentContent']:
             raise UserError(701, 'コメント')
 
-        '''게시물 입력'''
+        '''댓글 입력'''
         commentModel.insertComment(filteredArgs)
         
         return jsonify(getMessage(601)), 200

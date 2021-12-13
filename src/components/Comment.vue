@@ -30,7 +30,7 @@
             <div class="commentCont_profileInfo_date">{{$moment(comment.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
           </div>
         </div>
-        <!-- 댓글 코멘ㅌ -->
+        <!-- 댓글 코멘트 -->
         <div class="commentCont_list_content">
           {{ comment.comment_content }}
         </div>
@@ -66,11 +66,12 @@
                       id="regNewCommentTa"
                       placeholder="コメントを残してください"
                       rows="3"
+                      @input="inputCommentReply = $event"
                     />
                   </div>
                   <div class="nestedCommentCont_write_buttons" v-if="!comment.showReplyState">
                     <button class="btn btn-secondary cancel_btn" id="writeNestedCommentCancelBtn" @click="comment.showReplyState=!comment.showReplyState" ><b>キャンセル</b></button>
-                    <button class="btn btn-success confirm_btn" id="writeNestedCommentConfirmBtn" @click="comment.showReplyState=!comment.showReplyState"><b>コメントを作成する</b></button>
+                    <button class="btn btn-success confirm_btn" id="writeNestedCommentConfirmBtn" @click="registerCommentReply(comment.comment_id,inputCommentReply.target.value)"><b>コメントを作成する</b></button>
                   </div>
                 </div>
               </div>
@@ -91,15 +92,14 @@ export default {
   },
   data() {
     return {
-      inputComment : ""
+      inputComment : "",
+      inputCommentReply : "", // v-for에 반복되는 v-model을 사용
     };
   },
   methods:{
     // 댓글등록
     registerComment(){
-      const COMMENT_CONTENT=this.inputComment
-      console.log(this.inputComment)
-      console.log(this.postId)
+      const COMMENT_CONTENT=this.inputComment // 입력댓글
 
       this.loading = true;
 
@@ -114,15 +114,59 @@ export default {
         method: "post",
         sendData: {
           userId:"1",
+          postId:this.postId,
           commentContent:COMMENT_CONTENT
         }
       };
-      
+
       this.$store
         .dispatch("comment", payload)
         .then(() => {
-          this.$message.successMessage()
-          this.$router.push('/');
+          this.$message.successMessage().then(()=>{
+            this.$emit('updateCommentProps') // props 다시 받아오기 
+            this.inputComment="" // 입력댓글초기화
+          })
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    // 대댓글등록
+    registerCommentReply(commentId,commentReplyContent){
+      // eslint-disable-next-line no-debugger
+      debugger
+      console.log(commentId,commentReplyContent)
+
+      const COMMENT_CONTENT=this.inputComment // 입력댓글
+
+      this.loading = true;
+
+      // 입력값의 유효성체크
+      if (!COMMENT_CONTENT) {
+        this.$message.warningMessage("コメントを入力してください");
+        return false
+      }
+
+      // 입력정보를 서버전송데이터에 넣음
+      const payload = { 
+        method: "post",
+        sendData: {
+          userId:"1",
+          postId:this.postId,
+          commentContent:COMMENT_CONTENT
+        }
+      };
+
+      this.$store
+        .dispatch("comment", payload)
+        .then(() => {
+          this.$message.successMessage().then(()=>{
+            this.$emit('updateCommentProps') // props 다시 받아오기 
+            this.inputComment="" // 입력댓글초기화
+          })
         })
         .catch((err) => {
           this.$message.errorMessage(err);

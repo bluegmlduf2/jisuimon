@@ -27,7 +27,8 @@
       <p v-html="posts.content"></p>
     </div>
     <div>
-      <Comment :postId="posts.post_id" :comment="comment" />
+      <!-- @updateCommentProps : emit을 이용해서 자식(comment)이 부모(post)의 data를 초기화(렌더링없음) -->
+      <Comment :postId="posts.post_id" :comment="comment" @updateCommentProps="getPostDetail" />
     </div>
   </div>
 </template>

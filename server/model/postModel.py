@@ -133,7 +133,6 @@ def getPostComment(args):
             sql = '''
                  SELECT
                     C.comment_content ,
-                    C.comment_create_date ,
                     CONVERT_TZ(C.comment_create_date, '+00:00', '-09:00') as comment_create_date,
                     C.comment_id ,
                     C.user_table_user_id ,
