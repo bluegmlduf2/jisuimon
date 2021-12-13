@@ -92,6 +92,10 @@ const store = createStore({
         comment(context, payload) {
             return this.state.getRequest('/comment',payload);
         },
+        // 대댓글 등록
+        commentReply(context, payload) {
+            return this.state.getRequest('/commentReply',payload);
+        },
     },
 });
 

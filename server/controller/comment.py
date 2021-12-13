@@ -19,6 +19,8 @@ def comment():
 
         ### 유효성검사 ###
         # 공백 및 비어있는지 체크
+        if not filteredArgs['postId']:
+            raise UserError(701, '投稿ーID')
         if not filteredArgs['userId']:
             raise UserError(701, 'ユーザーID')
         if not filteredArgs['commentContent']:
@@ -26,5 +28,30 @@ def comment():
 
         '''댓글 입력'''
         commentModel.insertComment(filteredArgs)
+        
+        return jsonify(getMessage(601)), 200
+
+@comment_controller.route('/commentReply', methods=['POST'])
+@exception_handler
+def commentReply():
+    '''대댓글 등록'''
+    if request.method == 'POST':
+        args = request.get_json()
+
+        # xssFilter처리된 값
+        filteredArgs=copy.deepcopy(args)
+        filteredArgs['commentReplyContent'] = xssFilter(args['commentReplyContent'])  # 댓글내용
+
+        ### 유효성검사 ###
+        # 공백 및 비어있는지 체크
+        if not filteredArgs['commentId']:
+            raise UserError(701, 'コメントーID')
+        if not filteredArgs['commentUserId']:
+            raise UserError(701, 'コメント作成者ーID')
+        if not filteredArgs['commentReplyContent']:
+            raise UserError(701, 'コメント')
+
+        '''댓글 입력'''
+        commentModel.insertCommentReply(filteredArgs)
         
         return jsonify(getMessage(601)), 200

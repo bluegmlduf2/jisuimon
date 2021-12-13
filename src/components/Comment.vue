@@ -17,7 +17,7 @@
     </div>
     <!-- commentList -->
     <div class="commentCont_list">
-      <div v-for="(comment) in comment" :key="comment.comment_id">
+      <div v-for="(comment,i) in comment" :key="comment.comment_id">
         <!-- 댓글 프로필 -->
         <div class="commentCont_list_profile">
           <div class="commentCont_profileImg">
@@ -66,12 +66,12 @@
                       id="regNewCommentTa"
                       placeholder="コメントを残してください"
                       rows="3"
-                      @input="inputCommentReply = $event"
+                      v-model="inputCommentReply[i]"
                     />
                   </div>
                   <div class="nestedCommentCont_write_buttons" v-if="!comment.showReplyState">
                     <button class="btn btn-secondary cancel_btn" id="writeNestedCommentCancelBtn" @click="comment.showReplyState=!comment.showReplyState" ><b>キャンセル</b></button>
-                    <button class="btn btn-success confirm_btn" id="writeNestedCommentConfirmBtn" @click="registerCommentReply(comment.comment_id,inputCommentReply.target.value)"><b>コメントを作成する</b></button>
+                    <button class="btn btn-success confirm_btn" id="writeNestedCommentConfirmBtn" @click="registerCommentReply(comment.comment_id,inputCommentReply[i])"><b>コメントを作成する</b></button>
                   </div>
                 </div>
               </div>
@@ -88,12 +88,12 @@ export default {
   name: "Comment",
   props: {
     comment: Object,
-    postId: Number,
+    postId: String,
   },
   data() {
     return {
-      inputComment : "",
-      inputCommentReply : "", // v-for에 반복되는 v-model을 사용
+      inputComment : "", // 댓글내용
+      inputCommentReply : [], // 대댓글내용 (v-for의 동적 v-model)
     };
   },
   methods:{
@@ -136,16 +136,13 @@ export default {
     },
     // 대댓글등록
     registerCommentReply(commentId,commentReplyContent){
-      // eslint-disable-next-line no-debugger
-      debugger
-      console.log(commentId,commentReplyContent)
-
-      const COMMENT_CONTENT=this.inputComment // 입력댓글
+      const COMMENT_ID=commentId// 댓글ID
+      const COMMENT_REPLY_CONTENT=commentReplyContent // 대댓글내용
 
       this.loading = true;
 
       // 입력값의 유효성체크
-      if (!COMMENT_CONTENT) {
+      if (!COMMENT_REPLY_CONTENT) {
         this.$message.warningMessage("コメントを入力してください");
         return false
       }
@@ -154,14 +151,14 @@ export default {
       const payload = { 
         method: "post",
         sendData: {
-          userId:"1",
-          postId:this.postId,
-          commentContent:COMMENT_CONTENT
+          commentId:COMMENT_ID,
+          commentUserId:'1',
+          commentReplyContent:COMMENT_REPLY_CONTENT
         }
       };
 
       this.$store
-        .dispatch("comment", payload)
+        .dispatch("commentReply", payload)
         .then(() => {
           this.$message.successMessage().then(()=>{
             this.$emit('updateCommentProps') // props 다시 받아오기 
