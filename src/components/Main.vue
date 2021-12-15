@@ -3,7 +3,7 @@
     <!-- Main -->
     <router-view name="Card" :posts="posts" />
     <!-- Post -->
-    <router-view name="Post" :posts="posts" />
+    <router-view name="Post" />
     <!-- Write -->
     <router-view name="Write" v-slot="{ Component }">
       <transition name="fade" mode="out-in">

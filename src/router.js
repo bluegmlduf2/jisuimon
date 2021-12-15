@@ -41,6 +41,10 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes,
+    scrollBehavior(){
+        // 새로고침 후 항상 최상단 표시
+        return { top: 0 }
+    }
 });
 
 //모든 라우터 들이 실행되기 전에 실행되는 녀석을 추가 (navigation guard)

@@ -31,27 +31,59 @@
 </template>
 
 <script>
-import common from '@/assets/js/common.js';
+import common from "@/assets/js/common.js";
 
 export default {
-    name:"Card",
-    mixins:[common],
-    data() {
-        return {
-            cardDeckCnt:3,
-            cardCnt:11,
-        }
+  name: "Card",
+  mixins: [common],
+  data() {
+    return {
+      cardDeckCnt: 3,
+      cardCnt: 11,
+    };
+  },
+  props: {
+    posts: Array,
+  },
+  methods: {
+    // 게시물의 행과 열에 맞는 데이터를 반환한다
+    getPostObj(post, i, x) {
+      return post[(i - 1) * 4 + x - 1];
     },
-    props:{
-        posts:Array
+    // 무한스크롤 정의
+    moveScroll(e) {
+        const { scrollHeight, scrollTop, clientHeight } = e.target.documentElement;
+      const isAtTheBottom = scrollHeight === scrollTop + clientHeight;
+      // 일정 한도 밑으로 내려오면 함수 실행
+      if (isAtTheBottom) this.loadPages();
     },
-    methods:{
-        // 게시물의 행과 열에 맞는 데이터를 반환한다
-        getPostObj(post,i,x){
-            return post[((i-1)*4)+x-1]
-        }
-    }
-}
+    // 내려오면 api 호출하여 아래에 더 추가, total값 최대이면 호출 안함
+    loadPages() {
+    //TODO 둥근프로그레스바 구현
+    console.log(1)
+    
+    //   if (this.notifications.length < this.total) {
+    //     const params = {
+    //       limit: this.params.limit,
+    //       page: this.params.page + 1
+    //     };
+    //     this.$store.commit(
+    //       "notification/SET_PARAMS",
+    //       this.filterValue ? { ...params, type: this.filterValue } : params
+    //     );
+    //     this.dispatchGetNotifications(false);
+    //   }
+    },
+  },
+  // 스크롤 함수 이벤트 초기화
+  mounted() {
+    window.addEventListener("scroll", this.moveScroll);
+  },
+  // 스크롤 함수 이벤트 해제
+  unmounted() {
+    window.removeEventListener("scroll", this.moveScroll);
+  },
+};
 </script>
 
 <style>
