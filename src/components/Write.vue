@@ -233,7 +233,9 @@ export default {
         .dispatch("post", payload)
         .then(() => {
           this.$message.successMessage()
-          this.$router.push('/');
+
+          //TODO 현재 페이지 이동후 등록한 게시물의 갱신이 안됨..수정필요
+          this.$router.push('/')
         })
         .catch((err) => {
           this.$message.errorMessage(err);

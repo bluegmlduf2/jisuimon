@@ -13,7 +13,7 @@ const routes = [
         path: "/",
         components: {
             Card: Card,
-        },
+        }
     },
     {
         path: "/post/:postId",

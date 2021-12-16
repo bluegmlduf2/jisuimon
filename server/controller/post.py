@@ -52,6 +52,14 @@ def post():
         
         return jsonify(getMessage(601)), 200
 
+@post_controller.route('/postcount', methods=['GET'])
+@exception_handler
+def postCount():
+    '''총 게시물 수 가져오기'''
+    if request.method == 'GET':
+        data = postModel.getPostCount()
+        return jsonify(data), 200
+
 
 @post_controller.route('/postDetail', methods=['GET'])
 @exception_handler

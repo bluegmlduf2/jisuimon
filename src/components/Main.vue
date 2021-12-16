@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <!-- Main -->
-    <router-view name="Card" :posts="posts" :postCnt="postCnt" @addPostCnt="addPostCnt"/>
+    <router-view name="Card" :posts="posts" :postCnt="postCnt" :postCntAll="postCntAll" @addPostCnt="addPostCnt"/>
     <!-- Post -->
     <router-view name="Post" />
     <!-- Write -->
@@ -26,15 +26,14 @@ export default {
     return {
       loading: false,
       posts: [],
-      postCnt: 8,
+      postCnt: 8, //현재 게시물 수
+      postCntAll: 0, // 총 게시물 수
       showSpinner:false
     };
   },
   methods: {
     // 메인게시물 호출
     getPosts() {  
-      this.showSpinner = true
-
       const payload = {
         method: "get",
         sendData: { postCnt: this.postCnt },
@@ -47,14 +46,30 @@ export default {
         this.showSpinner = false
       });
     },
+    // 총 게시물수 가져오기
+    getPostCount(){
+      const payload = {
+        method: "get"
+      };
+      this.$store.dispatch('getPostCount',payload).then((result) => {
+        this.postCntAll=result.data.postCntAll
+      }).catch((err) => {
+        this.$message.errorMessage(err);
+      })
+    },
     // 게시물 8개 더 보여주기
     addPostCnt(){
+      this.showSpinner = true
+
+      setTimeout(() => {
         this.postCnt=this.postCnt+8
-        this.getPosts()        
+        this.getPosts()                  
+      }, 2000);
     }
   },
   created(){
     this.getPosts()
+    this.getPostCount()
   }
 };
 </script>

@@ -80,6 +80,10 @@ const store = createStore({
         post(context, payload) {
             return this.state.getRequest('/post',payload);
         },
+        // 총 게시물 수 가져오기
+        getPostCount(context, payload) {
+            return this.state.getRequest('/postcount',payload);
+        },
         // 게시물 상세정보 가져오기
         postDetail(context, payload) {
             return this.state.getRequest('/postDetail',payload);

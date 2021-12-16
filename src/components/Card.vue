@@ -45,6 +45,7 @@ export default {
   props: {
     posts: Array,
     postCnt: Number,
+    postCntAll: Number
   },
   methods: {
     // 게시물의 행과 열에 맞는 데이터를 반환한다
@@ -56,8 +57,15 @@ export default {
       const { scrollHeight, scrollTop, clientHeight } = e.target.documentElement;
       const isAtTheBottom = scrollHeight === Math.floor(scrollTop + clientHeight);
       // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
-      if (isAtTheBottom) this.$emit('addPostCnt')
-    }
+      if (isAtTheBottom) this.loadPages()
+    },
+    // 추가 게시물 가져오기
+    loadPages() {
+      // 내려오면 api 호출하여 아래에 더 추가, total값 최대이면 호출 안함
+      if (this.postCnt < this.postCntAll) {
+        this.$emit('addPostCnt')         
+      }
+    },
   },
   // 스크롤 함수 이벤트 초기화
   mounted() {

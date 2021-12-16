@@ -36,7 +36,7 @@ def getPosts(args):
             LIMIT %s,%s
             '''
             fromPostCnt=int(args['postCnt'])-8
-            toPostCnt=int(args['postCnt'])
+            toPostCnt=8 # 8개씩 가져옴
             data = conn.executeAll(sql, (fromPostCnt,toPostCnt))
 
             # 이미지->바이너리(base64)->utf-8문자열
@@ -72,6 +72,30 @@ def getPosts(args):
         finally:
             conn.close()
 
+def getPostCount():
+    conn = Connection()
+    if conn:
+        try:
+            # 총 게시물 수 구하기
+            sql = '''
+            SELECT
+                COUNT(*) as postCntAll
+            FROM
+                jisuimon.post_table AS P
+            '''
+
+            data = conn.executeOne(sql)
+
+        except UserError as e:
+            return json.dumps({'status': False, 'message': e.msg}), 200
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            return data
+        finally:
+            conn.close()
 
 def getPostDetail(args):
     conn = Connection()
