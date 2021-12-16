@@ -231,12 +231,9 @@ export default {
       
       this.$store
         .dispatch("post", payload)
-        .then((result) => {
+        .then(() => {
           this.$message.successMessage()
           this.$router.push('/');
-          this.posts = result.data[0]; //게시물 상세정보
-          this.comment = result.data[1]; //게시물 댓글정보
-          this.ingredient = result.data[2]; //게시물 재료정보
         })
         .catch((err) => {
           this.$message.errorMessage(err);

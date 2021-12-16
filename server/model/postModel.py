@@ -1,7 +1,7 @@
 from common import *
 import copy
 
-def getPosts():
+def getPosts(args):
     conn = Connection()
     if conn:
         try:
@@ -33,10 +33,33 @@ def getPosts():
                 P.post_id = PD.post_table_post_id
             ORDER BY
                 P.create_date DESC
-            LIMIT 8
+            LIMIT %s,%s
             '''
+            fromPostCnt=int(args['postCnt'])-8
+            toPostCnt=int(args['postCnt'])
+            data = conn.executeAll(sql, (fromPostCnt,toPostCnt))
 
-            data = conn.executeAll(sql)
+            # 이미지->바이너리(base64)->utf-8문자열
+            for i, e in enumerate(data):
+                #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
+                if not e['title_image']:
+                    e['title_image']=getTitleImage()
+                src = current_app.root_path+"/static/contentImg/"+e['title_image']
+                # 타이틀 이미지
+                with open(src, "rb") as image_file:
+                    # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
+                    data[i]['title_image'] = "data:image/jpeg;base64, " + \
+                        base64.b64encode(image_file.read()).decode('utf-8')
+
+                # 유저 이미지
+                if not e['user_image']:
+                    src = current_app.root_path+"/static/defaultImg/noUser.png"
+                else:
+                    src = current_app.root_path+"/static/userImg/"+e['user_image']
+                with open(src, "rb") as image_file:
+                    # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
+                    data[i]['user_image'] = "data:image/jpeg;base64, " + \
+                        base64.b64encode(image_file.read()).decode('utf-8')
 
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200

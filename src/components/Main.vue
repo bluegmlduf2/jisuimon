@@ -1,17 +1,18 @@
 <template>
   <div class="container-fluid">
     <!-- Main -->
-    <router-view name="Card" :posts="posts" />
+    <router-view name="Card" :posts="posts" :postCnt="postCnt" @addPostCnt="addPostCnt"/>
     <!-- Post -->
     <router-view name="Post" />
     <!-- Write -->
-    <router-view name="Write" v-slot="{ Component }">
+    <router-view name="Write" v-slot="{ Component }" @initPostCnt="initPostCnt">
       <transition name="fade" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
     <!-- Error -->
     <router-view name="NotFound" />
+    <div v-if="showSpinner" class="loader loader-black loader-1"></div>
   </div>
 </template>
 
@@ -25,21 +26,32 @@ export default {
     return {
       loading: false,
       posts: [],
+      postCnt: 8,
+      showSpinner:false
     };
   },
   methods: {
     // 메인게시물 호출
     getPosts() {  
-      this.loading = true;
-      const payload = {method: "get"};
+      this.showSpinner = true
+
+      const payload = {
+        method: "get",
+        sendData: { postCnt: this.postCnt },
+      };
       this.$store.dispatch('post',payload).then((result) => {
-        this.posts=result.data
+        this.posts.push(...result.data)
       }).catch((err) => {
         this.$message.errorMessage(err);
       }).finally(()=>{
-        this.loading = false;
+        this.showSpinner = false
       });
     },
+    // 게시물 8개 더 보여주기
+    addPostCnt(){
+        this.postCnt=this.postCnt+8
+        this.getPosts()        
+    }
   },
   created(){
     this.getPosts()
@@ -73,4 +85,40 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
   border-color: rgb(206, 212, 218) !important;
   box-shadow: rgb(0 0 0 / 20%) 0px 0px 10px !important;
 }
+
+/*-------------------------------------------
+    $ Loaders 스피너
+-------------------------------------------*/
+.loader {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 3em;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+}
+.loader,
+.loader:before,
+.loader:after {
+    animation: 1s infinite ease-in-out;
+}
+.loader:before,
+.loader:after {
+    width: 100%; 
+    height: 100%;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.loader-black { background-color: #333; }
+
+.loader-1 { animation-name: loader1; }
+@keyframes loader1 {
+    from { transform: scale(0); opacity: 1; }
+    to   { transform: scale(1); opacity: 0; }
+}
+
 </style>

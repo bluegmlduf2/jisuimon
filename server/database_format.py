@@ -11,19 +11,27 @@ class Connection:
         #DB의 커서 선언
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 
-    def execute(self, query, args={}):
+    def execute(self, query, args=()):
         '''execute는 쿼리 실행까지만,값을 가져올때는 fetch를 사용'''
-        result=self.cursor.execute(query, args)
+        # execute의 args의 매개변수는 튜플이 들어가야함
+        result=self.cursor.execute(query, args) # args를 매개변수로 사용하며 SqlInjection방지
         print(self.cursor._last_executed)
         return result
 
-    def executeOne(self, query, args={}):
+    def executeMany(self, query, args=()):
+        '''executeMany는 다량의 데이터를 한번에 입력'''
+        # args의 매개변수는 리스트의 튜플이 들어가야함
+        result=self.cursor.executemany(query, args)
+        print(self.cursor._last_executed)
+        return result
+
+    def executeOne(self, query, args=()):
         self.cursor.execute(query, args)
         row = self.cursor.fetchone()
         print(self.cursor._last_executed)
         return row
 
-    def executeAll(self, query, args={}):
+    def executeAll(self, query, args=()):
         '''쿼리를 실행한뒤(execute) 모든 값을 받아옴(fetchAll)'''
         self.cursor.execute(query, args)
         row = self.cursor.fetchall()
