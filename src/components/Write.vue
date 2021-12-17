@@ -19,7 +19,7 @@
       <div class="writeCont_add_materialList_input input-group input-group-sm col-md-4">
         <input type="number" class="form-control" ref="foodAmout" @input="inputAmout" min="1" placeholder="数量を入力してください" >
         <div class="input-group-append">
-          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">{{selectedFood.food_unit?selectedFood.food_unit:"単位"}}</button>
+          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">{{selectedFood.food_unit?selectedFood.food_unit:"単位選択"}}</button>
           <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
             <a class="dropdown-item" href="#" @click="selectUnit">個</a>
             <a class="dropdown-item" href="#" @click="selectUnit">ml</a>
@@ -314,7 +314,7 @@ export default {
 #selectUnitBtn{
   background-color: #fff;
   border:1px solid #ced4da;
-  width: 80px;
+  width: 90px;
 }
 .ck-content{
   height: 400px;

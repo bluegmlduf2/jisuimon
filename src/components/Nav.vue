@@ -43,9 +43,19 @@
         </div>
     </div>
   </nav>
+  <!-- 로그인 팝업 (TODO 나중에 컴포넌트분리필요)-->
+  <div class="loginCont_showBg">
+    <div class="loginCont">
+      <div class="loginCont_welcome">
+        <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="">
+        <h4>自炊モンに<br>ようこそ</h4>
+      </div>
+      <div class="loginCont_login">2</div>
+    </div>
+  </div>
   <!-- 모바일 로그인 상태화면-->
   <!-- <div class="nav_profile_list_mobile" >
-    <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" />
+    <img src="https://placeimg.com/100/100/arch" alt="profileImg" />
     <span class="material-icons nav_profile_arrow">arrow_drop_up</span>
   </div> -->
 </template>
@@ -181,5 +191,56 @@ export default {
   widows: 4rem;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* 로그인 팝업 배경 */
+.loginCont_showBg{
+  background-color:rgba(249, 249, 249, 0.85);; 
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;/* 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
+  width: 100%;
+  z-index: 9999;
+  display: flex;/* 아래는 플렉스를 이용한 가운데 정렬 */
+  justify-content: center;
+  align-items: center;
+}
+.loginCont{
+  width: 606px;
+  height: 480px;
+  animation: 0.4s ease-in-out 0s 1 normal forwards running hwrkPK;
+  box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
+  display: flex;
+}
+.loginCont_welcome{
+  width: 216px;
+    background: rgb(241, 243, 245);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;/* 세로정렬 */
+    align-items: center;
+    justify-content: center;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+}
+.loginCont_welcome img{
+  width: 100%;
+  border-radius: 7px;
+}
+.loginCont_welcome h4{
+    margin-top: 1.5rem;
+    color: rgb(73, 80, 87);
+    text-align: center;
+    line-height:2rem;
+}
+
+.loginCont_login{
+  flex: 1 1 0%;
+  background: white;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 </style>
