@@ -58,14 +58,16 @@
           <div class="loginCont_body">
             <h2><b>ログイン</b></h2>
             <h4>メールアドレスでログイン</h4>
-            <div class="loginCont_body_input input-group">
+            <div class="loginCont_body_input">
               <input type="text" id="loginEmailInput" class="form-control is-invalid" placeholder="メールアドレスを入力してください" required>
-              <div class="input-group-append">
-                <button class="btn btn-success confirm_btn" id="loginBtn"><b>ログイン</b></button>
-              </div>
-              <div class="invalid-feedback">
+              <div class="invalid-feedback" for="loginEmailInput">
                 Please provide a valid value.
               </div>
+              <input type="password" id="loginPassWordInput" class="form-control is-invalid" placeholder="パスワードを入力してください" required>
+              <div class="invalid-feedback" for="loginPassWordInput">
+                Please provide a valid value.
+              </div>
+              <button class="btn btn-success confirm_btn" id="loginBtn"><b>ログイン</b></button>
             </div>
           </div>
           <div class="loginCont_footer">
@@ -231,7 +233,7 @@ export default {
 }
 .loginCont{
   width: 606px;
-  height: 418px;
+  height: 480px;
   animation: 0.4s ease-in-out 0s 1 normal forwards running hwrkPK;
   box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
   display: flex;
@@ -246,6 +248,15 @@ export default {
     justify-content: center;
     -webkit-box-pack: center;
     -webkit-box-align: center;
+}
+
+@media (max-width: 576.98px) {
+  .loginCont{
+    height: 100%;
+  }
+  .loginCont_welcome{
+    display: none;
+  }
 }
 .loginCont_welcome img{
   width: 100%;
@@ -300,16 +311,22 @@ export default {
   color: rgb(134, 142, 150);
 }
 
-#loginEmailInput{
+#loginEmailInput,#loginPassWordInput{
   height: 3rem;
+  margin-top: 1rem;
 }
 
 .loginCont_body_input{
   height: 3rem;
 }
 
-#loginEmailInput::placeholder{
-  font-size: 0.8rem;
+#loginEmailInput::placeholder ,#loginPassWordInput::placeholder{
+  font-size: 0.9rem;
+}
+
+#loginBtn{
+  margin-top: 1.1rem;
+  width: 100%;
 }
 
 .loginCont_footer{

@@ -77,7 +77,7 @@ export default {
 </script>
 
 <style>
-/* 메인 레이아웃 css */
+/* 메인 레이아웃 css (부트스트랩 스마트폰 세로 기준(576px미만) 으로 작성)*/
 @media (max-width: 576.98px) {
   .container-fluid {
     padding-top: 80px;
