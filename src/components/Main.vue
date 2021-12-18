@@ -2,8 +2,6 @@
   <div class="container-fluid">
     <!-- Main -->
     <router-view name="Card" :posts="posts" :postCnt="postCnt" :postCntAll="postCntAll" @addPostCnt="addPostCnt"/>
-    <!-- Login -->
-    <router-view name="Login" />
     <!-- Post -->
     <router-view name="Post" />
     <!-- Write -->

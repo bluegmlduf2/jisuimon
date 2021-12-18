@@ -4,7 +4,6 @@ import Post from "./components/Post.vue";
 import Card from "./components/Card.vue";
 import Comment from "./components/Comment.vue";
 import Write from "./components/Write.vue";
-import Login from "./components/login.vue";
 import NotFound from "./components/NotFound.vue";
 //$route : 경로관련
 //$router : 페이지이동관련
@@ -28,12 +27,6 @@ const routes = [
         path: "/write",
         components: {
             Write: Write,
-        },
-    },
-    {
-        path: "/login",
-        components: {
-            Login: Login,
         },
     },
     {
