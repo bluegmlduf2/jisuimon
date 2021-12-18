@@ -50,7 +50,29 @@
         <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="">
         <h4>自炊モンに<br>ようこそ</h4>
       </div>
-      <div class="loginCont_login">2</div>
+      <div class="loginCont_login">
+        <div class="loginCont_exit">
+          <span class="material-icons" id="loginClose">close</span>
+        </div>
+        <div class="loginCont_main">
+          <div class="loginCont_body">
+            <h2><b>ログイン</b></h2>
+            <h4>メールアドレスでログイン</h4>
+            <div class="loginCont_body_input input-group">
+              <input type="text" id="loginEmailInput" class="form-control is-invalid" placeholder="メールアドレスを入力してください" required>
+              <div class="input-group-append">
+                <button class="btn btn-success confirm_btn" id="loginBtn"><b>ログイン</b></button>
+              </div>
+              <div class="invalid-feedback">
+                Please provide a valid value.
+              </div>
+            </div>
+          </div>
+          <div class="loginCont_footer">
+            まだメンバーでない方は、<span id="moveSignUpBtn">こちらから</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- 모바일 로그인 상태화면-->
@@ -209,7 +231,7 @@ export default {
 }
 .loginCont{
   width: 606px;
-  height: 480px;
+  height: 418px;
   animation: 0.4s ease-in-out 0s 1 normal forwards running hwrkPK;
   box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
   display: flex;
@@ -242,5 +264,61 @@ export default {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
+}
+
+.loginCont_exit{
+  display: flex;
+  justify-content: flex-end;
+  color: rgb(134, 142, 150);
+  margin-bottom: 2.25rem;
+}
+
+#loginClose{
+  cursor: pointer;
+}
+
+.loginCont_main{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* flex간 동일 간격을 줌 */
+  flex: 1 1 0%; /* 플렉스의 자식이 크고 작을때에 상관없이 꽉찬하나의 행을 차지  */
+}
+
+.loginCont_body{
+  text-align: left;
+}
+
+.loginCont_body h2{
+  font-size: 1.3125rem;
+  color: rgb(52, 58, 64);
+}
+
+.loginCont_body h4{
+  font-size: initial; /* h4 폰트사이즈 초기화(상속막기) */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  color: rgb(134, 142, 150);
+}
+
+#loginEmailInput{
+  height: 3rem;
+}
+
+.loginCont_body_input{
+  height: 3rem;
+}
+
+#loginEmailInput::placeholder{
+  font-size: 0.8rem;
+}
+
+.loginCont_footer{
+  text-align: right;
+}
+
+#moveSignUpBtn{
+  font-weight: bold;
+  color: rgb(18, 184, 134);
+  cursor: pointer;
 }
 </style>
