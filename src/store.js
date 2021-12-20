@@ -9,7 +9,18 @@ const instance = axios.create({
 });
 // axios 인터셉터 인증정보처리
 instance.interceptors.request.use(
+    
     (config) => {
+        // let token = sessionStorage.getItem('TOKEN')
+        let token = '123'
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+
+
+    //(config) => {
         //   if (!config.headers.Authorization) {
         //     const token = sessionStorage.getItem('TOKEN');
         //     if (token && token.length > 0) {
@@ -22,8 +33,8 @@ instance.interceptors.request.use(
         //       }
         //     }
         //   }
-        return config;
-    },
+    //     return config;
+    // },
     (error) => {
         Promise.reject(error);
     }

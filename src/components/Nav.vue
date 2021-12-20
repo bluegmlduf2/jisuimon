@@ -44,7 +44,7 @@
     </div>
   </nav>
   <!-- 로그인 팝업 (TODO 나중에 컴포넌트분리필요)-->
-  <div class="loginCont_showBg">
+  <!-- <div class="loginCont_showBg">
     <div class="loginCont">
       <div class="loginCont_welcome">
         <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="">
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <!-- 모바일 로그인 상태화면-->
   <!-- <div class="nav_profile_list_mobile" >
     <img src="https://placeimg.com/100/100/arch" alt="profileImg" />
@@ -91,6 +91,24 @@ export default {
     return {
       profileShow:true, // 프로필 표시상태
       profileMenuShow:false // 프로필 메뉴표시상태
+    }
+  },
+  methods: {
+    login(){
+          // signInWithEmailAndPassword(this.$auth, 'red@nate.com', '111111')
+    // .then((userCredential) => {
+    //   // eslint-disable-next-line no-debugger
+    //   debugger
+    //     console.log(1)
+    //     // Signed in
+    //     console.log(userCredential)
+    //     const user = userCredential.user;
+    //     // ...
+    // })
+    // .catch((error) => {
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    // });
     }
   },
 }
