@@ -16,6 +16,18 @@ export default {
             str=str.replace(REGEX, "") // 문자열에서 숫자가 아닌 모든 문자열을 빈 문자로 변경
             str=Number(str) // 가장 문자열의 가장 앞의 0을 지움
             return str;
+        },
+        // 이메일 양식체크
+        checkEmail(str) {
+            const REGEX = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
+            const isEmail= str.match(REGEX) != null ? true : false ;
+            return isEmail;
+        },
+        // 비밀번호 양식체크 (최소 8글자,문자하나,숫자하나,특문하나)
+        checkPass(str) {
+            const REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/
+            const isPass= REGEX.test(str) ? true : false ;
+            return isPass;
         }
     },
 };
