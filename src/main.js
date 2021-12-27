@@ -12,7 +12,7 @@ const app=createApp(App);
 
 //파이어베이스 초기화
 firebase.init();
-firebase.onAuth(); // 인가처리
+firebase.onAuth(); // 인가처리 TODO 한번체크
 
 // 전역변수
 moment.locale("ja");// moment 일본어 적용;
