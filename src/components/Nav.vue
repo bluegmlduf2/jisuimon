@@ -27,8 +27,8 @@
         <input class="form-control mr-sm-4" id="searchMaterial" type="text" placeholder="食材を入力してください">
       </form>
         <!-- 로그인 메뉴 -->
-        <button id="writePostBtn" v-if="profileShow" type="button" class="btn btn-light" @click="$router.push('/write')">New Post</button>
-        <div class="nav_profile" v-if="profileShow">
+        <button id="writePostBtn" v-if="profileShow" type="button" class="btn btn-light" @click="isLogin?$router.push('/write'):loginShow=true">{{isLogin?"New Post":"Login"}}</button>
+        <div class="nav_profile" v-if="profileShow && isLogin">
           <div class="nav_profile_list" @click="profileMenuShow=!profileMenuShow">
             <!-- <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" /> -->
             <span class="material-icons nav_profile_arrow">arrow_drop_down</span>
@@ -37,14 +37,15 @@
             <div class="nav_profile_list_show" v-if="profileMenuShow">
               <router-link class="nav-link" to="#">My Post</router-link>
               <router-link class="nav-link" to="#">Setting</router-link>
-              <router-link class="nav-link" to="#">Logout</router-link>
+              <router-link class="nav-link" @click="logout" to="#">Logout</router-link>
             </div>
           </div>
         </div>
     </div>
   </nav>
   <!-- 로그인 팝업 (TODO 나중에 컴포넌트분리필요)-->
-  <!-- <div class="loginCont_showBg">
+  <!-- <div class="loginCont_showBg"> -->
+  <div class="loginCont_showBg" v-if="loginShow">
     <div class="loginCont">
       <div class="loginCont_welcome">
         <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="">
@@ -52,22 +53,20 @@
       </div>
       <div class="loginCont_login">
         <div class="loginCont_exit">
-          <span class="material-icons" id="loginClose">close</span>
+          <span class="material-icons" id="loginClose" @click="closeLoginForm">close</span>
         </div>
         <div class="loginCont_main">
           <div class="loginCont_body">
             <h2><b>ログイン</b></h2>
             <h4>メールアドレスでログイン</h4>
             <div class="loginCont_body_input">
-              <input type="text" id="loginEmailInput" class="form-control is-invalid" placeholder="メールアドレスを入力してください" required>
-              <div class="invalid-feedback" for="loginEmailInput">
-                Please provide a valid value.
-              </div>
-              <input type="password" id="loginPassWordInput" class="form-control is-invalid" placeholder="パスワードを入力してください" required>
-              <div class="invalid-feedback" for="loginPassWordInput">
-                Please provide a valid value.
-              </div>
-              <button class="btn btn-success confirm_btn" id="loginBtn"><b>ログイン</b></button>
+              <input type="text" id="loginEmailInput" v-model="userEmail" 
+                class="form-control" :class="{'is-invalid': validationEmailCheck}" placeholder="メールアドレスを入力してください" required>
+              <div class="invalid-feedback" for="loginEmailInput" v-if="validationEmailCheck">Please provide a valid value.</div>
+              <input type="password" id="loginPassWordInput" v-model="userPass"
+                class="form-control" :class="{'is-invalid': validationPassCheck}" placeholder="パスワードを入力してください" required>
+              <div class="invalid-feedback" for="loginPassWordInput" v-if="validationPassCheck">Please provide a valid value.</div>
+              <button class="btn btn-success confirm_btn" id="loginBtn" @click="login"><b>ログイン</b></button>
             </div>
           </div>
           <div class="loginCont_footer">
@@ -76,7 +75,7 @@
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
   <!-- 모바일 로그인 상태화면-->
   <!-- <div class="nav_profile_list_mobile" >
     <img src="https://placeimg.com/100/100/arch" alt="profileImg" />
@@ -85,32 +84,95 @@
 </template>
 
 <script>
+import common from "@/assets/js/common.js";
+import firebase from '@/firebase';
+
 export default {
   name:"Nav",
+  mixins: [common],
   data() {
     return {
+      userEmail:'',
+      userPass:'',
+      loginShow:false, // 로그인창 표시 유무
+      validationUserEmail:false, // 이메일 유효성
+      validationUserPass:false, // 패스워드 유효성
+      afterValidation:false, // 최초 로그인부터 유효성검사
       profileShow:true, // 프로필 표시상태
       profileMenuShow:false // 프로필 메뉴표시상태
     }
   },
   methods: {
+    // 로그인
     login(){
-          // signInWithEmailAndPassword(this.$auth, 'red@nate.com', '111111')
-    // .then((userCredential) => {
-    //   // eslint-disable-next-line no-debugger
-    //   debugger
-    //     console.log(1)
-    //     // Signed in
-    //     console.log(userCredential)
-    //     const user = userCredential.user;
-    //     // ...
-    // })
-    // .catch((error) => {
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    // });
+      this.afterValidation=true
+      //TODO 1.원형프로그레스 , 유효성체크
+      firebase.signInWithEmailAndPassword('testid..', 'testPw').then(
+        (res) => {
+            res.user.getIdToken().then((idToken) => {
+                this.$store.commit("onAuthEmailChanged", res.user.email); // 이메일 저장
+                this.$store.commit("onUserStatusChanged", true); // 로그인 OK
+                localStorage.setItem("jwt", idToken); // 로그인 성공시 ID토큰을 로컬스토리지에 저장
+                this.loginShow=false; // 로그인 창 닫기
+                alert("로그인성공")
+            })
+        },
+        (err) => {
+            this.$store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
+            this.$store.commit('onUserStatusChanged', false);  // 로그인 NG
+            localStorage.removeItem("jwt") // ID토큰을 로컬스토리지에 삭제
+            alert("로그인실패")
+        }
+      )
+    },
+    // 로그아웃
+    logout(){
+      firebase.logout().then(() => {
+        localStorage.removeItem("jwt") // ID토큰을 로컬스토리지에 삭제
+        this.$store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
+        this.$store.commit('onUserStatusChanged', false);  // 로그인 NG
+        alert("로그아웃")
+      }).catch((err) => {
+      }).finally(() => {
+        this.$router.push('/')
+      });
+    },
+    // 로그인창 표시
+    showLoginForm(){
+      this.loginShow=true; // 로그인창 표시
+    },
+    // 로그인창 닫기
+    closeLoginForm(){
+      // 입력폼 초기화
+      this.userEmail="";
+      this.userPass="";
+      this.loginShow=false; // 로그인창 닫기
     }
   },
+  computed: {
+    // 로그인상태반환
+    isLogin(){
+      return this.$store.getters['isSignedIn']
+    },
+    // 이메일 폼체크
+    validationEmailCheck(){
+      return !this.validationUserEmail&&this.afterValidation 
+    },
+    // 패스워드 폼체크
+    validationPassCheck(){
+      return !this.validationUserPass&&this.afterValidation 
+    }
+  },
+  watch:{
+    // 이메일 유효성체크
+    userEmail(inputEmail){
+      this.validationUserEmail=this.checkEmail(inputEmail)
+    },
+    // 패스워드 유효성체크
+    userPass(inputPass) {
+      this.validationUserPass=this.checkPass(inputPass)
+    }
+  }
 }
 </script>
 

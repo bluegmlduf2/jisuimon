@@ -12,6 +12,8 @@ const app=createApp(App);
 
 //파이어베이스 초기화
 firebase.init();
+firebase.onAuth(); // 인가처리
+
 // 전역변수
 moment.locale("ja");// moment 일본어 적용;
 app.config.globalProperties.$message=message; //message

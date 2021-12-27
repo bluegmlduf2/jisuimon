@@ -45,6 +45,8 @@ const store = createStore({
     // 데이터 저장하는곳 , $store.state
     state() {
         return {
+            email: "", // 유저 이메일 정보
+            status: false, // 유저 로그인 상태
             like: 0,
             selectedLike: false,
             moreDataVuex: null,
@@ -68,8 +70,26 @@ const store = createStore({
             }
         };
     },
+    getters: {
+        // 유저이메일정보
+        email(state) {
+            return state.email
+        },
+        // 로그인상태
+        isSignedIn(state) {
+            return state.status
+        },
+    },
     // 데이터 변경하는곳 (디버깅등을 염두해서 데이터 변경을 한곳에서 처리) , $store.commoit()
     mutations: {
+        // 유저 이메일 정보 갱신
+        onAuthEmailChanged(state, email) {
+            state.email = email;
+        },
+        // 유저 로그인 상태 갱신
+        onUserStatusChanged(state, status) {
+            state.status = status;
+        },
         addLike(state) {
             state.like++;
             state.selectedLike = true;
@@ -82,7 +102,7 @@ const store = createStore({
         showMoreVuex(state, data) {
             state.moreDataVuex = data;
             console.log(state.moreDataVuex);
-        },
+        }
     },
     // Ajax데이터 요청등을 처리 , $store.dispatch()
     // 하나의 메서드로 안쓰고 메서드를 분리한 이유는 인터페이스 개념으로 url들을 파악하기 위해서
