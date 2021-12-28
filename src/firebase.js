@@ -30,9 +30,33 @@ export default {
     },
 
     // 이메일과 패스워드로 로그인한다
-    // 파이어베이스인증결과, JWT Token이 돌아온다. JWT는 로컬스토리지에 저장한다.
+    // 파이어베이스인증결과, JWT Token이 돌아온다. JWT는 세션스토리지에 저장한다.
     signInWithEmailAndPassword(email, password) {
-        return signInWithEmailAndPassword(this.auth, email, password)
+        return signInWithEmailAndPassword(this.auth, email, password).then(
+            // 로그인성공시
+            async (res) => {
+                await res.user.getIdToken().then((idToken) => {
+                    store.commit("onAuthEmailChanged", res.user.email); // 이메일 저장
+                    store.commit("onUserStatusChanged", true); // 로그인 OK
+                    sessionStorage.setItem("jwt", idToken); // 로그인 성공시 ID토큰을 세션스토리지에 저장
+                });
+                return "TODO로그인성공";
+            },
+            // 로그인실패시
+            (err) => {
+                store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
+                store.commit("onUserStatusChanged", false); // 로그인 NG
+                sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
+                if (
+                    err.code == "auth/user-not-found" ||
+                    err.code == "auth/wrong-password"
+                ) {
+                    throw new Error("TODO입력정보확인해주셈");
+                } else {
+                    throw new Error("TODO로그인실패");
+                }
+            }
+        );
     },
     // 회원가입
     signUpWithEmailAndPassword(email, password) {
@@ -49,21 +73,28 @@ export default {
     // 로그아웃
     // 로그아아웃을 성공하면 세션스토리지의 JWT를 삭제하고 vuex에 유저정보갱신기능을 실행해서 유저상태를 로그아웃으로 만든다
     logout() {
-        return signOut(this.auth)
+        return signOut(this.auth).then(() => {
+          sessionStorage.removeItem("jwt") // ID토큰을 세션스토리지에 삭제
+          store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
+          store.commit('onUserStatusChanged', false);  // 로그인 NG
+          return 'TODO로그아웃성공'
+        }).catch(() => {
+          throw new Error('TODO로그아웃안됨')
+        })
     },
     //로그인상태갱신,JWT의 상태갱신
     onAuth() {
-        onAuthStateChanged(this.auth, (user) => {
+        onAuthStateChanged(this.auth, async (user) => {
             // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
             if (user) {
                 // 토큰을 세션에 설정
-                // user.getIdToken()
-                // .then((idToken) => {
-                //   localStorage.setItem('jwt', idToken);
-                // })
-                // .catch((error) => {
-                //   console.log(error);
-                // });
+                await user.getIdToken()
+                .then((idToken) => {
+                  sessionStorage.setItem('jwt', idToken);
+                })
+                .catch(() => {
+                  sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
+                });
 
                 store.commit("onAuthEmailChanged", user.email); // 이메일 저장
                 if (user.uid) {
@@ -78,4 +109,6 @@ export default {
             }
         });
     },
+    // 초기 렌더링시 사용
+    onAuthStateChanged
 };

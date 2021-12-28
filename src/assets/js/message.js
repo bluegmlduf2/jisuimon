@@ -16,6 +16,14 @@ const successMessage = (msg) =>
         timer: 1500,
     })
 
+const okMessage = (msg) =>
+    Swal.fire({
+        html: `<h2>${msg}</h2>`,
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,
+    })
+
 const errorMessage = (err) =>
     Swal.fire({
         title: "エラー",
@@ -44,6 +52,7 @@ const infoMessage = (msg) =>
 
 export default Object.freeze({
     successMessage,
+    okMessage,
     errorMessage,
     warningMessage,
     infoMessage

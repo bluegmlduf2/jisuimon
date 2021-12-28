@@ -102,37 +102,31 @@ export default {
       profileMenuShow:false // 프로필 메뉴표시상태
     }
   },
+  created(){
+    // TODO삭제예정(테스트유저입력용)
+    this.userEmail=""
+    this.userPass=""
+  },
   methods: {
     // 로그인
     login(){
       this.afterValidation=true
       //TODO 1.원형프로그레스 , 유효성체크
-      firebase.signInWithEmailAndPassword('testid..', 'testPw').then(
+      firebase.signInWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
-            res.user.getIdToken().then((idToken) => {
-                this.$store.commit("onAuthEmailChanged", res.user.email); // 이메일 저장
-                this.$store.commit("onUserStatusChanged", true); // 로그인 OK
-                localStorage.setItem("jwt", idToken); // 로그인 성공시 ID토큰을 로컬스토리지에 저장
-                this.loginShow=false; // 로그인 창 닫기
-                alert("로그인성공")
-            })
-        },
-        (err) => {
-            this.$store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
-            this.$store.commit('onUserStatusChanged', false);  // 로그인 NG
-            localStorage.removeItem("jwt") // ID토큰을 로컬스토리지에 삭제
-            alert("로그인실패")
+          this.loginShow=false; // 로그인 창 닫기
+          this.$message.okMessage(res,false);
         }
-      )
+      ).catch((err)=>{
+        this.$message.warningMessage(err.message);
+      })
     },
     // 로그아웃
     logout(){
-      firebase.logout().then(() => {
-        localStorage.removeItem("jwt") // ID토큰을 로컬스토리지에 삭제
-        this.$store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
-        this.$store.commit('onUserStatusChanged', false);  // 로그인 NG
-        alert("로그아웃")
+      firebase.logout().then((res) => {
+        this.$message.okMessage(res,false);
       }).catch((err) => {
+        this.$message.warningMessage(err.message);
       }).finally(() => {
         this.$router.push('/')
       });
@@ -146,6 +140,9 @@ export default {
       // 입력폼 초기화
       this.userEmail="";
       this.userPass="";
+      // 유효성 초기화
+      this.validationUserEmail=false, // 이메일 유효성
+      this.validationUserPass=false, // 패스워드 유효성
       this.loginShow=false; // 로그인창 닫기
     }
   },

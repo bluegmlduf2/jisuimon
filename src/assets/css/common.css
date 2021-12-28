@@ -59,3 +59,8 @@
 .ck-placeholder{
     white-space: pre; /* pre를 사용하면 입력한 그대로 출력함 */
 }
+/* swal의 창이 가장 위에 표시되도록 설정 */
+.swal2-container{
+    z-index: 9999!important;
+}
+

@@ -55,7 +55,7 @@ const router = createRouter({
 
 //모든 라우터 들이 실행되기 전에 실행되는 녀석을 추가 (navigation guard)
 router.beforeEach(function (to, from, next) {
-    firebase.onAuth(); // 인가처리 TODO 한번 다시봐야함..
+    firebase.onAuth(); // app의 권한갱신과는 다르게 페이지 이동시마다 권한갱신을한다
     let currentUserStatus = store.getters["isSignedIn"];
     let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
     
