@@ -34,19 +34,9 @@ export default {
     signInWithEmailAndPassword(email, password) {
         return signInWithEmailAndPassword(this.auth, email, password).then(
             // 로그인성공시
-            async (res) => {
-                await res.user.getIdToken().then((idToken) => {
-                    store.commit("onAuthEmailChanged", res.user.email); // 이메일 저장
-                    store.commit("onUserStatusChanged", true); // 로그인 OK
-                    sessionStorage.setItem("jwt", idToken); // 로그인 성공시 ID토큰을 세션스토리지에 저장
-                });
-                return "TODO로그인성공";
-            },
+            () =>  "TODO로그인성공",
             // 로그인실패시
             (err) => {
-                store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
-                store.commit("onUserStatusChanged", false); // 로그인 NG
-                sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
                 if (
                     err.code == "auth/user-not-found" ||
                     err.code == "auth/wrong-password"
@@ -86,26 +76,16 @@ export default {
     onAuth() {
         onAuthStateChanged(this.auth, async (user) => {
             // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
-            if (user) {
-                // 토큰을 세션에 설정
-                await user.getIdToken()
-                .then((idToken) => {
-                  sessionStorage.setItem('jwt', idToken);
-                })
-                .catch(() => {
-                  sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
-                });
-
+            if (user?.uid) {
+                const ID_TOKEN=await user.getIdToken() // 토큰취득
+                sessionStorage.setItem('jwt', ID_TOKEN); // 토큰을 세션에 저장 
                 store.commit("onAuthEmailChanged", user.email); // 이메일 저장
-                if (user.uid) {
-                    store.commit("onUserStatusChanged", true); // 로그인 OK
-                } else {
-                    store.commit("onUserStatusChanged", false); // 로그인 NG
-                }
+                store.commit("onUserStatusChanged", true); // 로그인 상태 OK 저장
             } else {
                 // 갱신해온 정보에 유저정보가 없다면 JWT와 기존유저정보를 지움
-                store.commit("onAuthEmailChanged", "");
-                store.commit("onUserStatusChanged", false);
+                sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
+                store.commit("onAuthEmailChanged", ""); // 저장된 이메일 비움
+                store.commit("onUserStatusChanged", false); // 로그인 상태 NG 저장
             }
         });
     },

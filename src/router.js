@@ -1,5 +1,4 @@
 import { createWebHistory, createRouter } from "vue-router";
-// import Main from './components/Main.vue'
 import Post from "./components/Post.vue";
 import Card from "./components/Card.vue";
 import Comment from "./components/Comment.vue";
@@ -7,6 +6,7 @@ import Write from "./components/Write.vue";
 import NotFound from "./components/NotFound.vue";
 import firebase from '@/firebase';
 import store from '@/store.js';
+import message from '@/assets/js/message'
 
 //$route : 경로관련
 //$router : 페이지이동관련
@@ -68,7 +68,8 @@ router.beforeEach(function (to, from, next) {
             next()
         }else{
             // 로그인안한 상태일 경우 경고
-            alert('로그인하셈')
+            router.push('/')
+            message.infoMessage("TODO 로그인필요함");
         }
     }else{
         //인증이 필요없는 페이지

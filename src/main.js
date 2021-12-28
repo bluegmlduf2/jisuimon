@@ -13,30 +13,22 @@ let app
 
 // 파이어베이스 초기화
 firebase.init();
-// 파이어베이스 유저정보권한 초기화후 렌더링 시작 (비동기 유저갱신시 권한갱신)
-// 1.비동기적으로 처리되는 유저갱신(로그인등..)을 감지하여 렌더링전에 권한갱신을 하기 위함 
-// 2.예를들어 로그인시 state를 commit으로 갱신해준다. 이것이 감지되고 app이 재랜더링 되면서 아래의 권한갱신이 실행된다. 
+// 파이어베이스 유저정보권한 초기화 후 렌더링 시작
+// 1.router 내부에서 권한 체크를 위해선 파이어베이스 auth의 객체생성이 먼저 이루어져야한다
+// 2.비동기적으로 처리되는 유저갱신(로그인/새로고침)을 감지하여 렌더링전에 권한갱신을 하기 위함 
+// 3.재랜더링 될때마다 아래의 권한확인 후 할당부분이 실행된다. 
 firebase.onAuthStateChanged(firebase.auth, async (user) => {
     // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
-    if (user) {
-        // 토큰을 세션에 설정
-        await user.getIdToken().then((idToken) => {
-            sessionStorage.setItem('jwt', idToken);
-        })
-        .catch(() => {
-            sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
-        });
-
+    if (user?.uid) {
+        const ID_TOKEN=await user.getIdToken() // 토큰취득
+        sessionStorage.setItem('jwt', ID_TOKEN); // 토큰을 세션에 저장 
         store.commit("onAuthEmailChanged", user.email); // 이메일 저장
-        if (user.uid) {
-            store.commit("onUserStatusChanged", true); // 로그인 OK
-        } else {
-            store.commit("onUserStatusChanged", false); // 로그인 NG
-        }
+        store.commit("onUserStatusChanged", true); // 로그인 상태 OK 저장
     } else {
         // 갱신해온 정보에 유저정보가 없다면 JWT와 기존유저정보를 지움
-        store.commit("onAuthEmailChanged", "");
-        store.commit("onUserStatusChanged", false);
+        sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
+        store.commit("onAuthEmailChanged", ""); // 저장된 이메일 비움
+        store.commit("onUserStatusChanged", false); // 로그인 상태 NG 저장
     }
 
     // vue의 app객체를 최초 1회만 생성
