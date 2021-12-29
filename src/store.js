@@ -131,6 +131,10 @@ const store = createStore({
         commentReply(context, payload) {
             return this.state.getRequest('/commentReply',payload);
         },
+        // 회원등록
+        signUp(context, payload) {
+            return this.state.getRequest('/signUp',payload);
+        },
     },
 });
 

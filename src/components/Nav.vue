@@ -57,20 +57,21 @@
         </div>
         <div class="loginCont_main">
           <div class="loginCont_body">
-            <h2><b>ログイン</b></h2>
-            <h4>メールアドレスでログイン</h4>
+            <h2><b>{{signUpShow?"会員登録":"ログイン"}}</b></h2>
+            <h4>{{signUpShow?"メールアドレスで会員登録":"メールアドレスでログイン"}}</h4>
             <div class="loginCont_body_input">
               <input type="text" id="loginEmailInput" v-model="userEmail" 
                 class="form-control" :class="{'is-invalid': validationEmailCheck}" placeholder="メールアドレスを入力してください" required>
-              <div class="invalid-feedback" for="loginEmailInput" v-if="validationEmailCheck">Please provide a valid value.</div>
+              <div class="invalid-feedback" for="loginEmailInput" v-if="validationEmailCheck">メールアドレスの形式を確認してください</div>
               <input type="password" id="loginPassWordInput" v-model="userPass"
                 class="form-control" :class="{'is-invalid': validationPassCheck}" placeholder="パスワードを入力してください" required>
-              <div class="invalid-feedback" for="loginPassWordInput" v-if="validationPassCheck">Please provide a valid value.</div>
-              <button class="btn btn-success confirm_btn" id="loginBtn" @click="login"><b>ログイン</b></button>
+              <div class="invalid-feedback" for="loginPassWordInput" v-if="validationPassCheck">半角英数字のみ、記号1文字以上使用、全体で8文字以上を入力してください</div>
+              <button class="btn btn-success confirm_btn" id="loginBtn" @click="signUpShow?signup():login()"><b>{{signUpShow?"会員登録":"ログイン"}}</b></button>
             </div>
           </div>
           <div class="loginCont_footer">
-            まだメンバーでない方は、<span id="moveSignUpBtn">こちらから</span>
+            {{signUpShow?"既にメンバーの方は、":"まだメンバーでない方は、"}}
+            <span id="moveSignUpBtn" @click="signUpShow=!signUpShow">こちらから</span>
           </div>
         </div>
       </div>
@@ -95,6 +96,7 @@ export default {
       userEmail:'',
       userPass:'',
       loginShow:false, // 로그인창 표시 유무
+      signUpShow:false, // 회원가입창 표시 유무
       validationUserEmail:false, // 이메일 유효성
       validationUserPass:false, // 패스워드 유효성
       afterValidation:false, // 최초 로그인부터 유효성검사
@@ -131,6 +133,19 @@ export default {
         this.$router.push('/')
       });
     },
+    // 회원가입
+    signup(){
+      this.afterValidation=true
+      //TODO 1.원형프로그레스 , 유효성체크
+      firebase.signUpWithEmailAndPassword(this.userEmail, this.userPass).then(
+        (res) => {
+          this.loginShow=false; // 로그인 창 닫기
+          this.$message.okMessage(res,false);
+        }
+      ).catch((err)=>{
+        this.$message.warningMessage(err.message);
+      })
+    },
     // 로그인창 표시
     showLoginForm(){
       this.loginShow=true; // 로그인창 표시
@@ -141,8 +156,10 @@ export default {
       this.userEmail="";
       this.userPass="";
       // 유효성 초기화
-      this.validationUserEmail=false, // 이메일 유효성
-      this.validationUserPass=false, // 패스워드 유효성
+      this.afterValidation=false; // 유효성 검사유무
+      this.validationUserEmail=false; // 이메일 유효성
+      this.validationUserPass=false; // 패스워드 유효성
+      this.signUpShow=false; // 로그인화면 변경
       this.loginShow=false; // 로그인창 닫기
     }
   },

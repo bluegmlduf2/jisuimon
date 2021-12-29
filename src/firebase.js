@@ -34,7 +34,7 @@ export default {
     signInWithEmailAndPassword(email, password) {
         return signInWithEmailAndPassword(this.auth, email, password).then(
             // 로그인성공시
-            () =>  "TODO로그인성공",
+            () => "TODO로그인성공",
             // 로그인실패시
             (err) => {
                 if (
@@ -50,35 +50,53 @@ export default {
     },
     // 회원가입
     signUpWithEmailAndPassword(email, password) {
-        createUserWithEmailAndPassword(this.auth, email, password)
-            .then((res) => {
-                //서버에 가입정보 넘김
-                console.log(res);
-                // router.push('/signin');
-            })
-            .catch((err) => {
-                console.log(err.message);
-            });
+        return createUserWithEmailAndPassword(this.auth, email, password).then(
+            // 회원가입성공시 user를 반환한다
+            (userCredential) => userCredential.user,
+            // 회원가입실패시
+            (err) => {
+                //TODO 실패시 서버의 uid삭제
+                if (err.code == "auth/email-already-in-use") {
+                    throw new Error("TODO이미사용중인아이디임");
+                } else {
+                    throw new Error("TODO로그인실패");
+                }
+            }
+        ).then(async (user)=>{
+            // 서버전송데이터에 넣음
+            const payload = { 
+                method: "post",
+                sendData: {userId:user.uid}
+            };
+            debugger
+            return await store.dispatch("signUp", payload)
+        }).catch((err)=>{
+            //TODO 여기서 에러가나면 파이어베이스의 유저를 삭제해야함
+            //TODO삭제후인증정보도지워야함..인가정보 왜냐하면 회원가입후 자동로그인되므로
+            throw new Error("TODO 에러메세지.."+err)
+        });
     },
     // 로그아웃
     // 로그아아웃을 성공하면 세션스토리지의 JWT를 삭제하고 vuex에 유저정보갱신기능을 실행해서 유저상태를 로그아웃으로 만든다
     logout() {
-        return signOut(this.auth).then(() => {
-          sessionStorage.removeItem("jwt") // ID토큰을 세션스토리지에 삭제
-          store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
-          store.commit('onUserStatusChanged', false);  // 로그인 NG
-          return 'TODO로그아웃성공'
-        }).catch(() => {
-          throw new Error('TODO로그아웃안됨')
-        })
+        return signOut(this.auth)
+            .then(() => {
+                sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
+                store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
+                store.commit("onUserStatusChanged", false); // 로그인 NG
+                return "TODO로그아웃성공";
+            })
+            .catch(() => {
+                throw new Error("TODO로그아웃안됨");
+            });
     },
     //로그인상태갱신,JWT의 상태갱신
     onAuth() {
         onAuthStateChanged(this.auth, async (user) => {
             // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
             if (user?.uid) {
-                const ID_TOKEN=await user.getIdToken() // 토큰취득
-                sessionStorage.setItem('jwt', ID_TOKEN); // 토큰을 세션에 저장 
+                const ID_TOKEN = await user.getIdToken(); // 토큰취득
+                sessionStorage.setItem("jwt", ID_TOKEN); // 토큰을 세션에 저장
                 store.commit("onAuthEmailChanged", user.email); // 이메일 저장
                 store.commit("onUserStatusChanged", true); // 로그인 상태 OK 저장
             } else {
@@ -90,5 +108,5 @@ export default {
         });
     },
     // 초기 렌더링시 사용
-    onAuthStateChanged
+    onAuthStateChanged,
 };

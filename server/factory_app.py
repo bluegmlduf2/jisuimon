@@ -6,6 +6,7 @@ import traceback
 from controller import post
 from controller import food
 from controller import comment
+from controller import user
 from controller import common
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -51,8 +52,8 @@ def create_app(config_mode="test"):
 
     app.register_blueprint(post.post_controller, url_prefix=HOME_URL)
     app.register_blueprint(food.food_controller, url_prefix=HOME_URL)
+    app.register_blueprint(user.user_controller, url_prefix=HOME_URL)
     app.register_blueprint(comment.comment_controller, url_prefix=HOME_URL)
-    # app.register_blueprint(signup.signup_ab, url_prefix='/signup-data')
     # app.register_blueprint(signin.signin_ab, url_prefix='/signin-data')
     # app.register_blueprint(sell.sell_ab, url_prefix='/sell-data')
     # app.register_blueprint(common.common_ab, url_prefix='/common-data')
