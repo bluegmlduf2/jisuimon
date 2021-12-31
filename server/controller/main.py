@@ -1,7 +1,6 @@
 from flask import Blueprint, request, session, current_app, jsonify
 from model import main
 from common import *  # 공통
-import bcrypt  # 암호화
 import base64
 
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성

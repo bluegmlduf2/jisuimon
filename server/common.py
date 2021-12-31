@@ -54,6 +54,7 @@ def getMessage(code, param=None):
         701: f"{param}を入力してください",
         702: "ファイル名が存在しません。\nファイルアップロード失敗しました",
         703: "空きファイルです。\nファイルアップロード失敗しました",
+        704: "既に登録されているユーザーです",
         # 실패 (서버)
         801: "システムエラー"
     }
@@ -65,7 +66,7 @@ def getMessage(code, param=None):
 # 유저에러_Exception상속
 class UserError(Exception):
     # 인스턴스 생성시 리턴되는 인스턴스변수
-    def __init__(self, errCode, param):
+    def __init__(self, errCode, param=None):
         self.errorInfo = getMessage(errCode, param)
 
     # 객체가 print함수에 호출될때 표시되는 함수

@@ -1,10 +1,8 @@
-from flask import Blueprint, request, session, current_app, jsonify
+from flask import Blueprint, request, current_app, jsonify
 from model import postModel
 from common import *
 import datetime  # 이미지 업로드에서 사용할 시간모듈
 from PIL import Image  # 이미지 사이즈 변경
-import bcrypt  # 암호화
-import base64
 import random
 
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성

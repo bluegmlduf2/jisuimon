@@ -71,7 +71,7 @@
           </div>
           <div class="loginCont_footer">
             {{signUpShow?"既にメンバーの方は、":"まだメンバーでない方は、"}}
-            <span id="moveSignUpBtn" @click="signUpShow=!signUpShow">こちらから</span>
+            <span id="moveSignUpBtn" @click="showSignUpForm">こちらから</span>
           </div>
         </div>
       </div>
@@ -106,8 +106,8 @@ export default {
   },
   created(){
     // TODO삭제예정(테스트유저입력용)
-    this.userEmail=""
-    this.userPass=""
+    this.userEmail="blue@nate.com"
+    this.userPass="111111"
   },
   methods: {
     // 로그인
@@ -116,7 +116,7 @@ export default {
       //TODO 1.원형프로그레스 , 유효성체크
       firebase.signInWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
-          this.loginShow=false; // 로그인 창 닫기
+          this.closeLoginForm(); // 로그인 창 닫기
           this.$message.okMessage(res,false);
         }
       ).catch((err)=>{
@@ -139,7 +139,7 @@ export default {
       //TODO 1.원형프로그레스 , 유효성체크
       firebase.signUpWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
-          this.loginShow=false; // 로그인 창 닫기
+          this.closeLoginForm(); // 로그인 창 닫기
           this.$message.okMessage(res,false);
         }
       ).catch((err)=>{
@@ -149,6 +149,13 @@ export default {
     // 로그인창 표시
     showLoginForm(){
       this.loginShow=true; // 로그인창 표시
+    },
+    // 회원등록창 표시
+    showSignUpForm(){
+      this.afterValidation=false; // 유효성 검사유무
+      this.validationUserEmail=false; // 이메일 유효성
+      this.validationUserPass=false; // 패스워드 유효성
+      this.signUpShow=!this.signUpShow // 회원등록창 표시
     },
     // 로그인창 닫기
     closeLoginForm(){

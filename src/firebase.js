@@ -6,6 +6,7 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    deleteUser,
     signOut,
 } from "firebase/auth";
 import store from "@/store";
@@ -50,31 +51,43 @@ export default {
     },
     // 회원가입
     signUpWithEmailAndPassword(email, password) {
+        let current_user // 파이어베이스 회원등록 유저
         return createUserWithEmailAndPassword(this.auth, email, password).then(
             // 회원가입성공시 user를 반환한다
-            (userCredential) => userCredential.user,
+            (userCredential) => {
+                current_user = userCredential.user
+                return userCredential.user
+                
+            },
             // 회원가입실패시
             (err) => {
                 //TODO 실패시 서버의 uid삭제
                 if (err.code == "auth/email-already-in-use") {
                     throw new Error("TODO이미사용중인아이디임");
                 } else {
-                    throw new Error("TODO로그인실패");
+                    throw new Error("TODO회원등록실패");
                 }
             }
         ).then(async (user)=>{
-            // 서버전송데이터에 넣음
-            const payload = { 
+            const payload = {
                 method: "post",
-                sendData: {userId:user.uid}
+                sendData: { userId: user.uid },
             };
-            debugger
-            return await store.dispatch("signUp", payload)
-        }).catch((err)=>{
-            //TODO 여기서 에러가나면 파이어베이스의 유저를 삭제해야함
-            //TODO삭제후인증정보도지워야함..인가정보 왜냐하면 회원가입후 자동로그인되므로
-            throw new Error("TODO 에러메세지.."+err)
-        });
+            //TODO RSA암호화..너무귀찮지만고려..ssh사용하니 괜찮지않을까..?
+            return await store.dispatch("signUp", payload);
+        }).catch(async(err) => {
+            // 에러메세지 정의
+            const ERR_MESSAGE = (err.response?.data.message)
+                ? err.response.data.message // 서버에러메세지
+                : err.message; // 파이어베이스에러메세지
+                
+            // 유저등록중 서버 에러시 파이어베이스 유저삭제
+            if(current_user){
+                await deleteUser(current_user)
+            }    
+            throw new Error("TODO 에러메세지.." + ERR_MESSAGE);
+        })
+        .then(() => "TODO회원등록성공");
     },
     // 로그아웃
     // 로그아아웃을 성공하면 세션스토리지의 JWT를 삭제하고 vuex에 유저정보갱신기능을 실행해서 유저상태를 로그아웃으로 만든다
