@@ -4,6 +4,9 @@
     <router-view name="Card" :posts="posts" :postCnt="postCnt" :postCntAll="postCntAll" @addPostCnt="addPostCnt"/>
     <!-- Post -->
     <router-view name="Post" />
+    <!-- TODO write에서 setting으로 화면이동시 잔상 -->
+    <!-- Setting -->
+    <router-view name="Setting" />
     <!-- Write -->
     <router-view name="Write" v-slot="{ Component }">
       <transition name="fade" mode="out-in">

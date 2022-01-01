@@ -27,7 +27,9 @@ export default {
     init() {
         initializeApp(firebaseConfig); // firebase 초기화
         this.auth = getAuth(); // 인증정보모듈 (인증 서비스만 사용)
-        setPersistence(this.auth, browserSessionPersistence); // 세션에 로그인정보저장(창닫으면 초기화)
+        setPersistence(this.auth, browserSessionPersistence); // 세션에 로그인 정보저장(현재탭에만 적용,창닫으면 초기화) 
+        // setPersistence(this.auth, browserLocalPersistence); // 로컬스토리지에 로그인 정보저장(로그아웃하지않는한 지속,이게 디폴트임) 
+
     },
 
     // 이메일과 패스워드로 로그인한다

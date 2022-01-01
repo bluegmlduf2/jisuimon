@@ -3,6 +3,7 @@ import Post from "./components/Post.vue";
 import Card from "./components/Card.vue";
 import Comment from "./components/Comment.vue";
 import Write from "./components/Write.vue";
+import Setting from "./components/Setting.vue";
 import NotFound from "./components/NotFound.vue";
 import firebase from '@/firebase';
 import store from '@/store.js';
@@ -30,6 +31,15 @@ const routes = [
         path: "/write",
         components: {
             Write: Write,
+        },
+        meta:{
+            requiresAuth: true
+        }
+    },
+    {
+        path: "/setting",
+        components: {
+            Setting: Setting,
         },
         meta:{
             requiresAuth: true

@@ -16,7 +16,7 @@
         <li class="nav-item nav_profile_mobile" v-if="profileShow">
           <a class="nav-link" href="#">My Post</a>
         </li>
-        <li class="nav-item nav_profile_mobile" v-if="profileShow">
+        <li class="nav-item nav_profile_mobile" v-if="profileShow" to="/setting">
           <a class="nav-link" href="#">Setting</a>
         </li>
         <li class="nav-item nav_profile_mobile" v-if="profileShow">
@@ -36,7 +36,7 @@
           <div class="nav_profile_list_showBg" @click="profileMenuShow=!profileMenuShow" v-if="profileMenuShow">
             <div class="nav_profile_list_show" v-if="profileMenuShow">
               <router-link class="nav-link" to="#">My Post</router-link>
-              <router-link class="nav-link" to="#">Setting</router-link>
+              <router-link class="nav-link" to="/setting">Setting</router-link>
               <router-link class="nav-link" @click="logout" to="#">Logout</router-link>
             </div>
           </div>
@@ -217,7 +217,7 @@ export default {
 
 .nav_profile img {
   height: 2.5rem;
-  widows: 2.5rem;
+  width: 2.5rem;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -313,7 +313,7 @@ export default {
 }
 .nav_profile_list_mobile img {
   height: 4rem;
-  widows: 4rem;
+  width: 4rem;
   border-radius: 50%;
   object-fit: cover;
 }

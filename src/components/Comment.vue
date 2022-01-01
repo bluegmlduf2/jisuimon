@@ -206,7 +206,7 @@ export default {
 }
 .commentCont_profileImg > img {
   height: 2.5rem;
-  widows: 2.5rem;
+  width: 2.5rem;
   display: block;
   border-radius: 50%;
   object-fit: cover;

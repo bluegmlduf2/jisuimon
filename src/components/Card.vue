@@ -150,7 +150,7 @@ export default {
 }
 .card-writer > img {
   height: 1.5rem;
-  widows: 1.5rem;
+  width: 1.5rem;
   display: block;
   border-radius: 50%;
   object-fit: cover;
