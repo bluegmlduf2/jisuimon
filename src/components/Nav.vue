@@ -10,17 +10,17 @@
           <router-link class="nav-link" to="/">Home</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <router-link class="nav-link" to="#">Link</router-link>
         </li>
         <!-- 로그인 모바일 메뉴 -->
-        <li class="nav-item nav_profile_mobile" v-if="profileShow">
-          <a class="nav-link" href="#">My Post</a>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin">
+          <router-link class="nav-link" to="#">My Post</router-link>
         </li>
-        <li class="nav-item nav_profile_mobile" v-if="profileShow" to="/setting">
-          <a class="nav-link" href="#">Setting</a>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin" to="/setting">
+          <router-link class="nav-link" to="/setting">Setting</router-link>
         </li>
-        <li class="nav-item nav_profile_mobile" v-if="profileShow">
-          <a class="nav-link" href="#">Logout</a>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin">
+          <router-link class="nav-link" to="#" @click="logout">Logout</router-link>
         </li>
       </ul>
       <form class="form-inline mt-2 mt-md-0">

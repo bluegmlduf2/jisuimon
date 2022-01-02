@@ -14,8 +14,10 @@
     <div class="settingCont_nicknameCont">
       <div class="setting_input">
         <h3 class="setting_label">닉네임명</h3>
-        <div class="setting_cont">닉네임123(입력폼변경)</div>
-        <div class="setting_update update_btn">수정</div>
+        <div class="setting_cont" v-if="!nickNameClicked">닉네임123(입력폼변경)</div>
+        <input type="text" id="" class="setting_cont form-control" v-if="nickNameClicked" placeholder="入力してください">
+        <div class="setting_update update_btn" v-if="!nickNameClicked" @click="nickNameClicked=!nickNameClicked">수정</div>
+        <div class="setting_update btn btn-success confirm_btn" v-if="nickNameClicked" @click="nickNameClicked=!nickNameClicked">저장</div>
       </div>
       <div class="setting_desc">
         표시되는 닉네임입니다..
@@ -25,10 +27,11 @@
     <div class="settingCont_passwordCont">
       <div  class="setting_input">
         <h3 class="setting_label">패스워드</h3>
-        <div class="setting_cont">현재 비밀번호</div>
-        <div class="setting_update update_btn">수정</div>
-        <div class="setting_cont only">새 비밀번호(숨기기)</div>
-        <div class="setting_cont only">새 비밀번호 확인(숨기기)</div>
+        <input type="password" class="setting_cont form-control" v-if="passWordClicked" placeholder="현재 비밀번호">
+        <div class="setting_update update_btn only" v-if="!passWordClicked" @click="passWordClicked=!passWordClicked">수정</div>
+        <div class="setting_update btn btn-success confirm_btn" v-if="passWordClicked" @click="passWordClicked=!passWordClicked">저장</div>
+        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호">
+        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호 확인">
       </div>
       <div class="setting_desc">
         8글자 숫자와 특수문자 ...
@@ -50,25 +53,21 @@
 <script>
 export default {
   name: "Setting",
+  data() {
+    return {
+      nickName:'', // 닉네임
+      nickNameClicked:false, // 닉네임변경 유무
+      passWordClicked:false, // 패스워드변경 유무
+    }
+  },
 };
 </script>
 
 <style>
 @media (min-width: 577px) {
-  /* 현재 넓이가 577px이상 */
+  /* 현재 넓이가 577px이하 (모바일)*/
   .settingCont {
     padding-top: 10vh;
-  }
-}
-/* Post,Comment 공통 레이아웃 */
-@media (min-width: 992px) {
-  /* 넓이가 992px 이상 여백추가*/
-  .settingCont {
-    padding-left: 160px;
-    padding-right: 160px;
-    width: 768px;
-    margin-left: auto;
-    margin-right: auto;
   }
 }
 .settingCont {
@@ -76,6 +75,9 @@ export default {
   flex-direction: column;
   text-align: left;
   font-size: 1rem;
+  max-width: 447px; /* 1px~447px표시 아무리큰화면이라도 447px까지표시 모바일은 1까지줄어듬 */
+  margin-left: auto;
+  margin-right: auto;
 }
 /* 프로필사진 */
 .settingCont_photoCont {
@@ -120,19 +122,29 @@ export default {
 }
 
 .setting_cont {
-  /* 항상 70%를 유지하지만 최대 313px까지만 커진다 */
-  width: 70%;
-  max-width: 313px;
+  /* 항상 70%를 유지하지만 최대 1px~224px까지만 커진다 */
+  width: 62%;
+  margin-left: 1.5%;
+  margin-right: 1.5%;
+  max-width: 277px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  vertical-align:middle; /* overflow:hidden;으로 높낮이가 안맞는걸 해결 */
 }
 
 .setting_cont.only {
   /* 클래스의특정기능추가 */
-  padding-top: 1.2rem;
-  margin: 0 10% 0 20%
+  margin: 1.2rem 11.5% 0 21.5%
 }
 
 .setting_update {
-  width: 10%;
+  width: 15%;
+  text-align: center;
+}
+
+.setting_update.only{
+  margin-left: 65%;
 }
 
 .setting_desc {
