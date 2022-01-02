@@ -56,11 +56,7 @@ export default {
         let current_user // 파이어베이스 회원등록 유저
         return createUserWithEmailAndPassword(this.auth, email, password).then(
             // 회원가입성공시 user를 반환한다
-            (userCredential) => {
-                current_user = userCredential.user
-                return userCredential.user
-                
-            },
+            (userCredential) => userCredential.user,
             // 회원가입실패시
             (err) => {
                 //TODO 실패시 서버의 uid삭제
@@ -71,10 +67,8 @@ export default {
                 }
             }
         ).then(async (user)=>{
-            const payload = {
-                method: "post",
-                sendData: { userId: user.uid },
-            };
+            current_user = user // 서버에서 등록실패할 경우 파이어베이스의 유저삭제용
+            const payload = {method: "post"};
             //TODO RSA암호화..너무귀찮지만고려..ssh사용하니 괜찮지않을까..?
             return await store.dispatch("signUp", payload);
         }).catch(async(err) => {
@@ -82,7 +76,6 @@ export default {
             const ERR_MESSAGE = (err.response?.data.message)
                 ? err.response.data.message // 서버에러메세지
                 : err.message; // 파이어베이스에러메세지
-                
             // 유저등록중 서버 에러시 파이어베이스 유저삭제
             if(current_user){
                 await deleteUser(current_user)

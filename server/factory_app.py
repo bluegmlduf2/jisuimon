@@ -1,16 +1,15 @@
 '''
 Flask설정
 '''
-from flask import Flask, render_template, request, redirect, url_for, Blueprint,session
-import traceback
+from flask import Flask
 from controller import post
 from controller import food
 from controller import comment
 from controller import user
-from controller import common
 from flask_cors import CORS
-from flask_jwt_extended import JWTManager
 import configparser#환경설정파일parser
+import firebase_admin
+from firebase_admin import credentials, auth
 
 dict_confmode = {
     'test': 'setting.TestMode',
@@ -30,9 +29,10 @@ def create_app(config_mode="test"):
     config.read('{rootPath}/key.ini'.format(rootPath=app.root_path))
     app.secret_key= config['DEFAULT']['SESSION_KEY']
     
-    #jwt토큰의암호키설정
-    app.config["JWT_SECRET_KEY"] = config['DEFAULT']['JWT_KEY']
-    jwt = JWTManager(app)
+    # 파이어베이스 환경설정
+    cred = credentials.Certificate('{rootPath}/yoon-firebase-adminsdk-p1v9u-b1bb4f62fd.json'.format(rootPath=app.root_path))
+    app.firebase=firebase_admin.initialize_app(cred)
+    app.auth=auth
 
     #CORS(app,resources={r'*': {'origins': "*"}},supports_credentials=True)
     CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
@@ -54,10 +54,6 @@ def create_app(config_mode="test"):
     app.register_blueprint(food.food_controller, url_prefix=HOME_URL)
     app.register_blueprint(user.user_controller, url_prefix=HOME_URL)
     app.register_blueprint(comment.comment_controller, url_prefix=HOME_URL)
-    # app.register_blueprint(signin.signin_ab, url_prefix='/signin-data')
-    # app.register_blueprint(sell.sell_ab, url_prefix='/sell-data')
-    # app.register_blueprint(common.common_ab, url_prefix='/common-data')
-    # app.register_blueprint(main.main_ab, url_prefix='/main-data')
 
     return app
 

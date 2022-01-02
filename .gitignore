@@ -39,6 +39,7 @@ server/static/temp/*
 server/static/contentImg/*
 !server/static/contentImg/defaultImg
 server/static/userImg/*
+server/*firebase-adminsdk*.json
 
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files

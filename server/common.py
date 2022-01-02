@@ -1,8 +1,7 @@
-from flask import jsonify ,current_app
+from flask import jsonify ,current_app, request
 import time
 import traceback
 import simplejson as json  # dumps(객체) ->json문자열 , loads(json문자열) ->객체
-import configparser  # 환경설정파일parser
 import base64
 from database import Connection
 from functools import wraps
@@ -45,6 +44,23 @@ def exception_handler(func):
             return result
     return inner_func
 
+# 유저 토큰 확인 데코레이터
+def check_token(func):
+    @wraps(func)
+    def wrap(*args,**kwargs):
+        # 토큰이 존재하지않으면 400번에러
+        if not request.headers.get('authorization'):
+            return jsonify(getMessage(705)), 400
+        try:
+            #user변수에 파이어베이스 유저정보 넣음
+            user = current_app.auth.verify_id_token(request.headers['authorization'].replace("Bearer ",""))
+            request.user = user
+        except:
+            #유효하지않은 토큰
+            return jsonify(getMessage(705)), 400
+        return func(*args, **kwargs)
+    return wrap
+
 # 코드와 맵핑된 메세지 반환
 def getMessage(code, param=None):
     MESSAGE = {
@@ -55,6 +71,7 @@ def getMessage(code, param=None):
         702: "ファイル名が存在しません。\nファイルアップロード失敗しました",
         703: "空きファイルです。\nファイルアップロード失敗しました",
         704: "既に登録されているユーザーです",
+        705: "ユーザー権限を確認してください",
         # 실패 (서버)
         801: "システムエラー"
     }

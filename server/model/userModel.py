@@ -14,7 +14,7 @@ def checkUser(args):
                 ut.user_id = %s
             '''
 
-            data = conn.executeOne(sql, args['userId'])['isUser']
+            data = conn.executeOne(sql, args['uid'])['isUser']
 
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
@@ -41,7 +41,7 @@ def insertUser(args):
             VALUES(
                 %s);
             '''
-            conn.execute(sql, (args['userId']))
+            conn.execute(sql, (args['uid']))
         except UserError as e:
             conn.rollback()
             return json.dumps({'status': False, 'message': e.msg}), 200

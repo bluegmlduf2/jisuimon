@@ -65,6 +65,8 @@
               <div class="invalid-feedback" for="loginEmailInput" v-if="validationEmailCheck">メールアドレスの形式を確認してください</div>
               <input type="password" id="loginPassWordInput" v-model="userPass"
                 class="form-control" :class="{'is-invalid': validationPassCheck}" placeholder="パスワードを入力してください" required>
+              <input type="password" id="loginPassWordInput" v-model="userPassConfirm"
+                class="form-control" :class="{'is-invalid': validationPassCheck}" v-if="signUpShow" placeholder="パスワードを再入力してください" required>
               <div class="invalid-feedback" for="loginPassWordInput" v-if="validationPassCheck">半角英数字のみ、記号1文字以上使用、全体で8文字以上を入力してください</div>
               <button class="btn btn-success confirm_btn" id="loginBtn" @click="signUpShow?signup():login()"><b>{{signUpShow?"会員登録":"ログイン"}}</b></button>
             </div>
@@ -95,6 +97,7 @@ export default {
     return {
       userEmail:'',
       userPass:'',
+      userPassConfirm:'',
       loginShow:false, // 로그인창 표시 유무
       signUpShow:false, // 회원가입창 표시 유무
       validationUserEmail:false, // 이메일 유효성
@@ -136,7 +139,7 @@ export default {
     // 회원가입
     signup(){
       this.afterValidation=true
-      //TODO 1.원형프로그레스 , 유효성체크
+      //TODO 1.원형프로그레스 , 유효성체크 , 비밀번호확인창 일치체크
       firebase.signUpWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
           this.closeLoginForm(); // 로그인 창 닫기
@@ -152,6 +155,11 @@ export default {
     },
     // 회원등록창 표시
     showSignUpForm(){
+      // 입력폼 초기화
+      this.userEmail="";
+      this.userPass="";
+      this.userPassConfirm="";
+      // 유효성 초기화
       this.afterValidation=false; // 유효성 검사유무
       this.validationUserEmail=false; // 이메일 유효성
       this.validationUserPass=false; // 패스워드 유효성
@@ -162,6 +170,7 @@ export default {
       // 입력폼 초기화
       this.userEmail="";
       this.userPass="";
+      this.userPassConfirm="";
       // 유효성 초기화
       this.afterValidation=false; // 유효성 검사유무
       this.validationUserEmail=false; // 이메일 유효성
@@ -192,6 +201,10 @@ export default {
     // 패스워드 유효성체크
     userPass(inputPass) {
       this.validationUserPass=this.checkPass(inputPass)
+    },
+    // 비밀번호 확인란 체크
+    userPassConfirm(userPassConfirm) {
+      this.validationUserPass=this.checkPass(userPassConfirm)
     }
   }
 }
@@ -199,19 +212,19 @@ export default {
 
 <style>
 /* 넓이가 992px 이상 여백추가*/
-@media (min-width: 992px){
-  .navbar{
-    padding-left:80px!important;
-    padding-right:80px!important;
+@media (min-width: 992px) {
+  .navbar {
+    padding-left: 80px !important;
+    padding-right: 80px !important;
   }
 }
 
-.navbar-brand{
-  color:rgb(96, 96, 96)!important;
-  font-size:2rem!important;
+.navbar-brand {
+  color: rgb(96, 96, 96) !important;
+  font-size: 2rem !important;
 }
 
-.nav-item{
+.nav-item {
   font-size: 1.2rem;
 }
 
@@ -223,27 +236,27 @@ export default {
 }
 
 /* 가로넓이가 최대767px까지 클래스적용 */
-@media (max-width: 767px){
-  .nav_profile{
+@media (max-width: 767px) {
+  .nav_profile {
     display: none;
   }
-  #searchMaterial{
+  #searchMaterial {
     width: 100%;
   }
-  #writePostBtn{
+  #writePostBtn {
     width: 100%;
     margin-top: 10px;
-    border-radius:0.5rem!important;
+    border-radius: 0.5rem !important;
   }
-  .nav_profile_mobile{
-    display: block!important;
+  .nav_profile_mobile {
+    display: block !important;
   }
-  .nav_profile_list_mobile{
-    display: inline-block!important;
+  .nav_profile_list_mobile {
+    display: inline-block !important;
   }
 }
 
-#writePostBtn{
+#writePostBtn {
   font-weight: bold;
   margin-right: 0.7rem;
   padding-left: 1rem;
@@ -253,63 +266,63 @@ export default {
   background: white;
   border: 1px solid rgb(96, 96, 96);
   color: rgb(96, 96, 96);
-  transition: all 0.125s ease-in 0s;/* 마우스오버색상변환 */
-  position: relative;/* list메뉴의 시작위치지정을 위해 추가 */
+  transition: all 0.125s ease-in 0s; /* 마우스오버색상변환 */
+  position: relative; /* list메뉴의 시작위치지정을 위해 추가 */
 }
 
-#writePostBtn:hover{
+#writePostBtn:hover {
   background: rgb(52, 58, 64);
   color: white;
 }
 
-.nav_profile_list{
+.nav_profile_list {
   display: inline-block;
   cursor: pointer;
 }
 
-.nav_profile_list_show{
-    position: fixed;
-    margin-top: 50px;
-    width: 12rem;
-    background: white;
-    box-shadow: rgb(0 0 0 / 20%) 0px 0px 10px;
-    right: 3.5rem;
+.nav_profile_list_show {
+  position: fixed;
+  margin-top: 50px;
+  width: 12rem;
+  background: white;
+  box-shadow: rgb(0 0 0 / 20%) 0px 0px 10px;
+  right: 3.5rem;
 }
 
-.nav_profile_list_show > a{
+.nav_profile_list_show > a {
   display: block;
   padding: 0.8rem 0;
-  color: rgba(0,0,0,.9);
+  color: rgba(0, 0, 0, 0.9);
 }
 
 /* 모달닫기용 */
-.nav_profile_list_showBg{
-  background-color:transparent; 
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;/** 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
-  padding:15px;
+.nav_profile_list_showBg {
+  background-color: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /** 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
+  padding: 15px;
 }
 
-.nav_profile_arrow{
-    position: relative;
-    top: 6px;
+.nav_profile_arrow {
+  position: relative;
+  top: 6px;
 }
 
-.nav_profile_mobile{
+.nav_profile_mobile {
   display: none;
 }
 
 /* 모바일 로그인 상태화면 (현재 사용하지않지만 나중에 게시물 좋아요 개발예정) */
-.nav_profile_list_mobile{
+.nav_profile_list_mobile {
   position: fixed;
   display: none;
   cursor: pointer;
   right: 1rem;
   bottom: 1rem;
-  z-index: 1;/* 중첩요소중 가장앞에위치 */
+  z-index: 1; /* 중첩요소중 가장앞에위치 */
 }
 .nav_profile_list_mobile img {
   height: 4rem;
@@ -319,58 +332,58 @@ export default {
 }
 
 /* 로그인 팝업 배경 */
-.loginCont_showBg{
-  background-color:rgba(249, 249, 249, 0.85);; 
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;/* 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
+.loginCont_showBg {
+  background-color: rgba(249, 249, 249, 0.85);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
   width: 100%;
   z-index: 9999;
-  display: flex;/* 아래는 플렉스를 이용한 가운데 정렬 */
+  display: flex; /* 아래는 플렉스를 이용한 가운데 정렬 */
   justify-content: center;
   align-items: center;
 }
-.loginCont{
+.loginCont {
   width: 606px;
-  height: 480px;
+  height: 520px;
   animation: 0.4s ease-in-out 0s 1 normal forwards running hwrkPK;
   box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
   display: flex;
 }
-.loginCont_welcome{
+.loginCont_welcome {
   width: 216px;
-    background: rgb(241, 243, 245);
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;/* 세로정렬 */
-    align-items: center;
-    justify-content: center;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
+  background: rgb(241, 243, 245);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column; /* 세로정렬 */
+  align-items: center;
+  justify-content: center;
+  -webkit-box-pack: center;
+  -webkit-box-align: center;
 }
 
 @media (max-width: 576.98px) {
-  .loginCont{
+  .loginCont {
     height: 100%;
   }
-  .loginCont_welcome{
+  .loginCont_welcome {
     display: none;
   }
 }
-.loginCont_welcome img{
+.loginCont_welcome img {
   width: 100%;
   border-radius: 7px;
 }
-.loginCont_welcome h4{
-    margin-top: 1.5rem;
-    color: rgb(73, 80, 87);
-    text-align: center;
-    line-height:2rem;
+.loginCont_welcome h4 {
+  margin-top: 1.5rem;
+  color: rgb(73, 80, 87);
+  text-align: center;
+  line-height: 2rem;
 }
 
-.loginCont_login{
+.loginCont_login {
   flex: 1 1 0%;
   background: white;
   padding: 1.5rem;
@@ -378,63 +391,67 @@ export default {
   flex-direction: column;
 }
 
-.loginCont_exit{
+.loginCont_exit {
   display: flex;
   justify-content: flex-end;
   color: rgb(134, 142, 150);
   margin-bottom: 2.25rem;
 }
 
-#loginClose{
+#loginClose {
   cursor: pointer;
 }
 
-.loginCont_main{
+.loginCont_main {
   display: flex;
   flex-direction: column;
   justify-content: space-between; /* flex간 동일 간격을 줌 */
   flex: 1 1 0%; /* 플렉스의 자식이 크고 작을때에 상관없이 꽉찬하나의 행을 차지  */
 }
 
-.loginCont_body{
+.loginCont_body {
   text-align: left;
 }
 
-.loginCont_body h2{
+.loginCont_body h2 {
   font-size: 1.3125rem;
   color: rgb(52, 58, 64);
 }
 
-.loginCont_body h4{
+.loginCont_body h4 {
   font-size: initial; /* h4 폰트사이즈 초기화(상속막기) */
   margin-top: 1rem;
   margin-bottom: 1rem;
   color: rgb(134, 142, 150);
 }
 
-#loginEmailInput,#loginPassWordInput{
+#loginEmailInput,
+#loginPassWordInput,
+#loginPassWordConfirmInput {
   height: 3rem;
   margin-top: 1rem;
 }
 
-.loginCont_body_input{
+.loginCont_body_input {
   height: 3rem;
 }
 
-#loginEmailInput::placeholder ,#loginPassWordInput::placeholder{
+#loginEmailInput::placeholder,
+#loginPassWordInput::placeholder,
+#loginPassWordConfirmInput::placeholder {
   font-size: 0.9rem;
 }
 
-#loginBtn{
+#loginBtn {
   margin-top: 1.1rem;
   width: 100%;
 }
 
-.loginCont_footer{
+.loginCont_footer {
   text-align: right;
 }
 
-#moveSignUpBtn{
+#moveSignUpBtn {
   font-weight: bold;
   color: rgb(18, 184, 134);
   cursor: pointer;
