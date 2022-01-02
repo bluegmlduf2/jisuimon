@@ -120,12 +120,15 @@ export default {
 }
 
 .setting_cont {
+  /* 항상 70%를 유지하지만 최대 313px까지만 커진다 */
   width: 70%;
+  max-width: 313px;
 }
 
 .setting_cont.only {
   /* 클래스의특정기능추가 */
-  padding: 1.2rem 10% 0 20%;
+  padding-top: 1.2rem;
+  margin: 0 10% 0 20%
 }
 
 .setting_update {
