@@ -55,7 +55,9 @@ export default {
     // 무한스크롤 정의
     moveScroll(e) {
       const { scrollHeight, scrollTop, clientHeight } = e.target.documentElement;
-      const isAtTheBottom = scrollHeight === Math.floor(scrollTop + clientHeight);
+      const scrollPos=Math.floor(scrollTop + clientHeight);
+      // scrollHeight 화면바닥의px === scrollPos 스크롤위치
+      const isAtTheBottom = scrollHeight === scrollPos;
       // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
       if (isAtTheBottom) this.loadPages()
     },
