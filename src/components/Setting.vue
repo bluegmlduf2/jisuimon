@@ -3,10 +3,10 @@
     <!-- 프로필사진 -->
     <div class="settingCont_photoCont">
       <div class="settingCont_photoCont_image">
-        <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="profireImg">
+        <img :src="photoUrl" alt="profireImg">
       </div>
       <div class="settingCont_photoCont_button">
-        <button id="profileImgUploadBtn" class="btn btn-success confirm_btn" type="button"><b>プロフィール画像変更</b></button>
+        <button id="profileImgUploadBtn" class="btn btn-success confirm_btn" type="button" @click="updateProfileImg"><b>プロフィール画像変更</b></button>
         <button id="profileImgDeletedBtn" class="btn btn-success confirm_white_btn" type="button"><b>プロフィール画像削除</b></button>
       </div>
     </div>
@@ -14,10 +14,10 @@
     <div class="settingCont_nicknameCont">
       <div class="setting_input">
         <h3 class="setting_label">닉네임명</h3>
-        <div class="setting_cont" v-if="!nickNameClicked">닉네임123(입력폼변경)</div>
-        <input type="text" id="" class="setting_cont form-control" v-if="nickNameClicked" placeholder="入力してください">
+        <div class="setting_cont" v-if="!nickNameClicked">{{nickName}}</div>
+        <input type="text" id="" class="setting_cont form-control" v-model="nickNameUpdated" v-if="nickNameClicked" placeholder="入力してください">
         <div class="setting_update update_btn" v-if="!nickNameClicked" @click="nickNameClicked=!nickNameClicked">수정</div>
-        <div class="setting_update btn btn-success confirm_btn" v-if="nickNameClicked" @click="nickNameClicked=!nickNameClicked">저장</div>
+        <div class="setting_update btn btn-success confirm_btn" v-if="nickNameClicked" @click="updateNickName">저장</div>
       </div>
       <div class="setting_desc">
         표시되는 닉네임입니다..
@@ -29,7 +29,7 @@
         <h3 class="setting_label">패스워드</h3>
         <input type="password" class="setting_cont form-control" v-if="passWordClicked" placeholder="현재 비밀번호">
         <div class="setting_update update_btn only" v-if="!passWordClicked" @click="passWordClicked=!passWordClicked">수정</div>
-        <div class="setting_update btn btn-success confirm_btn" v-if="passWordClicked" @click="passWordClicked=!passWordClicked">저장</div>
+        <div class="setting_update btn btn-success confirm_btn" v-if="passWordClicked" @click="updatePassword">저장</div>
         <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호">
         <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호 확인">
       </div>
@@ -51,15 +51,100 @@
 </template>
 
 <script>
+import common from "@/assets/js/common.js";
+import firebase from '@/firebase';
+
 export default {
   name: "Setting",
   data() {
     return {
-      nickName:'', // 닉네임
+      // 표시용
+      photoUrl:'', // 프로필사진URL (표시용)
+      nickName:'', // 닉네임 (표시용)
+      // 갱신용
+      photoUrlUpdated:'', // 프로필사진URL
+      nickNameUpdated:'', // 닉네임
+      currentPassUpdated:'', // 현재비밀번호
+      newPassUpdated:'', // 새로운비밀번호
+      newPassConfirmUpdated:'', // 새로운비밀번호확인
+      // 화면상태
       nickNameClicked:false, // 닉네임변경 유무
       passWordClicked:false, // 패스워드변경 유무
     }
   },
+  created(){
+    this.initUser() // 파이어베이스 유저 초기화
+  },
+  methods: {
+    // 파이어베이스 유저정보 현재화면에 초기화
+    initUser(){
+      const USER=firebase.auth.currentUser; // 파이어베이스 유저정보
+      const DISP_NAME = USER.displayName??"USER"+USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
+      const PHOTO_URL = USER.photoURL??require('@/assets/img/jisuimonLogo.png'); // 이미지 URL
+      this.photoUrl=PHOTO_URL
+      this.nickName=DISP_NAME
+      // 인풋초기화
+      this.photoUrlUpdated=""; // 프로필사진인풋 초기화
+      this.nickNameUpdated=""; // 닉네임인풋 초기화
+
+    },
+    // 유저 프로필 변경
+    updateProfileImg(){
+      // TODO 유효성체크 프로필이미지
+
+      // 업데이트할 유저정보
+      const UPDATE_INFO={
+        flag:"profileImg",
+        photoURL:this.photoUrlUpdated
+      }
+
+      firebase.updateUser(UPDATE_INFO).then((res) => {
+        
+      }).catch((err) => {
+        
+      }).finally(() => {
+        this.initUser() // 유저정보초기화
+      });
+    },
+    // 유저 닉네임 변경
+    updateNickName(){
+      // TODO 유효성체크 닉네임
+
+      // 업데이트할 유저정보
+      const UPDATE_INFO={
+        flag:"nickName",
+        nickName:this.nickNameUpdated
+      }
+
+      firebase.updateUser(UPDATE_INFO).then((res) => {
+        this.$message.okMessage(res,false);
+      }).catch((err) => {
+        this.$message.warningMessage(err.message);
+      }).finally(() => {
+        this.nickNameClicked=!this.nickNameClicked; // 버튼상태변경
+        this.initUser() // 유저정보초기화
+      });
+    },
+    // 유저 비밀번호 변경
+    updatePassword(){
+      // TODO 유효성체크 비밀번호 일치
+
+      // 업데이트할 유저정보
+      const UPDATE_INFO={
+        currentPassword:this.currentPassUpdated,
+        newPassword:this.newPassUpdated
+      }
+
+      firebase.updatePass(UPDATE_INFO).then((res) => {
+        
+      }).catch((err) => {
+        
+      }).finally(() => {
+        this.passWordClicked=!this.passWordClicked; // 버튼상태변경
+        this.initUser() // 유저정보초기화
+      });
+    },
+  }
 };
 </script>
 

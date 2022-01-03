@@ -6,6 +6,8 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    updateProfile,
+    updatePassword,
     deleteUser,
     signOut,
 } from "firebase/auth";
@@ -27,9 +29,8 @@ export default {
     init() {
         initializeApp(firebaseConfig); // firebase 초기화
         this.auth = getAuth(); // 인증정보모듈 (인증 서비스만 사용)
-        setPersistence(this.auth, browserSessionPersistence); // 세션에 로그인 정보저장(현재탭에만 적용,창닫으면 초기화) 
-        // setPersistence(this.auth, browserLocalPersistence); // 로컬스토리지에 로그인 정보저장(로그아웃하지않는한 지속,이게 디폴트임) 
-
+        setPersistence(this.auth, browserSessionPersistence); // 세션에 로그인 정보저장(현재탭에만 적용,창닫으면 초기화)
+        // setPersistence(this.auth, browserLocalPersistence); // 로컬스토리지에 로그인 정보저장(로그아웃하지않는한 지속,이게 디폴트임)
     },
 
     // 이메일과 패스워드로 로그인한다
@@ -53,36 +54,38 @@ export default {
     },
     // 회원가입
     signUpWithEmailAndPassword(email, password) {
-        let current_user // 파이어베이스 회원등록 유저
-        return createUserWithEmailAndPassword(this.auth, email, password).then(
-            // 회원가입성공시 user를 반환한다
-            (userCredential) => userCredential.user,
-            // 회원가입실패시
-            (err) => {
-                //TODO 실패시 서버의 uid삭제
-                if (err.code == "auth/email-already-in-use") {
-                    throw new Error("TODO이미사용중인아이디임");
-                } else {
-                    throw new Error("TODO회원등록실패");
+        let current_user; // 파이어베이스 회원등록 유저
+        return createUserWithEmailAndPassword(this.auth, email, password)
+            .then(
+                // 회원가입성공시 user를 반환한다
+                (userCredential) => userCredential.user,
+                // 회원가입실패시
+                (err) => {
+                    //TODO 실패시 서버의 uid삭제
+                    if (err.code == "auth/email-already-in-use") {
+                        throw new Error("TODO이미사용중인아이디임");
+                    } else {
+                        throw new Error("TODO회원등록실패");
+                    }
                 }
-            }
-        ).then(async (user)=>{
-            current_user = user // 서버에서 등록실패할 경우 파이어베이스의 유저삭제용
-            const payload = {method: "post"};
-            //TODO RSA암호화..너무귀찮지만고려..ssh사용하니 괜찮지않을까..?
-            return await store.dispatch("signUp", payload);
-        }).catch(async(err) => {
-            // 에러메세지 정의
-            const ERR_MESSAGE = (err.response?.data.message)
-                ? err.response.data.message // 서버에러메세지
-                : err.message; // 파이어베이스에러메세지
-            // 유저등록중 서버 에러시 파이어베이스 유저삭제
-            if(current_user){
-                await deleteUser(current_user)
-            }    
-            throw new Error("TODO 에러메세지.." + ERR_MESSAGE);
-        })
-        .then(() => "TODO회원등록성공");
+            )
+            .then(async (user) => {
+                current_user = user; // 서버에서 등록실패할 경우 파이어베이스의 유저삭제용
+                const payload = { method: "post" };
+                return await store.dispatch("signUp", payload);
+            })
+            .catch(async (err) => {
+                // 에러메세지 정의
+                const ERR_MESSAGE = err.response?.data.message
+                    ? err.response.data.message // 서버에러메세지
+                    : err.message; // 파이어베이스에러메세지
+                // 유저등록중 서버 에러시 파이어베이스 유저삭제
+                if (current_user) {
+                    await deleteUser(current_user);
+                }
+                throw new Error("TODO 에러메세지.." + ERR_MESSAGE);
+            })
+            .then(() => "TODO회원등록성공");
     },
     // 로그아웃
     // 로그아아웃을 성공하면 세션스토리지의 JWT를 삭제하고 vuex에 유저정보갱신기능을 실행해서 유저상태를 로그아웃으로 만든다
@@ -96,6 +99,38 @@ export default {
             })
             .catch(() => {
                 throw new Error("TODO로그아웃안됨");
+            });
+    },
+    // 유저정보갱신
+    updateUser(updateInfo) {
+        const USER_INFO = {};
+
+        switch (updateInfo.flag) {
+            case "profileImg":
+                USER_INFO.photoURL = updateInfo.photoURL;
+                break;
+            case "nickName":
+                USER_INFO.displayName = updateInfo.nickName;
+                break;
+        }
+        return updateProfile(this.auth.currentUser, USER_INFO)
+            .then(() => "TODO갱신성공")
+            .catch(() => {
+                throw new Error("TODO갱신실패");
+            });
+    },
+    // 유저비밀번호갱신
+    updatePass(updateInfo) {
+        // TODO 현재패스워드 체크 후 문제없으면 갱신
+        return updatePassword(this.auth.currentUser, updateInfo.newPassword)
+            .then(() => {
+                return "TODO비밀번호갱신성공";
+                // Update successful.
+            })
+            .catch((error) => {
+                // An error ocurred
+                // ...
+                throw new Error("TODO비밀번호갱신실패");
             });
     },
     //로그인상태갱신,JWT의 상태갱신
