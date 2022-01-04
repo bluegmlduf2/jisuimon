@@ -61,7 +61,7 @@ def check_token(func):
         return func(*args, **kwargs)
     return wrap
 
-# 코드와 맵핑된 메세지 반환
+# d 맵핑된 메세지 반환
 def getMessage(code, param=None):
     MESSAGE = {
         # 성공
@@ -72,6 +72,7 @@ def getMessage(code, param=None):
         703: "空きファイルです。\nファイルアップロード失敗しました",
         704: "既に登録されているユーザーです",
         705: "ユーザー権限を確認してください",
+        706: "ユーザー削除処理失敗しました",
         # 실패 (서버)
         801: "システムエラー"
     }

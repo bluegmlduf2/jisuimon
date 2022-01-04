@@ -1,5 +1,5 @@
 from common import *
-from flask import current_app
+
 
 def getFood(args):
     conn = Connection()
@@ -20,8 +20,8 @@ def getFood(args):
                 -- 공백구분가능한 fulltext인덱스 
                 -- ALTER TABLE jisuimon.food_table ADD FULLTEXT INDEX idx_foodName_full_text(food_name) WITH PARSER NGRAM
             '''
-            
-            data = conn.executeAll(sql,args['food_name'])
+
+            data = conn.executeAll(sql, args['food_name'])
         except UserError as e:
             conn.rollback()
             raise e

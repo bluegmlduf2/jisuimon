@@ -132,7 +132,11 @@ const store = createStore({
         },
         // 회원등록
         signUp(context, payload) {
-            return this.state.getRequest('/signUp',payload);
+            return this.state.getRequest('/user',payload);
+        },
+        // 회원삭제
+        deleteUser(context, payload) {
+            return this.state.getRequest('/user',payload);
         },
     },
 });

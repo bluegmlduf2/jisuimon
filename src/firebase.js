@@ -6,10 +6,12 @@ import {
     onAuthStateChanged,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
+    reauthenticateWithCredential,
     updateProfile,
     updatePassword,
     deleteUser,
     signOut,
+    EmailAuthProvider,
 } from "firebase/auth";
 import store from "@/store";
 //SDK v9를 사용, SDK8는 firebase를 통채로 사용했다고하면 SDK9는 필요한 모듈(auth)만 import하기때문에 적은 용량의 이점이 있음
@@ -120,22 +122,33 @@ export default {
             });
     },
     // 유저비밀번호갱신
-    updatePass(updateInfo) {
-        // TODO 현재패스워드 체크 후 문제없으면 갱신
-        return updatePassword(this.auth.currentUser, updateInfo.newPassword)
-            .then(() => {
-                return "TODO비밀번호갱신성공";
-                // Update successful.
-            })
-            .catch((error) => {
-                // An error ocurred
-                // ...
-                throw new Error("TODO비밀번호갱신실패");
-            });
+    async updatePass(updateInfo) {
+        const CURRENT_USER = this.auth.currentUser;
+        const USER_EMAIL = CURRENT_USER.email;
+        const CURRENT_PASS = updateInfo.currentPassword;
+        const NEW_PASS = updateInfo.newPassword;
+        const CREDENTIAL = EmailAuthProvider.credential(
+            USER_EMAIL,
+            CURRENT_PASS
+        );
+
+        try {
+            // 재인증 및 현재비밀번호 일치 여부 확인
+            await reauthenticateWithCredential(CURRENT_USER, CREDENTIAL);
+            // 비밀번호 갱신
+            await updatePassword(CURRENT_USER, NEW_PASS);
+            // 토큰 정보 갱신
+            await this.onAuth();
+
+            return "TODO비밀번호변경성공";
+        } catch (err) {
+            throw new Error("TODO현재비밀번호맞지않음갱신실패");
+        }
     },
     //로그인상태갱신,JWT의 상태갱신
     onAuth() {
         onAuthStateChanged(this.auth, async (user) => {
+            debugger
             // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
             if (user?.uid) {
                 const ID_TOKEN = await user.getIdToken(); // 토큰취득

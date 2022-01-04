@@ -1,5 +1,6 @@
 from common import *
 
+
 def checkUser(args):
     conn = Connection()
     if conn:
@@ -42,6 +43,33 @@ def insertUser(args):
                 %s);
             '''
             conn.execute(sql, (args['uid']))
+        except UserError as e:
+            conn.rollback()
+            return json.dumps({'status': False, 'message': e.msg}), 200
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            conn.commit()
+        finally:
+            conn.close()
+
+
+def deleteUser(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 유저삭제
+            sql = '''
+            DELETE FROM jisuimon.user_table
+            WHERE user_id=%s;
+            '''
+            conn.execute(sql, (args['uid']))
+
+            # 유저삭제(파이어베이스)
+            current_app.auth.delete_user(args['uid'])
+
         except UserError as e:
             conn.rollback()
             return json.dumps({'status': False, 'message': e.msg}), 200

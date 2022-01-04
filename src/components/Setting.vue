@@ -27,11 +27,11 @@
     <div class="settingCont_passwordCont">
       <div  class="setting_input">
         <h3 class="setting_label">패스워드</h3>
-        <input type="password" class="setting_cont form-control" v-if="passWordClicked" placeholder="현재 비밀번호">
+        <input type="password" class="setting_cont form-control" v-if="passWordClicked" v-model="currentPassUpdated" placeholder="현재 비밀번호">
         <div class="setting_update update_btn only" v-if="!passWordClicked" @click="passWordClicked=!passWordClicked">수정</div>
         <div class="setting_update btn btn-success confirm_btn" v-if="passWordClicked" @click="updatePassword">저장</div>
-        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호">
-        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" placeholder="새 비밀번호 확인">
+        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" v-model="newPassUpdated" placeholder="새 비밀번호">
+        <input type="password" class="setting_cont only form-control" v-if="passWordClicked" v-model="newPassConfirmUpdated" placeholder="새 비밀번호 확인">
       </div>
       <div class="setting_desc">
         8글자 숫자와 특수문자 ...
@@ -41,7 +41,7 @@
     <div class="settingCont_deleteUser">
       <div  class="setting_input">
         <div class="setting_label">탈퇴처리</div>
-        <div id="" class="delete_btn" type="button"><b>탈퇴</b></div>
+        <div id="" class="delete_btn" type="button" @click="deleteUser"><b>탈퇴</b></div>
       </div>
       <div class="setting_desc">
         글 다 삭제됨 복구안됨..
@@ -52,99 +52,139 @@
 
 <script>
 import common from "@/assets/js/common.js";
-import firebase from '@/firebase';
+import firebase from "@/firebase";
 
 export default {
   name: "Setting",
   data() {
     return {
       // 표시용
-      photoUrl:'', // 프로필사진URL (표시용)
-      nickName:'', // 닉네임 (표시용)
+      photoUrl: "", // 프로필사진URL (표시용)
+      nickName: "", // 닉네임 (표시용)
       // 갱신용
-      photoUrlUpdated:'', // 프로필사진URL
-      nickNameUpdated:'', // 닉네임
-      currentPassUpdated:'', // 현재비밀번호
-      newPassUpdated:'', // 새로운비밀번호
-      newPassConfirmUpdated:'', // 새로운비밀번호확인
+      photoUrlUpdated: "", // 프로필사진URL
+      nickNameUpdated: "", // 닉네임
+      currentPassUpdated: "", // 현재비밀번호
+      newPassUpdated: "", // 새로운비밀번호
+      newPassConfirmUpdated: "", // 새로운비밀번호확인
       // 화면상태
-      nickNameClicked:false, // 닉네임변경 유무
-      passWordClicked:false, // 패스워드변경 유무
-    }
+      nickNameClicked: false, // 닉네임변경 유무
+      passWordClicked: false, // 패스워드변경 유무
+    };
   },
-  created(){
-    this.initUser() // 파이어베이스 유저 초기화
+  created() {
+    this.initUser(); // 파이어베이스 유저 초기화
   },
   methods: {
     // 파이어베이스 유저정보 현재화면에 초기화
-    initUser(){
-      const USER=firebase.auth.currentUser; // 파이어베이스 유저정보
-      const DISP_NAME = USER.displayName??"USER"+USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
-      const PHOTO_URL = USER.photoURL??require('@/assets/img/jisuimonLogo.png'); // 이미지 URL
-      this.photoUrl=PHOTO_URL
-      this.nickName=DISP_NAME
+    initUser() {
+      const USER = firebase.auth.currentUser; // 파이어베이스 유저정보
+      const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
+      const PHOTO_URL =
+        USER.photoURL ?? require("@/assets/img/jisuimonLogo.png"); // 이미지 URL
+      this.photoUrl = PHOTO_URL;
+      this.nickName = DISP_NAME;
       // 인풋초기화
-      this.photoUrlUpdated=""; // 프로필사진인풋 초기화
-      this.nickNameUpdated=""; // 닉네임인풋 초기화
-
+      this.photoUrlUpdated = ""; // 프로필사진인풋 초기화
+      this.nickNameUpdated = ""; // 닉네임인풋 초기화
+      this.currentPassUpdated = ""; // 현재비밀번호
+      this.newPassUpdated = ""; // 새로운비밀번호
+      this.newPassConfirmUpdated = ""; // 새로운비밀번호확인
     },
     // 유저 프로필 변경
-    updateProfileImg(){
+    updateProfileImg() {
       // TODO 유효성체크 프로필이미지
 
       // 업데이트할 유저정보
-      const UPDATE_INFO={
-        flag:"profileImg",
-        photoURL:this.photoUrlUpdated
-      }
+      const UPDATE_INFO = {
+        flag: "profileImg",
+        photoURL: this.photoUrlUpdated,
+      };
 
-      firebase.updateUser(UPDATE_INFO).then((res) => {
-        
-      }).catch((err) => {
-        
-      }).finally(() => {
-        this.initUser() // 유저정보초기화
-      });
+      firebase
+        .updateUser(UPDATE_INFO)
+        .then((res) => {})
+        .catch((err) => {})
+        .finally(() => {
+          this.initUser(); // 유저정보초기화
+        });
     },
     // 유저 닉네임 변경
-    updateNickName(){
+    updateNickName() {
       // TODO 유효성체크 닉네임
 
       // 업데이트할 유저정보
-      const UPDATE_INFO={
-        flag:"nickName",
-        nickName:this.nickNameUpdated
-      }
+      const UPDATE_INFO = {
+        flag: "nickName",
+        nickName: this.nickNameUpdated,
+      };
 
-      firebase.updateUser(UPDATE_INFO).then((res) => {
-        this.$message.okMessage(res,false);
-      }).catch((err) => {
-        this.$message.warningMessage(err.message);
-      }).finally(() => {
-        this.nickNameClicked=!this.nickNameClicked; // 버튼상태변경
-        this.initUser() // 유저정보초기화
-      });
+      firebase
+        .updateUser(UPDATE_INFO)
+        .then((res) => {
+          this.$message.okMessage(res, false);
+        })
+        .catch((err) => {
+          this.$message.warningMessage(err.message);
+        })
+        .finally(() => {
+          this.nickNameClicked = !this.nickNameClicked; // 버튼상태변경
+          this.initUser(); // 유저정보초기화
+        });
     },
     // 유저 비밀번호 변경
-    updatePassword(){
-      // TODO 유효성체크 비밀번호 일치
+    updatePassword() {
+      // TODO 유효성체크 비밀번호 일치,글자수,특문포함여부
 
       // 업데이트할 유저정보
-      const UPDATE_INFO={
-        currentPassword:this.currentPassUpdated,
-        newPassword:this.newPassUpdated
-      }
+      const UPDATE_INFO = {
+        currentPassword: this.currentPassUpdated,
+        newPassword: this.newPassUpdated,
+      };
 
-      firebase.updatePass(UPDATE_INFO).then((res) => {
-        
-      }).catch((err) => {
-        
-      }).finally(() => {
-        this.passWordClicked=!this.passWordClicked; // 버튼상태변경
-        this.initUser() // 유저정보초기화
+      firebase
+        .updatePass(UPDATE_INFO)
+        .then((res) => {
+          this.$message.okMessage(res, false);
+        })
+        .catch((err) => {
+          this.$message.warningMessage(err.message);
+        })
+        .finally(() => {
+          this.passWordClicked = !this.passWordClicked; // 버튼상태변경
+          this.initUser(); // 유저정보초기화
+        });
+    },
+    // 유저삭제
+    deleteUser() {
+      this.$message.confirmMessage("TODO削除する？").then((res) => {
+        // 확인버튼을 눌렀을시
+        if (res.isConfirmed) {
+          this.loading = true;
+          const payload = {
+            method: "delete",
+          };
+          this.$store
+            .dispatch("deleteUser", payload)
+            .then(async () => {
+              // TODO 인증정보가 초기화가안됨..
+              // await firebase.onAuth(); // 인증정보초기화
+              // this.$router.push("/");
+              await this.$message.successMessage(
+                "TODO脱会処理しました。\nご利用ありがとうございました。"
+              );
+              location.href="/";  
+            })
+            .catch((err) => {
+              this.$message.errorMessage(err);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
       });
     },
-  }
+  },
 };
 </script>
 
@@ -212,15 +252,15 @@ export default {
   margin-left: 1.5%;
   margin-right: 1.5%;
   max-width: 277px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  vertical-align:middle; /* overflow:hidden;으로 높낮이가 안맞는걸 해결 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle; /* overflow:hidden;으로 높낮이가 안맞는걸 해결 */
 }
 
 .setting_cont.only {
   /* 클래스의특정기능추가 */
-  margin: 1.2rem 11.5% 0 21.5%
+  margin: 1.2rem 11.5% 0 21.5%;
 }
 
 .setting_update {
@@ -228,7 +268,7 @@ export default {
   text-align: center;
 }
 
-.setting_update.only{
+.setting_update.only {
   margin-left: 65%;
 }
 

@@ -6,13 +6,14 @@ from common import *
 user_controller = Blueprint('user', __name__)
 
 
-@user_controller.route('/signUp', methods=['POST'])
+@user_controller.route('/user', methods=['POST', 'DELETE'])
 @check_token
 @exception_handler
-def signUp():
+def user():
     '''회원등록'''
     if request.method == 'POST':
         user=request.user #파이어베이스 유저정보 취득
+
         #기존 등록된 유저여부체크
         isUser=userModel.checkUser(user)
         if not isUser:
@@ -22,5 +23,20 @@ def signUp():
             #유저등록에러
             raise UserError(704)
 
+        
+        return jsonify(getMessage(601)), 200
+
+    '''회원삭제'''
+    if request.method == 'DELETE':
+        user=request.user #파이어베이스 유저정보 취득
+
+        #기존 등록된 유저여부체크
+        isUser=userModel.checkUser(user)
+        if isUser:
+            #유저삭제
+            userModel.deleteUser(user)
+        else:
+            #유저삭제에러
+            raise UserError(706)
         
         return jsonify(getMessage(601)), 200
