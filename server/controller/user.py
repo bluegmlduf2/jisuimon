@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, send_from_directory
 from model import userModel
 from common import *
 
@@ -40,3 +40,13 @@ def user():
             raise UserError(706)
         
         return jsonify(getMessage(601)), 200
+
+@user_controller.route('/userImage', methods=['GET'])
+@exception_handler
+def userImage():
+    '''유저이미지반환'''
+    if request.method == 'GET':
+        fileName=request.args.get('filename') # 요청URL에서 취득한 파일명
+        imageFilePath="static/userImg/"+fileName # 이미지파일 경로
+        
+        return send_from_directory(imageFilePath) # send_file()은 보안적으로 취약함

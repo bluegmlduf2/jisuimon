@@ -1,4 +1,9 @@
 export default {
+    data() {
+        return {
+            rootUrl : process.env.VUE_APP_SERVER_URL // env파일에 저장된 서버 Root_url
+        }
+    },
     // 라이플사이클일 경우 mixin먼저 호출
     // 컴포넌트 메서드가 우선권있음
     methods: {

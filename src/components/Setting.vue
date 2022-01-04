@@ -50,12 +50,14 @@
   </main>
 </template>
 
+
 <script>
 import common from "@/assets/js/common.js";
 import firebase from "@/firebase";
 
 export default {
   name: "Setting",
+  mixins: [common],
   data() {
     return {
       // 표시용
@@ -80,8 +82,9 @@ export default {
     initUser() {
       const USER = firebase.auth.currentUser; // 파이어베이스 유저정보
       const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
-      const PHOTO_URL =
-        USER.photoURL ?? require("@/assets/img/jisuimonLogo.png"); // 이미지 URL
+      const PHOTO_URL = USER.photoURL
+        ? `${this.rootUrl}/userImage?filename=${USER.photoURL}` //해당유저이미지 URL
+        : require("@/assets/img/noUser.png"); // 유저기본이미지 URL
       this.photoUrl = PHOTO_URL;
       this.nickName = DISP_NAME;
       // 인풋초기화
@@ -167,13 +170,15 @@ export default {
           this.$store
             .dispatch("deleteUser", payload)
             .then(() => {
-              this.$message.successMessage(
-                "TODO脱会処理しました。\nご利用ありがとうございました。"
-              ).then(()=>{
-                // 탈퇴후 홈화면으로 이동
-                const HOME_URL=`/${location.pathname.split('/')[1]}`
-                window.location.href=HOME_URL;
-              });
+              this.$message
+                .successMessage(
+                  "TODO脱会処理しました。\nご利用ありがとうございました。"
+                )
+                .then(() => {
+                  // 탈퇴후 홈화면으로 이동
+                  const HOME_URL = `/${location.pathname.split("/")[1]}`;
+                  window.location.href = HOME_URL;
+                });
             })
             .catch((err) => {
               this.$message.errorMessage(err);
