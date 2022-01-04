@@ -148,7 +148,6 @@ export default {
     //로그인상태갱신,JWT의 상태갱신
     onAuth() {
         onAuthStateChanged(this.auth, async (user) => {
-            debugger
             // 갱신해온 정보에 유저정보가 있으면 JWT를 갱신하고 유저이메일, 정보를 저장한다
             if (user?.uid) {
                 const ID_TOKEN = await user.getIdToken(); // 토큰취득

@@ -166,14 +166,14 @@ export default {
           };
           this.$store
             .dispatch("deleteUser", payload)
-            .then(async () => {
-              // TODO 인증정보가 초기화가안됨..
-              // await firebase.onAuth(); // 인증정보초기화
-              // this.$router.push("/");
-              await this.$message.successMessage(
+            .then(() => {
+              this.$message.successMessage(
                 "TODO脱会処理しました。\nご利用ありがとうございました。"
-              );
-              location.href="/";  
+              ).then(()=>{
+                // 탈퇴후 홈화면으로 이동
+                const HOME_URL=`/${location.pathname.split('/')[1]}`
+                window.location.href=HOME_URL;
+              });
             })
             .catch((err) => {
               this.$message.errorMessage(err);
