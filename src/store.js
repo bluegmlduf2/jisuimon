@@ -49,11 +49,16 @@ const store = createStore({
             like: 0,
             selectedLike: false,
             moreDataVuex: null,
-            getRequest:(url,payload)=>{
+            getRequest:(url,payload,fileUpload=false)=>{
                 // Axios의 기본 정보
                 const option = {
                     url: url,
                     method: payload.method,
+                }
+                
+                // 파일업로드인 경우 헤더의 타입을 변경
+                if (fileUpload) {
+                    option.headers['content-Type'] = "multipart/form-data"
                 }
 
                 // Axios의 메서드에 따라서 파라메터 타입을 지정해줌
@@ -137,6 +142,10 @@ const store = createStore({
         // 회원삭제
         deleteUser(context, payload) {
             return this.state.getRequest('/user',payload);
+        },
+        // 회원이미지등록
+        userImage(context, payload,fileUpload=false) {
+            return this.state.getRequest('/userImage',payload,fileUpload);
         },
     },
 });

@@ -6,7 +6,10 @@
         <img :src="photoUrl" alt="profireImg">
       </div>
       <div class="settingCont_photoCont_button">
-        <button id="profileImgUploadBtn" class="btn btn-success confirm_btn" type="button" @click="updateProfileImg"><b>プロフィール画像変更</b></button>
+        <label for="profileImgUploadBtn" class="btn btn-success confirm_btn">
+          <b>プロフィール画像変更</b>
+        </label>
+        <input id="profileImgUploadBtn" accept="image/png,image/jpeg" type="file" @change="updateProfileImg">
         <button id="profileImgDeletedBtn" class="btn btn-success confirm_white_btn" type="button"><b>プロフィール画像削除</b></button>
       </div>
     </div>
@@ -82,9 +85,11 @@ export default {
     initUser() {
       const USER = firebase.auth.currentUser; // 파이어베이스 유저정보
       const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
+      //TODO PHOTO_URL를 공통으로 만들기 
       const PHOTO_URL = USER.photoURL
-        ? `${this.rootUrl}/userImage?filename=${USER.photoURL}` //해당유저이미지 URL
+        ? `${this.rootUrl}/userImage?filename=${USER.photoURL.replace('http://','')}` //해당유저이미지 URL
         : require("@/assets/img/noUser.png"); // 유저기본이미지 URL
+        
       this.photoUrl = PHOTO_URL;
       this.nickName = DISP_NAME;
       // 인풋초기화
@@ -95,21 +100,48 @@ export default {
       this.newPassConfirmUpdated = ""; // 새로운비밀번호확인
     },
     // 유저 프로필 변경
-    updateProfileImg() {
-      // TODO 유효성체크 프로필이미지
+    updateProfileImg(event) {
+      // 파일정보
+      const FILE = event.target.files[0],
+        FILE_NAME = FILE.name,
+        IDXDOT = FILE_NAME.lastIndexOf(".") + 1,
+        EXT_FILE = FILE_NAME.substr(IDXDOT, FILE_NAME.length).toLowerCase();
 
-      // 업데이트할 유저정보
-      const UPDATE_INFO = {
-        flag: "profileImg",
-        photoURL: this.photoUrlUpdated,
+      //이미지 파일형식체크와 공백체크 유효성검사
+      if (!["jpg", "jpeg", "png"].includes(EXT_FILE) || !FILE_NAME) {
+        this.$message.warningMessage(
+          "イメージファイルをアップロードしてください。"
+        );
+        return;
+      }
+
+      // 파일전송객체
+      const formData = new FormData();
+      formData.append("userImage", FILE);
+
+      //전송할데이터
+      const payload = {
+        method: "post",
+        sendData: formData,
       };
 
-      firebase
-        .updateUser(UPDATE_INFO)
-        .then((res) => {})
-        .catch((err) => {})
+      this.$store
+        .dispatch("userImage", payload, true)
+        .then(() => {
+          this.$message
+            .successMessage(
+              "TODOプロフィール写真変更しました。"
+            )
+            .then(() => {
+              //TODO 갱신한 프로필이미지가 적용이안됨
+              this.initUser(); // 유저정보초기화
+            });
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
         .finally(() => {
-          this.initUser(); // 유저정보초기화
+          this.loading = false;
         });
     },
     // 유저 닉네임 변경
@@ -233,7 +265,7 @@ export default {
   display: block;
 }
 
-.settingCont_photoCont_button > #profileImgUploadBtn {
+.settingCont_photoCont_button > label[for="profileImgUploadBtn"] {
   margin-bottom: 1.25rem;
 }
 

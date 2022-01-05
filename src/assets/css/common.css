@@ -4,7 +4,7 @@
     font-style: normal;
     font-weight: 400;
     src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8, 크롬에서는 읽지않음 리소스 낭비없음*/
-    src: local("Material Icons"), local("MaterialIcons-Regular"),
+    src: local("Material Icons"), local("MaterialIcons-Regular");
 }
 .material-icons {
     font-family: "Material Icons";
@@ -31,30 +31,33 @@
     font-feature-settings: "liga";
 }
 /* 공통버튼 */
-.confirm_btn{
-    background: rgb(18, 184, 134)!important;
-    border: none!important;
+.confirm_btn {
+    background: rgb(18, 184, 134) !important;
+    border: none !important;
 }
-.confirm_btn:hover,.confirm_btn:focus{
-    background: rgb(32, 201, 151)!important;
+.confirm_btn:hover,
+.confirm_btn:focus {
+    background: rgb(32, 201, 151) !important;
 }
-.cancel_btn{
-    background:rgb(134, 142, 150)!important;
-    border: none!important;
+.cancel_btn {
+    background: rgb(134, 142, 150) !important;
+    border: none !important;
 }
-.cancel_btn:hover,.cancel_btn:focus{
-    background: rgb(173, 181, 189)!important;
+.cancel_btn:hover,
+.cancel_btn:focus {
+    background: rgb(173, 181, 189) !important;
 }
-.confirm_white_btn{
-    color: rgb(18, 184, 134)!important;
-    border-color:rgb(18, 184, 134)!important;
-    background: rgb(255, 255, 255)!important;
+.confirm_white_btn {
+    color: rgb(18, 184, 134) !important;
+    border-color: rgb(18, 184, 134) !important;
+    background: rgb(255, 255, 255) !important;
 }
-.confirm_white_btn:hover,.confirm_white_btn:active{
-    color: rgb(255, 255, 255)!important;
-    background: rgb(18, 184, 134)!important;
+.confirm_white_btn:hover,
+.confirm_white_btn:active {
+    color: rgb(255, 255, 255) !important;
+    background: rgb(18, 184, 134) !important;
 }
-.update_btn{
+.update_btn {
     outline: none;
     padding: 0px;
     border: none;
@@ -64,7 +67,7 @@
     background: none;
     cursor: pointer;
 }
-.delete_btn{
+.delete_btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -79,15 +82,19 @@
     height: 2rem;
     font-size: 1rem;
 }
-.delete_btn:hover{
+.delete_btn:hover {
     background: rgb(255, 135, 135);
 }
 /* CKEdito placeholder 설정*/
-.ck-placeholder{
+.ck-placeholder {
     white-space: pre; /* pre를 사용하면 입력한 그대로 출력함 */
 }
 /* swal의 창이 가장 위에 표시되도록 설정 */
-.swal2-container{
-    z-index: 9999!important;
+.swal2-container {
+    z-index: 9999 !important;
 }
 
+/* 파일업로드 버튼 */
+input[type="file"] {
+    display: none;
+}

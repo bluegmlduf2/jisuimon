@@ -81,3 +81,36 @@ def deleteUser(args):
             conn.commit()
         finally:
             conn.close()
+
+
+def insertUserImage(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 유저이미지등록
+            sql = '''
+                UPDATE
+                    jisuimon.user_table
+                SET
+                    user_image = %s
+                WHERE
+                    user_id = %s;
+            '''
+            conn.execute(sql, (args['filename'], args['uid']))
+            
+            #파이어베이스에 유저이미지명 등록 (url형식만등록허용함)
+            current_app.auth.update_user(
+                args['uid'],
+                photo_url='http://'+args['filename'])
+
+        except UserError as e:
+            conn.rollback()
+            return json.dumps({'status': False, 'message': e.msg}), 200
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            conn.commit()
+        finally:
+            conn.close()
