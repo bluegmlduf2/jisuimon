@@ -34,6 +34,12 @@ def create_app(config_mode="test"):
     app.firebase=firebase_admin.initialize_app(cred)
     app.auth=auth
 
+    # 파일경로 설정
+    app.userImgPath=app.root_path + "/static/userImg/" # 유저이미지 경로
+    app.userDefaultImg=app.root_path+"/static/defaultImg/noUser.png" # 기본 유저이미지 경로
+    app.fileTempPath = app.root_path+'/static/temp/' #　게시물이미지 임시파일위치
+    app.fileDestPath = app.root_path+'/static/contentImg/' # 게시물이미지 저장용폴더위치
+
     #CORS(app,resources={r'*': {'origins': "*"}},supports_credentials=True)
     CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
     # API server ,View server 다른 도메인에서 사용할때 발생하는 에러 방지

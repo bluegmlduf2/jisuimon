@@ -99,7 +99,7 @@ def imageUploadTemp():
         image = Image.open(f)
         # resize_image = image.resize((286,180)) # 286,180 이미지 사이즈변경
 
-        source = current_app.root_path+'/static/temp/'+resize_image_fileNm  # 임시파일저장경로
+        source = current_app.fileTempPath+resize_image_fileNm  # 임시파일저장경로
 
         # RGB형식으로 변경후 , 이미지 파일 저장
         image.convert('RGB').save(source)  # resize사용시 image -> resize_image

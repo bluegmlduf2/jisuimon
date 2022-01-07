@@ -102,11 +102,11 @@ class UserError(Exception):
 # 이미지 함수에 필요한 설정부분
 def imageConfig():
     # 파일 이동에 필요한 설정부분
-    fileSource = current_app.root_path+'/static/temp/' #　임시파일위치
-    fileDest = current_app.root_path+'/static/contentImg/' # 저장용폴더위치
-    imageForder = os.listdir(fileSource) # 임시파일이 위치한 폴더
+    fileTempPath = current_app.fileTempPath  # 　임시파일위치
+    fileDestPath = current_app.fileDestPath # 저장용폴더위치
+    imageForder = os.listdir(fileTempPath) # 임시파일이 위치한 폴더
 
-    return imageForder, fileSource, fileDest 
+    return imageForder, fileTempPath, fileDestPath 
 
 # 이미지파일을 base64형식변환
 def imageParser(src):
@@ -128,11 +128,11 @@ def getTitleImage():
 
 # 임시이미지 파일을 저장용 폴더에 이동
 def moveImageTempToDest(imageFileNames):
-    imageForder, fileSource, fileDest = imageConfig() # 이미지 설정부분
+    imageForder, fileTempPath, fileDestPath = imageConfig() # 이미지 설정부분
     # 파일 이동 실행 부분
     for imageFile in imageForder:
         if imageFile in imageFileNames:
-            shutil.move(fileSource + imageFile, fileDest + imageFile) # 파일이동
+            shutil.move(fileTempPath + imageFile, fileDestPath + imageFile) # 파일이동
 
 '''
  아래는 보안에 관련된 공통항목이다

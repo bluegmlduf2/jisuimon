@@ -44,7 +44,7 @@ def getPosts(args):
                 #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
                 if not e['title_image']:
                     e['title_image']=getTitleImage()
-                src = current_app.root_path+"/static/contentImg/"+e['title_image']
+                src = current_app.fileDestPath+e['title_image']
                 # 타이틀 이미지
                 with open(src, "rb") as image_file:
                     # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
@@ -53,9 +53,9 @@ def getPosts(args):
 
                 # 유저 이미지
                 if not e['user_image']:
-                    src = current_app.root_path+"/static/defaultImg/noUser.png"
+                    src = current_app.userDefaultImg
                 else:
-                    src = current_app.root_path+"/static/userImg/"+e['user_image']
+                    src = current_app.userImgPath+e['user_image']
                 with open(src, "rb") as image_file:
                     # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                     data[i]['user_image'] = "data:image/jpeg;base64, " + \
@@ -213,8 +213,8 @@ def getPostComment(args):
             removeCommentReplyCol=['comment_content','comment_create_date','user_table_user_id','post_table_post_id','user_image','nickname']
 
             # 이미지 경로
-            userImgPath=current_app.root_path + "/static/userImg/" # 유저이미지 경로
-            userDefaultImg=current_app.root_path+"/static/defaultImg/noUser.png" # 기본 유저이미지 경로            
+            userImgPath=current_app.userImgPath # 유저이미지 경로
+            userDefaultImg=current_app.userDefaultImg # 기본 유저이미지 경로            
 
             # 댓글에 대댓글 추가
             # 댓글 (부모)

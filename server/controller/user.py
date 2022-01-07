@@ -80,7 +80,7 @@ def userImage():
         image = Image.open(f)
         resize_image = image.resize((286,180)) # 286,180 이미지 사이즈변경
 
-        source = current_app.root_path+'/static/userImg/'+resize_image_fileNm  # 임시파일저장경로
+        source = current_app.userImgPath+resize_image_fileNm  # 유저이미지저장경로
 
         # RGB형식으로 변경후 , 이미지 파일 저장
         resize_image.convert('RGB').save(source)
