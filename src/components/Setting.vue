@@ -132,8 +132,9 @@ export default {
             .successMessage(
               "TODOプロフィール写真変更しました。"
             )
-            .then(() => {
-              //TODO 갱신한 프로필이미지가 적용이안됨
+            .then(async() => {
+              // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
+              await firebase.auth.currentUser.reload() 
               this.initUser(); // 유저정보초기화
             });
         })

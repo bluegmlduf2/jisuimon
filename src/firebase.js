@@ -43,11 +43,10 @@ export default {
             () => "TODO로그인성공",
             // 로그인실패시
             (err) => {
-                if (
-                    err.code == "auth/user-not-found" ||
-                    err.code == "auth/wrong-password"
-                ) {
-                    throw new Error("TODO입력정보확인해주셈");
+                if (err.code == "auth/user-not-found") {
+                    throw new Error("TODO등록한아이디없음 확인해주셈");
+                } else if (err.code == "auth/wrong-password") {
+                    throw new Error("TODO패스워드틀림 확인해주셈");
                 } else {
                     throw new Error("TODO로그인실패");
                 }
