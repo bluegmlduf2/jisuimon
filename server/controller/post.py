@@ -109,7 +109,7 @@ def imageUploadTemp():
         if current_app.env == 'development':
             url="http://localhost:5000"
         
-        # 나중에 같은 서버 사용하면 변경해야함
-        dest=url+'/static/temp/'+resize_image_fileNm # 임시 저장 경로
+        # TODO나중에 같은 서버 사용하면 변경해야함
+        dest=url+current_app.urlTempPath+resize_image_fileNm # 임시 저장 경로
         
         return jsonify({"url":dest}), 200

@@ -39,6 +39,7 @@ def create_app(config_mode="test"):
     app.userDefaultImg=app.root_path+"/static/defaultImg/noUser.png" # 기본 유저이미지 경로
     app.fileTempPath = app.root_path+'/static/temp/' #　게시물이미지 임시파일위치
     app.fileDestPath = app.root_path+'/static/contentImg/' # 게시물이미지 저장용폴더위치
+    app.urlTempPath = '/static/temp/' # 임시파일위치 (url반환용)
 
     #CORS(app,resources={r'*': {'origins': "*"}},supports_credentials=True)
     CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
