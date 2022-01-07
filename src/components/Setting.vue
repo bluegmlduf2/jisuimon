@@ -10,7 +10,7 @@
           <b>プロフィール画像変更</b>
         </label>
         <input id="profileImgUploadBtn" accept="image/png,image/jpeg" type="file" @change="updateProfileImg">
-        <button id="profileImgDeletedBtn" class="btn btn-success confirm_white_btn" type="button"><b>プロフィール画像削除</b></button>
+        <button id="profileImgDeletedBtn" class="btn btn-success confirm_white_btn" type="button" @click="deleteProfileImg"><b>プロフィール画像削除</b></button>
       </div>
     </div>
     <!-- 닉네임 -->
@@ -85,11 +85,14 @@ export default {
     initUser() {
       const USER = firebase.auth.currentUser; // 파이어베이스 유저정보
       const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
-      //TODO PHOTO_URL를 공통으로 만들기 
+      //TODO PHOTO_URL를 공통으로 만들기
       const PHOTO_URL = USER.photoURL
-        ? `${this.rootUrl}/userImage?filename=${USER.photoURL.replace('http://','')}` //해당유저이미지 URL
+        ? `${this.rootUrl}/userImage?filename=${USER.photoURL.replace(
+            "http://",
+            ""
+          )}` //해당유저이미지 URL
         : require("@/assets/img/noUser.png"); // 유저기본이미지 URL
-        
+
       this.photoUrl = PHOTO_URL;
       this.nickName = DISP_NAME;
       // 인풋초기화
@@ -129,12 +132,10 @@ export default {
         .dispatch("userImage", payload, true)
         .then(() => {
           this.$message
-            .successMessage(
-              "TODOプロフィール写真変更しました。"
-            )
-            .then(async() => {
+            .successMessage("TODOプロフィール写真変更しました。")
+            .then(async () => {
               // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
-              await firebase.auth.currentUser.reload() 
+              await firebase.auth.currentUser.reload();
               this.initUser(); // 유저정보초기화
             });
         })
@@ -145,9 +146,40 @@ export default {
           this.loading = false;
         });
     },
+    // 유저 프로필 삭제
+    deleteProfileImg() {
+      this.$message.confirmMessage("TODO削除する？").then((res) => {
+        // 확인버튼을 눌렀을시
+        if (res.isConfirmed) {
+          this.loading = true;
+          const payload = {
+            method: "delete",
+          };
+          this.$store
+            .dispatch("userImage", payload)
+            .then(() => {
+              this.$message
+                .successMessage("TODOプロフィール写真変更しました。")
+                .then(async () => {
+                  // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
+                  await firebase.auth.currentUser.reload();
+                  this.initUser(); // 유저정보초기화
+                });
+            })
+            .catch((err) => {
+              this.$message.errorMessage(err);
+            })
+            .finally(() => {
+              this.loading = false;
+            });
+        }
+      });
+    },
     // 유저 닉네임 변경
     updateNickName() {
       // TODO 유효성체크 닉네임
+
+      // TODO 닉네임변경란이 공백이고 저장클릭시 변경안하고 그냥 현재 input모드 닫기
 
       // 업데이트할 유저정보
       const UPDATE_INFO = {
@@ -171,6 +203,8 @@ export default {
     // 유저 비밀번호 변경
     updatePassword() {
       // TODO 유효성체크 비밀번호 일치,글자수,특문포함여부
+
+      // TODO 현재비밀번호,새비밀번호,새비밀번호확인 란이 공백이고 저장클릭시 변경안하고 그냥 현재 input모드 닫기
 
       // 업데이트할 유저정보
       const UPDATE_INFO = {
@@ -319,7 +353,7 @@ export default {
 
 /* 닉네임 */
 .settingCont_nicknameCont {
-  padding: 4rem 0 1.5rem;
+  margin: 4rem 0 1.5rem;
 }
 
 /* 비밀번호 */
