@@ -24,6 +24,8 @@ const firebaseConfig = {
     projectId: process.env.VUE_PROJECT_ID,
 };
 
+const ROOT_URL=process.env.VUE_APP_SERVER_URL // env파일에 저장된 서버 Root_url
+
 export default {
     app: null,
 
@@ -33,6 +35,26 @@ export default {
         this.auth = getAuth(); // 인증정보모듈 (인증 서비스만 사용)
         setPersistence(this.auth, browserSessionPersistence); // 세션에 로그인 정보저장(현재탭에만 적용,창닫으면 초기화)
         // setPersistence(this.auth, browserLocalPersistence); // 로컬스토리지에 로그인 정보저장(로그아웃하지않는한 지속,이게 디폴트임)
+    },
+
+    // 파이어베이스 현재 유저정보
+    getUserInfo(){
+        const USER = this.auth.currentUser; // 파이어베이스 유저정보
+        const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
+        //TODO PHOTO_URL를 공통으로 만들기
+        const PHOTO_URL = USER.photoURL
+          ? `${ROOT_URL}/userImage?filename=${USER.photoURL.replace(
+              "http://",
+              ""
+            )}` //해당유저이미지 URL
+          : require("@/assets/img/noUser.png"); // 유저기본이미지 URL
+        
+        // 반환시 변수명이 키값이 된다. 키명선언생략
+        return {
+            USER,
+            DISP_NAME,
+            PHOTO_URL
+        }
     },
 
     // 이메일과 패스워드로 로그인한다

@@ -3,6 +3,7 @@
     font-family: "Material Icons";
     font-style: normal;
     font-weight: 400;
+    font-display: block; /* 구글 머티리얼 아이콘 로딩전에 아이콘을 숨김처리한다. 처리하지않으면 영문이 깜박이며 표기됨*/
     src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8, 크롬에서는 읽지않음 리소스 낭비없음*/
     src: local("Material Icons"), local("MaterialIcons-Regular");
 }

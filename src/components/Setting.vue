@@ -9,7 +9,7 @@
         <label for="profileImgUploadBtn" class="btn btn-success confirm_btn">
           <b>プロフィール画像変更</b>
         </label>
-        <input id="profileImgUploadBtn" accept="image/png,image/jpeg" type="file" @change="updateProfileImg">
+        <input id="profileImgUploadBtn" ref="profileImgUploadRef" accept="image/png,image/jpeg" type="file" @change="updateProfileImg">
         <button id="profileImgDeletedBtn" class="btn btn-success confirm_white_btn" type="button" @click="deleteProfileImg"><b>プロフィール画像削除</b></button>
       </div>
     </div>
@@ -18,7 +18,7 @@
       <div class="setting_input">
         <h3 class="setting_label">닉네임명</h3>
         <div class="setting_cont" v-if="!nickNameClicked">{{nickName}}</div>
-        <input type="text" id="" class="setting_cont form-control" v-model="nickNameUpdated" v-if="nickNameClicked" placeholder="入力してください">
+        <input type="text" class="setting_cont form-control" v-model="nickNameUpdated" v-if="nickNameClicked" placeholder="入力してください">
         <div class="setting_update update_btn" v-if="!nickNameClicked" @click="nickNameClicked=!nickNameClicked">수정</div>
         <div class="setting_update btn btn-success confirm_btn" v-if="nickNameClicked" @click="updateNickName">저장</div>
       </div>
@@ -83,18 +83,9 @@ export default {
   methods: {
     // 파이어베이스 유저정보 현재화면에 초기화
     initUser() {
-      const USER = firebase.auth.currentUser; // 파이어베이스 유저정보
-      const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
-      //TODO PHOTO_URL를 공통으로 만들기
-      const PHOTO_URL = USER.photoURL
-        ? `${this.rootUrl}/userImage?filename=${USER.photoURL.replace(
-            "http://",
-            ""
-          )}` //해당유저이미지 URL
-        : require("@/assets/img/noUser.png"); // 유저기본이미지 URL
-
-      this.photoUrl = PHOTO_URL;
-      this.nickName = DISP_NAME;
+      // 유저정보
+      this.photoUrl = firebase.getUserInfo().PHOTO_URL;
+      this.nickName = firebase.getUserInfo().DISP_NAME;
       // 인풋초기화
       this.photoUrlUpdated = ""; // 프로필사진인풋 초기화
       this.nickNameUpdated = ""; // 닉네임인풋 초기화
@@ -103,12 +94,12 @@ export default {
       this.newPassConfirmUpdated = ""; // 새로운비밀번호확인
     },
     // 유저 프로필 변경
-    updateProfileImg(event) {
+    updateProfileImg(event) {      
       // 파일정보
-      const FILE = event.target.files[0],
-        FILE_NAME = FILE.name,
-        IDXDOT = FILE_NAME.lastIndexOf(".") + 1,
-        EXT_FILE = FILE_NAME.substr(IDXDOT, FILE_NAME.length).toLowerCase();
+      const FILE = event?.target.files[0],
+        FILE_NAME = FILE?.name,
+        IDXDOT = FILE_NAME?.lastIndexOf(".") + 1,
+        EXT_FILE = FILE_NAME?.substr(IDXDOT, FILE_NAME.length).toLowerCase();
 
       //이미지 파일형식체크와 공백체크 유효성검사
       if (!["jpg", "jpeg", "png"].includes(EXT_FILE) || !FILE_NAME) {
@@ -143,6 +134,7 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
+          this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
           this.loading = false;
         });
     },
@@ -170,6 +162,7 @@ export default {
               this.$message.errorMessage(err);
             })
             .finally(() => {
+              this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
               this.loading = false;
             });
         }
