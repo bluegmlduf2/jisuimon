@@ -113,7 +113,6 @@ export default {
       const payload = { 
         method: "post",
         sendData: {
-          userId:"1",
           postId:this.postId,
           commentContent:COMMENT_CONTENT
         }
@@ -152,7 +151,6 @@ export default {
         method: "post",
         sendData: {
           commentId:COMMENT_ID,
-          commentUserId:'1',
           commentReplyContent:COMMENT_REPLY_CONTENT
         }
       };

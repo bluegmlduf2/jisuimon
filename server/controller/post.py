@@ -6,7 +6,7 @@ from common import *
 post_controller = Blueprint('post', __name__)
 
 
-@post_controller.route('/post', methods=['GET', 'POST'])
+@post_controller.route('/post', methods=['GET'])
 @exception_handler
 def post():
     '''메인화면의 게시물 8개 가져오기'''
@@ -16,12 +16,13 @@ def post():
 
         return jsonify(data), 200
 
+@post_controller.route('/post', methods=['POST'])
+@check_token
+@exception_handler
+def insertPost():
     '''게시물 등록'''
     if request.method == 'POST':
         args = request.get_json()
-        ################
-        # args = request.form
-        ################
 
         # 글내용의 이미지 url변경
         filteredContent = args['content'].replace(
@@ -42,6 +43,8 @@ def post():
             raise UserError(701, '作り方')
         if not filteredArgs['ingredientList']:
             raise UserError(701, '材料')
+
+        filteredArgs['userId'] = request.user['uid']  # 파이어베이스 유저정보 취득
 
         '''게시물 입력'''
         postModel.insertPost(filteredArgs)
@@ -87,9 +90,10 @@ def imageUploadTemp():
         if size == 0:
             raise UserError(703)
 
+        # 임시파일이미지
         args = {
             'file': f
-        }  # 임시파일이미지
+        }
 
         resize_image_fileNm = postModel.insertPostTempImage(args)  # 임시이미지 등록
 

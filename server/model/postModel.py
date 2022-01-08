@@ -115,8 +115,7 @@ def getPostDetail(args):
                 P.title_image,
                 P.user_table_user_id,
                 PD.content,
-                U.nickname,
-                U.user_image 
+                U.user_id 
             FROM
                 jisuimon.post_table AS P
             INNER JOIN jisuimon.post_detail_table AS PD ON
@@ -128,6 +127,11 @@ def getPostDetail(args):
             '''
 
             data = conn.executeOne(sql, args['postId'])
+
+            # 파이어베이스 유저정보 취득
+            user=getUser(data['user_id']) # 유저정보취득 (파이어베이스)
+            data['nickname']=user['nickname'] # 유저 닉네임
+            data['user_image']=user['user_image'] # 유저 프로필이미지
 
         except UserError as e:
             conn.rollback()
@@ -188,14 +192,12 @@ def getPostComment(args):
                     C.comment_id ,
                     C.user_table_user_id ,
                     C.post_table_post_id ,
-                    U.user_image,
-                    U.nickname,
+                    U.user_id ,
                     CR.comment_reply_content ,
                     CONVERT_TZ(CR.comment_reply_create_date, '+00:00', '-09:00') as comment_reply_create_date,
                     CR.comment_reply_id ,
                     CR.comment_table_comment_id,
-                    (SELECT user_image FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_image_CR,
-                    (SELECT nickname FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS nickname_CR
+                    (SELECT user_id FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_id_CR
                 FROM
                     jisuimon.comment_table AS C
                 LEFT JOIN jisuimon.comment_reply_table AS CR ON
@@ -207,6 +209,17 @@ def getPostComment(args):
                 ORDER BY C.comment_create_date , CR.comment_reply_create_date
                 '''
             data=conn.executeAll(sql,args['postId'])
+
+            # 유저의 닉네임과 프로필이미지를 파이어베이스로 부터 취득
+            for i, e in enumerate(data):
+                # 댓글유저정보취득
+                user=getUser(e['user_id']) # 댓글유저정보취득 (파이어베이스)
+                data[i]['nickname']=user['nickname'] # 유저 닉네임
+                data[i]['user_image']=user['user_image'] # 유저 프로필이미지
+                # 대댓글유저정보취득
+                user_cr=getUser(e['user_id_CR']) # 대댓글유저정보취득 (파이어베이스)
+                data[i]['nickname_CR']=user_cr['nickname'] # 유저 닉네임
+                data[i]['user_image_CR']=user_cr['user_image'] # 유저 프로필이미지
 
             # 화면에 반환할 값 commentReturnData
             commentData=list({e['comment_id']:e for e in data}.values()) # 중복 제거한 댓글목록
@@ -282,10 +295,10 @@ def insertPost(args):
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP,
                 %s,
-                UCvstCIzmxYDWOh9ujTtAYlHsxE3);
+                %s);
             '''
             postId=getUUID() # 게시글 PK
-            conn.execute(sql, (postId,args['title'],titleImage))
+            conn.execute(sql, (postId,args['title'],titleImage,args['userId']))
 
             # 게시물의 상세정보
             sql = '''
