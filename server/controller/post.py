@@ -1,4 +1,3 @@
-from flask import Blueprint, request, current_app, jsonify
 from model import postModel
 from common import *
 

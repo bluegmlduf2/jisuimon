@@ -1,7 +1,5 @@
-from flask import Blueprint, request, jsonify
 from model import commentModel
 from common import *
-import copy
 
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성
 comment_controller = Blueprint('comment', __name__)
