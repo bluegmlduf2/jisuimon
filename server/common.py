@@ -13,7 +13,8 @@ import random # 디폴트 이미지명 난수생성
 import uuid # PK작성을 위한 UUID 생성
 from PIL import Image  # 이미지 사이즈 변경
 import datetime  # 이미지 업로드에서 사용할 시간모듈
-import copy
+import copy # 딕셔너리 객체복사용
+from io import BytesIO # 저장용 버퍼객체
 
 '''
  아래는 예외처리에 관련된 공통항목이다
@@ -111,12 +112,16 @@ def imageConfig():
 
     return imageForder, fileTempPath, fileDestPath 
 
-# 이미지파일을 base64형식변환
+# 이미지파일을 base64형식변환 (섬네일)
 def imageParser(src):
-    with open(src, "rb") as image_file:
-        # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
-        return "data:image/jpeg;base64, " + \
-            base64.b64encode(image_file.read()).decode('utf-8')
+    image = Image.open(src)
+    resize_image = image.resize((24, 24)) # 섬네일사이즈로 리사이즈
+    buffered = BytesIO() # 버퍼(임시메모리) 생성
+    resize_image.save(buffered, format="JPEG") # 버퍼 저장
+    # 섬네일 이미지 반환
+    return "data:image/jpeg;base64, " + \
+            base64.b64encode(buffered.getvalue()).decode('utf-8')
+
 
 # 게시글에서 이미지 추출
 def imageFromContent(content):

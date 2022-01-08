@@ -97,7 +97,7 @@ def insertUserImage(args):
 
         # 리사이즈
         image = Image.open(args['file'])
-        resize_image = image.resize((160, 160))  # 160,160 이미지 사이즈변경
+        resize_image = image.resize((130, 130))  # 130,130 이미지 사이즈변경
         source = current_app.userImgPath+resize_image_fileNm  # 유저이미지저장경로
 
         # RGB형식으로 변경후 , 이미지 파일 저장
