@@ -1,5 +1,4 @@
 from common import *
-import copy
 
 def getPosts(args):
     conn = Connection()
@@ -14,8 +13,7 @@ def getPosts(args):
                 CONVERT_TZ(P.update_date, '+00:00', '-09:00') as update_date,
                 P.title_image,
                 P.user_table_user_id,
-                U.nickname ,
-                U.user_image ,
+                U.user_id ,
                 PD.content ,
                 (
                 SELECT
@@ -39,13 +37,20 @@ def getPosts(args):
             toPostCnt=8 # 8개씩 가져옴
             data = conn.executeAll(sql, (fromPostCnt,toPostCnt))
 
+            # TODO 유저삭제하면 uid가 없는데 그에대한 대처필요
+ 
             # 이미지->바이너리(base64)->utf-8문자열
             for i, e in enumerate(data):
-                #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
+                user = current_app.auth.get_user(e['user_id']) # 유저정보취득 (파이어베이스)
+                data[i]['nickname']=user.display_name # 유저 닉네임
+                data[i]['user_image']=str(user.photo_url or '').replace(
+                    'http://', '') # 유저 프로필이미지
+                    
+                # 타이틀 이미지
                 if not e['title_image']:
+                    #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
                     e['title_image']=getTitleImage()
                 src = current_app.fileDestPath+e['title_image']
-                # 타이틀 이미지
                 with open(src, "rb") as image_file:
                     # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                     data[i]['title_image'] = "data:image/jpeg;base64, " + \
@@ -61,6 +66,12 @@ def getPosts(args):
                     data[i]['user_image'] = "data:image/jpeg;base64, " + \
                         base64.b64encode(image_file.read()).decode('utf-8')
 
+                # 유저 닉네임
+                if not e['nickname']:
+                    # 유저네임이 존재하지 않는 경우 유저명임의생성 (타임스탬프이용)
+                    data[i]['nickname'] = "USER" + str(user.user_metadata.creation_timestamp)
+                    
+                
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
@@ -278,7 +289,7 @@ def insertPost(args):
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP,
                 %s,
-                1);
+                UCvstCIzmxYDWOh9ujTtAYlHsxE3);
             '''
             postId=getUUID() # 게시글 PK
             conn.execute(sql, (postId,args['title'],titleImage))

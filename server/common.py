@@ -13,7 +13,7 @@ import random # 디폴트 이미지명 난수생성
 import uuid # PK작성을 위한 UUID 생성
 from PIL import Image  # 이미지 사이즈 변경
 import datetime  # 이미지 업로드에서 사용할 시간모듈
-
+import copy
 
 '''
  아래는 예외처리에 관련된 공통항목이다
