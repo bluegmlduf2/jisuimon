@@ -338,3 +338,28 @@ def insertPost(args):
             conn.commit()
         finally:
             conn.close()
+
+def insertPostTempImage(args):
+    '''유저이미지 추가'''
+    try:
+        # 파일명변경
+        now = datetime.datetime.now(datetime.timezone(
+            datetime.timedelta(hours=9)))  # 일본시간
+        time = now.strftime('%Y%m%d%H%M%S')  # YYYYmmddHHMMSS 형태의 시간 출력
+        ranNum = str(random.randint(1, 999999)).rjust(4, "0")  # 난수4자리,공백은0으로채움
+        resize_image_fileNm = time+ranNum+".jpg"  # 파일명변경
+
+        # 이미지 저장
+        image = Image.open(args['file'])
+        source = current_app.fileTempPath+resize_image_fileNm  # 임시파일저장경로
+
+        # RGB형식으로 변경후 , 이미지 파일 저장
+        image.convert('RGB').save(source)  # resize사용시 image -> resize_image
+
+    except UserError as e:
+        return json.dumps({'status': False, 'message': e.msg}), 200
+    except Exception as e:
+        traceback.print_exc()
+        raise e
+    else:
+        return resize_image_fileNm

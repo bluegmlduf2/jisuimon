@@ -92,13 +92,24 @@ def deleteUser(args):
 def insertUserImage(args):
     '''유저이미지 추가'''
     try:
+        # 파일명변경
+        resize_image_fileNm = getUUID()+".jpg"  # 파일명변경
+
+        # 리사이즈
+        image = Image.open(args['file'])
+        resize_image = image.resize((286, 180))  # 286,180 이미지 사이즈변경
+        source = current_app.userImgPath+resize_image_fileNm  # 유저이미지저장경로
+
+        # RGB형식으로 변경후 , 이미지 파일 저장
+        resize_image.convert('RGB').save(source)
+
         # 현재 유저의 지난 프로필이미지 삭제
         deleteCurrentUserImage(args)
 
         # 파이어베이스에 유저이미지명 등록 (url형식만등록허용함)
         current_app.auth.update_user(
             args['uid'],
-            photo_url='http://'+args['filename'])
+            photo_url='http://'+resize_image_fileNm)
 
     except UserError as e:
         return json.dumps({'status': False, 'message': e.msg}), 200

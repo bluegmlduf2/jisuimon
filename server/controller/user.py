@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, send_from_directory
 from model import userModel
-from PIL import Image  # 이미지 사이즈 변경
 from common import *
 
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성
@@ -74,21 +73,9 @@ def userImage():
         if size == 0:
             raise UserError(703)
 
-        # 파일명변경
-        resize_image_fileNm = getUUID()+".jpg"  # 파일명변경
-
-        # 리사이즈
-        image = Image.open(f)
-        resize_image = image.resize((286, 180))  # 286,180 이미지 사이즈변경
-
-        source = current_app.userImgPath+resize_image_fileNm  # 유저이미지저장경로
-
-        # RGB형식으로 변경후 , 이미지 파일 저장
-        resize_image.convert('RGB').save(source)
-
-        # 파일이미지명을 파이어베이스와 서버DB에 등록
         args = request.user  # 파이어베이스 유저정보 취득
-        args['filename'] = resize_image_fileNm  # 파일명
+        args['file'] = f  # 유저 프로필 이미지
+
         userModel.insertUserImage(args)
 
         return jsonify(getMessage(601)), 200
