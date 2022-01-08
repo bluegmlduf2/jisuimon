@@ -41,10 +41,9 @@ def getPosts(args):
  
             # 이미지->바이너리(base64)->utf-8문자열
             for i, e in enumerate(data):
-                user = current_app.auth.get_user(e['user_id']) # 유저정보취득 (파이어베이스)
-                data[i]['nickname']=user.display_name # 유저 닉네임
-                data[i]['user_image']=str(user.photo_url or '').replace(
-                    'http://', '') # 유저 프로필이미지
+                user=getUser(e['user_id']) # 유저정보취득 (파이어베이스)
+                data[i]['nickname']=user['nickname'] # 유저 닉네임
+                data[i]['user_image']=user['user_image'] # 유저 프로필이미지
                     
                 # 타이틀 이미지
                 if not e['title_image']:
@@ -65,12 +64,6 @@ def getPosts(args):
                     # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
                     data[i]['user_image'] = "data:image/jpeg;base64, " + \
                         base64.b64encode(image_file.read()).decode('utf-8')
-
-                # 유저 닉네임
-                if not e['nickname']:
-                    # 유저네임이 존재하지 않는 경우 유저명임의생성 (타임스탬프이용)
-                    data[i]['nickname'] = "USER" + str(user.user_metadata.creation_timestamp)
-                    
                 
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200

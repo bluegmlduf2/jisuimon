@@ -142,11 +142,9 @@ def deleteUserImage(args):
 def deleteCurrentUserImage(args):
     '''현재 유저의 프로필이미지 삭제'''
     # 유저 기존 이미지명 취득 (파이어베이스)
-    photo_url = current_app.auth.get_user(args['uid']).photo_url
-    photo_url_str = str(photo_url or '').replace(
-        'http://', '')  # None을 공백 문자열로 변환후 url을 공백 변환
-    filePath = current_app.userImgPath+photo_url_str
+    user=getUser(args['uid']) # 유저정보취득 (파이어베이스)
+    filePath = current_app.userImgPath+user['user_image']
 
     # 기존 유저이미지파일 존재시 삭제
-    if os.path.exists(filePath) and photo_url_str:
+    if os.path.exists(filePath) and user['user_image']:
         os.remove(filePath)
