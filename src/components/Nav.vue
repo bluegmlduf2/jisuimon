@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
-    <router-link class="navbar-brand" to="/">自炊モン</router-link>
+    <a class="navbar-brand" to="#" @click="moveToHome">自炊モン</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -222,6 +222,7 @@ export default {
 .navbar-brand {
   color: rgb(96, 96, 96) !important;
   font-size: 2rem !important;
+  cursor: pointer;
 }
 
 .nav-item {

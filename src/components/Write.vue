@@ -233,9 +233,7 @@ export default {
         .dispatch("post", payload)
         .then(() => {
           this.$message.successMessage()
-
-          //TODO 현재 페이지 이동후 등록한 게시물의 갱신이 안됨..수정필요
-          this.$router.push('/')
+          this.moveToHome()//홈화면으로 이동
         })
         .catch((err) => {
           this.$message.errorMessage(err);
