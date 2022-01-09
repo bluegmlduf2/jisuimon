@@ -96,11 +96,13 @@ class UserError(Exception):
         return self.errorInfo['message']
 
 '''
- 아래는 이미지에 관련된 공통항목이다
+ 아래는 이미지와 경로에 관련된 공통항목이다
  imageConfig
  imageParser
  imageFromContent
  getTitleImage
+ getUserImage
+ getUrlPath
  moveImageTempToDest
 '''
 # 이미지 함수에 필요한 설정부분
@@ -130,9 +132,33 @@ def imageFromContent(content):
     removeStringPath=[x.replace('/static/contentImg/','') for x in removeStringBetween] # 문자열의 패스제거
     return [x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
     
-# 게시글의 타이틀 이미지 추출
-def getTitleImage():
-    return'defaultImg/titleImage_'+str(random.randrange(1,8))+'.jpg' # 타이틀 이미지 , 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
+# 게시글의 타이틀 이미지 경로 추출
+def getTitleImage(titleImage):
+    if titleImage:
+        # 유저 저장 타이틀 이미지
+        return getUrlPath()+current_app.urlDestPath+titleImage # 타이틀 이미지 , 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
+    else:
+        # 기본 타이틀 이미지, 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
+        return getUrlPath()+current_app.urlDestDefaultPath+'titleImage_'+str(random.randrange(1,8))+'.jpg'
+
+# 유저 이미지 경로 추출
+def getUserImage(userImage):
+    if userImage:
+        # 유저 저장 이미지
+        return current_app.userImgPath+userImage
+    else:
+        # 유저 기본 이미지
+        return current_app.userDefaultImg
+
+# 현재의 url 정보를 반환
+def getUrlPath():
+    url = request.host_url  # 홈 URL
+    
+    # 개발환경용 url 설정
+    if current_app.env == 'development':
+        url = "http://localhost:5000"
+    
+    return url
 
 # 임시이미지 파일을 저장용 폴더에 이동
 def moveImageTempToDest(imageFileNames):

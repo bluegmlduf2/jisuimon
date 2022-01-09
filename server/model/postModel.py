@@ -46,25 +46,13 @@ def getPosts(args):
                 data[i]['user_image']=user['user_image'] # 유저 프로필이미지
                     
                 # 타이틀 이미지
-                if not e['title_image']:
-                    #　타이틀의 이미지가 없을 경우 기본 이미지를 출력
-                    e['title_image']=getTitleImage()
-                src = current_app.fileDestPath+e['title_image']
-                
-                #TODO url요청형식으로 변경할것
-                with open(src, "rb") as image_file:
-                    # b64encode함수는 바이트코드를만든다. decode는 문자열을 만든다.
-                    data[i]['title_image'] = "data:image/jpeg;base64, " + \
-                        base64.b64encode(image_file.read()).decode('utf-8')
-
+                data[i]['title_image'] = getTitleImage(e['title_image'])
+ 
                 # 유저 이미지
-                if not e['user_image']:
-                    src = current_app.userDefaultImg
-                else:
-                    src = current_app.userImgPath+e['user_image']
+                userImagePath = getUserImage(e['user_image'])
 
                 # 섬네일이미지변환Base64
-                data[i]['user_image']=imageParser(src)
+                data[i]['user_image'] = imageParser(userImagePath)
                 
         except UserError as e:
             return json.dumps({'status': False, 'message': e.msg}), 200

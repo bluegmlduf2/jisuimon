@@ -94,14 +94,10 @@ def imageUploadTemp():
             'file': f
         }
 
-        resize_image_fileNm = postModel.insertPostTempImage(args)  # 임시이미지 등록
+        # 임시이미지 등록
+        resize_image_fileNm = postModel.insertPostTempImage(args)  
 
-        url = request.host_url  # 홈 URL
-        # 개발환경용 url 설정
-        if current_app.env == 'development':
-            url = "http://localhost:5000"
-
-        # TODO나중에 같은 서버 사용하면 변경해야함
-        dest = url+current_app.urlTempPath+resize_image_fileNm  # 임시 저장 경로
+        # 임시등록한 이미지의 url+파일명반환
+        dest = getUrlPath()+current_app.urlTempPath+resize_image_fileNm  # 임시 저장 경로
 
         return jsonify({"url": dest}), 200
