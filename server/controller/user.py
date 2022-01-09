@@ -5,25 +5,37 @@ from common import *
 user_controller = Blueprint('user', __name__)
 
 
-@user_controller.route('/user', methods=['POST', 'DELETE'])
-@check_token
+@user_controller.route('/user', methods=['POST'])
 @exception_handler
 def user():
     '''회원등록'''
     if request.method == 'POST':
-        user = request.user  # 파이어베이스 유저정보 취득
+        args = request.get_json()
+        
+        # 유효성 공백체크
+        if not args['email']:
+            raise UserError(701, 'Email')
+
+        # 파이어베이스에서 이메일로 유저검색 후 uid 초기화
+        user=current_app.auth.get_user_by_email(args['email'])
+        args['uid']= user.uid
 
         # 기존 등록된 유저여부체크
-        isUser = userModel.checkUser(user)
+        isUser = userModel.checkUser(args)
         if not isUser:
             # 유저등록
-            userModel.insertUser(user)
+            userModel.insertUser(args)
         else:
             # 유저등록에러
             raise UserError(704)
 
         return jsonify(getMessage(601)), 200
 
+
+@user_controller.route('/user', methods=['DELETE'])
+@check_token
+@exception_handler
+def deleteUser():
     '''회원삭제'''
     if request.method == 'DELETE':
         user = request.user  # 파이어베이스 유저정보 취득

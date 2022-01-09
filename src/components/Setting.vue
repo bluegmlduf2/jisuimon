@@ -236,8 +236,7 @@ export default {
                 )
                 .then(() => {
                   // 탈퇴후 홈화면으로 이동
-                  const HOME_URL = `/${location.pathname.split("/")[1]}`;
-                  window.location.href = HOME_URL;
+                  this.moveToHome()
                 });
             })
             .catch((err) => {

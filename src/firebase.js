@@ -94,7 +94,7 @@ export default {
             )
             .then(async (user) => {
                 current_user = user; // 서버에서 등록실패할 경우 파이어베이스의 유저삭제용
-                const payload = { method: "post" };
+                const payload = { method: "post" , sendData: { email: email }};
                 return await store.dispatch("signUp", payload);
             })
             .catch(async (err) => {

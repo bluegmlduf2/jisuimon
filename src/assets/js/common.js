@@ -7,6 +7,11 @@ export default {
     // 라이플사이클일 경우 mixin먼저 호출
     // 컴포넌트 메서드가 우선권있음
     methods: {
+        // 홈화면으로 이동 (라우터를 사용하는것이 화면로딩에 비용이 또 들어감)
+        moveToHome(){
+            const HOME_URL = `/${location.pathname.split("/")[1]}`;
+            location.href = HOME_URL;
+        },
         // HTML태그제거
         removeHtml(str) {
             str = str.replace(/<br\/>/gi, "\n");

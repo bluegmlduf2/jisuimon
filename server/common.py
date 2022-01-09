@@ -112,16 +112,16 @@ def imageConfig():
 
     return imageForder, fileTempPath, fileDestPath 
 
-# 이미지파일을 base64형식변환 (섬네일)
+# 이미지파일을 base64형식변환 (섬네일사이즈)
 def imageParser(src):
+    # 이미지파일->이미지파일사이즈변경->버퍼메모리저장->base64인코딩
     image = Image.open(src)
-    resize_image = image.resize((24, 24)) # 섬네일사이즈로 리사이즈
-    buffered = BytesIO() # 버퍼(임시메모리) 생성
-    resize_image.save(buffered, format="JPEG") # 버퍼 저장
-    # 섬네일 이미지 반환
+    buffered = BytesIO()  # 버퍼(임시메모리) 객체생성
+    # 이미지파일을 리사이즈 후 임시 메모리 객체 버퍼에 저장
+    image.resize((24, 24)).save(buffered, format="JPEG")
+    # 섬네일 이미지 반환 (버퍼의 내용을 base64형식으로 변환후 반환)
     return "data:image/jpeg;base64, " + \
-            base64.b64encode(buffered.getvalue()).decode('utf-8')
-
+        base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 # 게시글에서 이미지 추출
 def imageFromContent(content):
