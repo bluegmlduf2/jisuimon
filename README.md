@@ -30,8 +30,10 @@ database_format.py → database.py
 ```
 key_format.ini → key.ini
 And write key to key.ini
+
 firebase-format-adminsdk.json → username-firebase-format-adminsdk.json
 And write key to username-firebase-format-adminsdk.json
+
 .temp.env.local → .env.local
 And write firebasekey to .env.local , .env.production
 ```
