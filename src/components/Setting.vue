@@ -94,7 +94,7 @@ export default {
       this.newPassConfirmUpdated = ""; // 새로운비밀번호확인
     },
     // 유저 프로필 변경
-    updateProfileImg(event) {      
+    updateProfileImg(event) {
       // 파일정보
       const FILE = event?.target.files[0],
         FILE_NAME = FILE?.name,
@@ -118,6 +118,8 @@ export default {
         method: "post",
         sendData: formData,
       };
+      
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
 
       this.$store
         .dispatch("userImage", payload, true)
@@ -135,7 +137,7 @@ export default {
         })
         .finally(() => {
           this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
-          this.loading = false;
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     },
     // 유저 프로필 삭제
@@ -143,10 +145,10 @@ export default {
       this.$message.confirmMessage("TODO削除する？").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
-          this.loading = true;
           const payload = {
             method: "delete",
           };
+          this.$store.commit('showSpinner'); // 요청대기스피너 보기
           this.$store
             .dispatch("userImage", payload)
             .then(() => {
@@ -163,7 +165,7 @@ export default {
             })
             .finally(() => {
               this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
-              this.loading = false;
+              this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
             });
         }
       });
@@ -180,6 +182,8 @@ export default {
         nickName: this.nickNameUpdated,
       };
 
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      
       firebase
         .updateUser(UPDATE_INFO)
         .then((res) => {
@@ -191,6 +195,7 @@ export default {
         .finally(() => {
           this.nickNameClicked = !this.nickNameClicked; // 버튼상태변경
           this.initUser(); // 유저정보초기화
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     },
     // 유저 비밀번호 변경
@@ -205,6 +210,8 @@ export default {
         newPassword: this.newPassUpdated,
       };
 
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+
       firebase
         .updatePass(UPDATE_INFO)
         .then((res) => {
@@ -216,6 +223,7 @@ export default {
         .finally(() => {
           this.passWordClicked = !this.passWordClicked; // 버튼상태변경
           this.initUser(); // 유저정보초기화
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     },
     // 유저삭제
@@ -223,10 +231,11 @@ export default {
       this.$message.confirmMessage("TODO削除する？").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
-          this.loading = true;
           const payload = {
             method: "delete",
           };
+          this.$store.commit('showSpinner'); // 요청대기스피너 보기
+
           this.$store
             .dispatch("deleteUser", payload)
             .then(() => {
@@ -243,7 +252,7 @@ export default {
               this.$message.errorMessage(err);
             })
             .finally(() => {
-              this.loading = false;
+              this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
             });
         }
       });

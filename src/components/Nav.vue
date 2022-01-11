@@ -117,6 +117,8 @@ export default {
     login(){
       this.afterValidation=true
       //TODO 1.원형프로그레스 , 유효성체크
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      
       firebase.signInWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
           this.closeLoginForm(); // 로그인 창 닫기
@@ -124,21 +126,28 @@ export default {
         }
       ).catch((err)=>{
         this.$message.warningMessage(err.message);
-      })
+      }).finally(() => {
+        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+      });
     },
     // 로그아웃
     logout(){
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      
       firebase.logout().then((res) => {
         this.$message.okMessage(res,false);
       }).catch((err) => {
         this.$message.warningMessage(err.message);
       }).finally(() => {
+        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         this.$router.push('/')
       });
     },
     // 회원가입
     signup(){
       this.afterValidation=true
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      
       //TODO 1.원형프로그레스 , 유효성체크 , 비밀번호확인창 일치체크
       firebase.signUpWithEmailAndPassword(this.userEmail, this.userPass).then(
         (res) => {
@@ -147,7 +156,9 @@ export default {
         }
       ).catch((err)=>{
         this.$message.warningMessage(err.message);
-      })
+      }).finally(() => {
+        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+      });
     },
     // 로그인창 표시
     showLoginForm(){

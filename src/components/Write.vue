@@ -106,7 +106,6 @@ export default {
       if(INPUT_FOOD.length<2){
         return
       }
-      this.loading = true;
       const payload = {
         method: "get", 
         sendData: {food_name: INPUT_FOOD}
@@ -119,9 +118,6 @@ export default {
         .catch((err) => {
           this.$message.errorMessage(err);
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     // 선택한 재료 추가
     selectFood(event){
@@ -217,8 +213,6 @@ export default {
     },
     // 게시글 등록
     registerPost() {
-      this.loading = true;
-
       // 입력값의 유효성체크
       if(this.validation())return
       
@@ -228,6 +222,7 @@ export default {
       };
 
       payload.sendData=this.formData // 입력정보를 서버전송데이터에 넣음
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
       
       this.$store
         .dispatch("post", payload)
@@ -239,7 +234,7 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.loading = false;
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     },
     // 입력값의 유효값 체크

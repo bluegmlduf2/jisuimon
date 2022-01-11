@@ -4,9 +4,12 @@
     <router-view name="Card" :posts="posts" :postCnt="postCnt" :postCntAll="postCntAll" @addPostCnt="addPostCnt"/>
     <!-- Post -->
     <router-view name="Post" />
-    <!-- TODO write에서 setting으로 화면이동시 잔상 -->
     <!-- Setting -->
-    <router-view name="Setting" />
+    <router-view name="Setting" v-slot="{ Component }">
+      <transition name="fade" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
     <!-- Write -->
     <router-view name="Write" v-slot="{ Component }">
       <transition name="fade" mode="out-in">
@@ -15,24 +18,36 @@
     </router-view>
     <!-- Error -->
     <router-view name="NotFound" />
-    <div v-if="showSpinner" class="loader loader-black loader-1"></div>
+    <!-- 요청대기용 스피너 -->
+    <div class="loader-background" v-if="getSpinner">
+      <div class="regot-loader">
+        <div class="regot regot1"></div>
+        <div class="regot regot2"></div>
+        <div class="regot regot3"></div>
+        <div class="regot regot4"></div>
+      </div>
+    </div>
+    <!-- 게시물더보기용 스피너 -->
+    <div v-if="scrollSpinner" class="loader loader-black loader-1"></div>
   </div>
 </template>
 
 <script>
 export default {
   name: "Main",
-  components: {
-    // Card:Card
-  },
   data() {
     return {
-      loading: false,
       posts: [],
       postCnt: 8, //현재 게시물 수
       postCntAll: 0, // 총 게시물 수
-      showSpinner:false
+      scrollSpinner:false // 게시물 더보기 스피너
     };
+  },
+  computed:{
+    // 요청대기 스피너 초기값반환
+    getSpinner(){
+      return this.$store.getters['getSpinner']
+    }
   },
   methods: {
     // 메인게시물 호출
@@ -41,12 +56,19 @@ export default {
         method: "get",
         sendData: { postCnt: this.postCnt },
       };
+
+      // 요청대기 스피너 보기 (초기화면만)
+      if(this.postCnt == 8){
+        this.$store.commit('showSpinner');
+      }
+
       this.$store.dispatch('post',payload).then((result) => {
         this.posts.push(...result.data)
       }).catch((err) => {
         this.$message.errorMessage(err);
       }).finally(()=>{
-        this.showSpinner = false
+        this.scrollSpinner = false // 게시물더보기 스피너 보지않기
+        this.$store.commit('hideSpinner'); // 요청대기 스피너 보지않기
       });
     },
     // 총 게시물수 가져오기
@@ -62,12 +84,9 @@ export default {
     },
     // 게시물 8개 더 보여주기
     addPostCnt(){
-      this.showSpinner = true
-
-      setTimeout(() => {
-        this.postCnt=this.postCnt+8
-        this.getPosts()                  
-      }, 2000);
+      this.postCnt=this.postCnt+8
+      this.scrollSpinner = true // 게시물더보기 스피너 보기
+      this.getPosts()              
     }
   },
   created(){
@@ -87,13 +106,11 @@ export default {
 
 /* transition의 페이지 이동시 fade 애니메이션
 transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
-.fade-enter-active,
-.fade-leave-active {
+.fade-enter-active {
   transition: opacity 1s ease;
 }
 
-.fade-enter-from,
-.fade-leave-to {
+.fade-enter-from{
   opacity: 0;
 }
 
@@ -105,7 +122,95 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
 }
 
 /*-------------------------------------------
-    $ Loaders 스피너
+    $ Loaders 스피너 (요청대기용)
+-------------------------------------------*/
+.loader-background{
+  background-color: rgba(249, 249, 249, 0.85);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
+  width: 100%;
+  z-index: 9999;
+  display: flex; /* 아래는 플렉스를 이용한 가운데 정렬 */
+  justify-content: center;
+  align-items: center;
+}
+.regot-loader {
+  font-size: 20px;
+  position: fixed;
+  transform: translateX( -50% ); /** fixed의 width를 고려한 정중앙위치 */
+  width: 4em;
+  height: 1em;
+  /* margin: 100px auto; */
+  top:50%;
+  left:50%;
+}
+
+.regot {
+  width: 1em;
+  height: 1em;
+  border-radius: 0.5em;
+  background: rgb(134, 142, 150);
+  position: absolute;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+}
+
+.regot1,
+.regot2 {
+  left: 0;
+}
+
+.regot3 {
+  left: 1.5em;
+}
+
+.regot4 {
+  left: 3em;
+}
+
+@keyframes show {
+  from {
+    transform: scale(0.001);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes remove {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(0.001);
+  }
+}
+
+@keyframes shift {
+  to {
+    transform: translateX(1.5em);
+  }
+}
+
+.regot1 {
+  animation-name: show;
+}
+
+.regot2,
+.regot3 {
+  animation-name: shift;
+}
+
+.regot4 {
+  animation-name: remove;
+}
+
+/*-------------------------------------------
+    $ Loaders 스피너 (게시물더보기용)
 -------------------------------------------*/
 .loader {
     width: 50px;

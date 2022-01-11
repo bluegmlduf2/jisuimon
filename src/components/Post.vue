@@ -53,11 +53,13 @@ export default {
   methods: {
     // 선택 게시물 상세내용
     getPostDetail() {
-      this.loading = true;
       const payload = {
         method: "get",
         sendData: { postId: this.$route.params.postId },
       };
+      
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      
       this.$store
         .dispatch("postDetail", payload)
         .then((result) => {
@@ -69,7 +71,7 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.loading = false;
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     },
   },

@@ -101,8 +101,6 @@ export default {
     registerComment(){
       const COMMENT_CONTENT=this.inputComment // 입력댓글
 
-      this.loading = true;
-
       // 입력값의 유효성체크
       if (!COMMENT_CONTENT) {
         this.$message.warningMessage("コメントを入力してください");
@@ -118,6 +116,8 @@ export default {
         }
       };
 
+      this.$store.commit('showSpinner');
+
       this.$store
         .dispatch("comment", payload)
         .then(() => {
@@ -130,15 +130,13 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.loading = false;
+          this.$store.commit('hideSpinner');
         });
     },
     // 대댓글등록
     registerCommentReply(commentId,commentReplyContent){
       const COMMENT_ID=commentId// 댓글ID
       const COMMENT_REPLY_CONTENT=commentReplyContent // 대댓글내용
-
-      this.loading = true;
 
       // 입력값의 유효성체크
       if (!COMMENT_REPLY_CONTENT) {
@@ -155,6 +153,8 @@ export default {
         }
       };
 
+      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+
       this.$store
         .dispatch("commentReply", payload)
         .then(() => {
@@ -167,7 +167,7 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.loading = false;
+          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
         });
     }
   }
