@@ -119,10 +119,9 @@ export default {
   color: rgb(12, 166, 120);
   text-decoration: none;
   font-weight: 500;
-  height: 1.5rem;
   font-size: 1rem;
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.25rem 1rem;
   margin-right: 0.5rem;
   margin-bottom: 0.2rem;
 }
@@ -155,11 +154,21 @@ export default {
 .postCont_article {
   line-height: 1.75; /* 폰트사이즈16px*1.75 */
   padding-bottom: 70px;
+  word-break:break-all; /* 가로 넓이 벗어나면 줄바꿈 */
 }
+
 @media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
   .postCont {
     padding-top: 10vh;
+  }
+
+}
+
+/* 메인 레이아웃 css (부트스트랩 스마트폰 가로 기준(576px미만) 으로 작성)*/
+@media (max-width: 576.98px) {
+  .postCont_article img {
+    width: 100%;
   }
 }
 </style>

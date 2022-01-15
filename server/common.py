@@ -1,4 +1,4 @@
-from flask import Blueprint, request, current_app, jsonify, send_from_directory
+from flask import Blueprint, request, current_app, jsonify, send_from_directory,Markup
 import time
 import traceback
 import simplejson as json  # dumps(객체) ->json문자열 , loads(json문자열) ->객체
@@ -171,10 +171,18 @@ def moveImageTempToDest(imageFileNames):
 '''
  아래는 보안에 관련된 공통항목이다
  xssFilter
+ htmlUnescape
 '''
 # jinja를 이용한 xss필터함수
 def xssFilter(args):
-    return str(utils.escape(args))  
+    escapedHTML=str(utils.escape(args))
+    # script태그를 막기위해 설정(일부만 막을수있음..)
+    escapedHTML=escapedHTML.replace("script", "")
+    return escapedHTML
+
+# escape된 HTML을 다시 HTML형식으로 변환
+def htmlUnescape(args):
+    return Markup(args).unescape()
 
 '''
  아래는 유일키 생성 항목이다

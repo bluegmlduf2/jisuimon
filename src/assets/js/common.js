@@ -18,6 +18,8 @@ export default {
             str = str.replace(/<(\/)?([a-zA-Z]*)(\s[a-zA-Z]*=[^>]*)?(\s)*(\/)?>/gi,"");
             str = str.replace(/(<([^>]+)>)/gi, "");
             str = str.replace(/&nbsp;/gi, "");
+            str = str.replace(/&lt;/gi, "<"); // <script>태그제거후 남은 <>처리
+            str = str.replace(/&gt;/gi, ">");
             return str;
         },
         // 숫자만 허용,공백허용안함

@@ -47,7 +47,10 @@ def getPosts(args):
                     
                 # 타이틀 이미지
                 data[i]['title_image'] = getTitleImage(e['title_image'])
- 
+
+                # 게시물 내용 변환 escapeHTML->HTML
+                data[i]['content'] = htmlUnescape(e['content'])
+
                 # 유저 이미지
                 userImagePath = getUserImage(e['user_image'])
 
@@ -116,6 +119,9 @@ def getPostDetail(args):
             '''
 
             data = conn.executeOne(sql, args['postId'])
+
+            # 게시물 내용 변환 escapeHTML->HTML
+            data['content'] = htmlUnescape(data['content'])
 
             # 파이어베이스 유저정보 취득
             user=getUser(data['user_id']) # 유저정보취득 (파이어베이스)
