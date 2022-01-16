@@ -46,7 +46,7 @@ def getPosts(args):
                 data[i]['user_image']=user['user_image'] # 유저 프로필이미지
                     
                 # 타이틀 이미지
-                data[i]['title_image'] = getTitleImage(e['title_image'])
+                data[i]['title_image'] = getTitleImage(e)
 
                 # 게시물 내용 변환 escapeHTML->HTML
                 data[i]['content'] = htmlUnescape(e['content'])
@@ -266,7 +266,6 @@ def insertPost(args):
     if conn:
         try:
             imageFileNames=imageFromContent(args['content']) # 게시글에서 이미지 추출
-            # titleImage=getTitleImage(imageFileNames) # 게시글의 타이틀 이미지명 추출
 
             # 타이틀이미지가 존재할 경우 해당 이미지 사용
             titleImage='' 

@@ -133,13 +133,15 @@ def imageFromContent(content):
     return [x.replace('&#34','') for x in removeStringPath] # 문자열의 불필요한 뒷부분 제거후 최종파일명
     
 # 게시글의 타이틀 이미지 경로 추출
-def getTitleImage(titleImage):
+def getTitleImage(data):
+    titleImage=data['title_image'] # 타이틀이미지
+    defaultFileNum=str((data['create_date'].second % 8)+1) # 게시물 작성시간 초를 기준으로 1-8정수획득
     if titleImage:
         # 유저 저장 타이틀 이미지
         return getUrlPath()+current_app.urlDestPath+titleImage # 타이틀 이미지 , 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
     else:
         # 기본 타이틀 이미지, 없을 경우에 기본 타이틀이미지 1~8중 임의선택 
-        return getUrlPath()+current_app.urlDestDefaultPath+'titleImage_'+str(random.randrange(1,8))+'.jpg'
+        return getUrlPath()+current_app.urlDestDefaultPath+'titleImage_'+defaultFileNum+'.jpg'
 
 # 유저 이미지 경로 추출
 def getUserImage(userImage):
