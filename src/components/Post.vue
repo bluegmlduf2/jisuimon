@@ -2,10 +2,14 @@
   <div class="postCont">
     <h1 class="postCont_title">{{ posts.title }}</h1>
     <div class="postCont_writer">
-      <b>{{ posts.nickname }}</b
-      >&nbsp;&nbsp;&nbsp;{{
-        $moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")
-      }}
+      <div class="postCont_writer_profile">
+        <b>{{ posts.nickname }}</b>
+        <span>{{$moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</span>
+      </div>
+      <div class="postCont_writer_button">
+        <span>修正</span>
+        <span>削除</span>
+      </div>
     </div>
     <div class="postCont_ingredient">
       <span v-for="i in ingredient" :key="i.ingredient_id">
@@ -106,7 +110,25 @@ export default {
   margin-bottom: 30px;
 }
 .postCont_writer {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 20px;
+}
+.postCont_writer_profile span{
+  margin-left: 0.5rem;
+}
+.postCont_writer_button{
+  padding: 0px;
+  outline: none;
+  border: none;
+  background: none;
+  font-size: inherit;
+  cursor: pointer;
+  color: rgb(134, 142, 150);
+  font-size: 0.9rem;
+}
+.postCont_writer_button > span{
+  margin-left: 0.5rem;
 }
 .postCont_ingredient {
   margin-bottom: 20px;
@@ -148,7 +170,6 @@ export default {
   margin-bottom: 0.5rem;
 }
 .postCont_index_list {
-  margin-top: 2.5rem;
   cursor: pointer;
 }
 .postCont_article {

@@ -23,11 +23,17 @@
           <div class="commentCont_profileImg">
             <img :src="`${comment.user_image}`" alt="profileImg">
           </div>
-          <div class="commentCont_profileInfo">
-            <div class="commentCont_profileInfo_name">
-              <b>{{ comment.nickname }}</b>
+          <div class="commentCont_profileInfo update_button_cont">
+            <div>
+              <div class="commentCont_profileInfo_name">
+                <b>{{ comment.nickname }}</b>
+              </div>
+              <div class="commentCont_profileInfo_date">{{getCommentMoment(comment.comment_create_date)}}</div>
             </div>
-            <div class="commentCont_profileInfo_date">{{$moment(comment.comment_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
+            <div>
+              <span>修正</span>
+              <span>削除</span>
+            </div>
           </div>
         </div>
         <!-- 댓글 코멘트 -->
@@ -47,11 +53,17 @@
                     <div class="commentCont_profileImg">
                       <img :src="`${commentReply.user_image_CR}`" alt="profileImg">
                     </div>
-                    <div class="commentCont_profileInfo">
-                      <div class="commentCont_profileInfo_name">
-                        <b>{{ commentReply.nickname_CR }}</b>
+                    <div class="commentCont_profileInfo update_button_cont">
+                      <div>
+                        <div class="commentCont_profileInfo_name">
+                          <b>{{ commentReply.nickname_CR }}</b>
+                        </div>
+                        <div class="commentCont_profileInfo_date">{{getCommentMoment(commentReply.comment_reply_create_date)}}</div>
                       </div>
-                      <div class="commentCont_profileInfo_date">{{$moment(commentReply.comment_reply_create_date).format("YYYY年 MM月 DD日 dddd  hh時 mm分")}}</div>
+                      <div>
+                        <span>修正</span>
+                        <span>削除</span>
+                      </div>
                     </div>
                   </div>
                   <!-- 대댓글 코멘트 -->
@@ -97,6 +109,20 @@ export default {
     };
   },
   methods:{
+    // 댓글용 시간 반환
+    getCommentMoment(date){
+      console.log(date)
+      const FROM_DATE=this.$moment(new Date()) // 현재시간
+      const TO_DATE=this.$moment(date) // 비교시간
+      const DAY_BETWEEN=FROM_DATE.diff(TO_DATE, 'days') // 비교일수
+      
+      // 비교일수가 1일이상일 경우에 일자까지만 표시, 1일 이내일 경우엔 현재기준으로 차이를 표시
+      if(DAY_BETWEEN){
+        return this.$moment(date.comment_reply_create_date).format("YYYY年 MM月 DD日")
+      }else{
+        return this.$moment(TO_DATE).fromNow();
+      }
+    },
     // 댓글등록
     registerComment(){
       const COMMENT_CONTENT=this.inputComment // 입력댓글
@@ -215,6 +241,22 @@ export default {
 .commentCont_profileInfo_date {
   font-size: 0.75rem;
   color: rgb(134, 142, 150);
+}
+.update_button_cont {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.update_button_cont span{
+  padding: 0px;
+  outline: none;
+  border: none;
+  background: none;
+  font-size: inherit;
+  cursor: pointer;
+  color: rgb(134, 142, 150);
+  margin-left: 0.5rem;
+  font-size: 0.8rem;;
 }
 .commentCont_list_content {
   padding: 1rem 0 2rem;
