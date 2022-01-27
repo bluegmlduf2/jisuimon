@@ -129,6 +129,10 @@ def getPostDetail(args):
             data['user_image']=user['user_image'] # 유저 프로필이미지
             data['post_auth']= getUserAuth(args.user,data['user_id']) # 게시물의 유저권한취득
             
+            # 불필요한 게시물의 칼럼제거
+            removePostCol = ['user_id','user_table_user_id']
+            [data.pop(colNm) for colNm in removePostCol]
+
         except UserError as e:
             conn.rollback()
             raise e
@@ -223,7 +227,7 @@ def getPostComment(args):
 
             # 댓글과 대댓글에서 삭제할 칼럼목록
             removeCommentCol = ['comment_reply_content', 'comment_reply_create_date', 'comment_reply_id',
-                                'comment_table_comment_id', 'user_image_CR', 'nickname_CR', 'user_id', 'user_id_CR', 'user_table_user_id']
+                                'comment_table_comment_id', 'user_image_CR', 'nickname_CR', 'user_id', 'user_id_CR', 'user_table_user_id','post_table_post_id']
             removeCommentReplyCol = ['comment_content', 'comment_create_date',
                                      'user_table_user_id', 'post_table_post_id', 'user_image', 'nickname', 'user_id', 'user_id_CR']
 
