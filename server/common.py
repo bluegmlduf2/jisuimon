@@ -48,7 +48,7 @@ def exception_handler(func):
             return result
     return inner_func
 
-# 유저 토큰 확인 데코레이터
+# 유저 토큰 확인 데코레이터 (토큰이 필수값)
 def check_token(func):
     @wraps(func)
     def wrap(*args,**kwargs):
@@ -59,6 +59,22 @@ def check_token(func):
             #user변수에 파이어베이스 유저정보 넣음
             user = current_app.auth.verify_id_token(request.headers['authorization'].replace("Bearer ",""))
             request.user = user
+        except:
+            #유효하지않은 토큰
+            return jsonify(getMessage(705)), 400
+        return func(*args, **kwargs)
+    return wrap
+
+# 유저 토큰 확인 데코레이터 (토큰이 선택값)
+def get_token(func):
+    @wraps(func)
+    def wrap(*args,**kwargs):
+        try:
+            user = None
+            #유저 정보가 존재할 경우에 user변수에 파이어베이스 유저정보 넣음
+            if request.headers.get('authorization'):
+                user = current_app.auth.verify_id_token(request.headers['authorization'].replace("Bearer ",""))
+            request.args.user = user # request.args가 변경불가능한 딕셔너리이기때문에 여기서 추가해준다 (ImmutableMultiDict)
         except:
             #유효하지않은 토큰
             return jsonify(getMessage(705)), 400
@@ -197,6 +213,7 @@ def getUUID():
 '''
  아래는 파이어베이스 유저 관련 항목이다
  getUser
+ getUserAuth
 '''
 # 파이어베이스 유저정보 취득
 def getUser(uid):
@@ -222,3 +239,12 @@ def getUser(uid):
         userInfo['user_image']=user_image
 
     return userInfo
+
+# 유저 권한 정보 취득
+def getUserAuth(login_uid,uid):
+    auth = False # 게시물의 유저 권한
+    if login_uid:
+        # 로그인 유저와 데이터의 uid가 동일한 경우 데이터 관리 유저권한을 반환한다
+        auth = True if login_uid['uid'] == uid else False
+
+    return auth

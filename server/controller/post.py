@@ -62,6 +62,7 @@ def postCount():
 
 
 @post_controller.route('/postDetail', methods=['GET'])
+@get_token
 @exception_handler
 def postDetail():
     '''게시물의 상세정보'''
