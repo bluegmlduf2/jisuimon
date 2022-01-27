@@ -149,6 +149,7 @@ export default {
 }
 .card-writer{
     display: flex;
+    word-break: break-all;
 }
 .card-writer > img {
   height: 1.5rem;

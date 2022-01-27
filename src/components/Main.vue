@@ -90,8 +90,11 @@ export default {
     }
   },
   created(){
-    this.getPosts()
-    this.getPostCount()
+    // 메인화면에서만 게시글 정보 호출
+    if(this.$route.path == "/"){
+      this.getPosts()
+      this.getPostCount()
+    }
   }
 };
 </script>
