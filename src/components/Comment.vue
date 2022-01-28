@@ -8,9 +8,10 @@
         placeholder="コメントを残してください"
         rows="3"
         v-model="inputComment"
+        v-if="getLoginStatus"
       />
     </div>
-    <div class="commentCont_reg">
+    <div class="commentCont_reg" v-if="getLoginStatus">
       <button class="btn btn-success confirm_btn" id="regCommentBtn" @click="registerComment">
         <b>コメントを作成する</b>
       </button>
@@ -30,7 +31,7 @@
               </div>
               <div class="commentCont_profileInfo_date">{{getCommentMoment(comment.comment_create_date)}}</div>
             </div>
-            <div>
+            <div v-if="comment.comment_auth">
               <span>修正</span>
               <span>削除</span>
             </div>
@@ -41,9 +42,10 @@
           {{ comment.comment_content }}
         </div>
         <div class="commentCont_list_moreComment" >
-          <span v-if="comment.showState" @click="comment.showState=!comment.showState" class="material-icons commentCont_list_show">remove_circle_outline</span>
-          <span v-if="!comment.showState" @click="comment.showState=!comment.showState" class="material-icons commentCont_list_hide">add_circle_outline</span>
-          <span @click="comment.showState=!comment.showState">&nbsp;{{comment.comment_reply.length>0?`${comment.comment_reply.length}件のコメント`:"コメントを残す"}}</span>
+          <span v-if="comment.showState" @click="comment.showState=false" class="material-icons commentCont_list_show">remove_circle_outline</span>
+          <span v-else-if="comment.comment_reply.length>0 || getLoginStatus" @click="comment.showState=true" class="material-icons commentCont_list_hide">add_circle_outline</span>
+          <span v-if="comment.comment_reply.length>0" @click="comment.showState=!comment.showState">&nbsp;{{comment.comment_reply.length+"件のコメント"}}</span>
+          <span v-else-if="getLoginStatus" @click="comment.showState=!comment.showState">&nbsp;コメントを残す</span>
           <!-- nestedComment 대댓글 -->
           <div class="nestedCommentCont" :class="{'nestedComment_show': comment.showState,'nestedComment_hidden': !comment.showState }">
               <div class="nestedCommentCont_background">
@@ -60,7 +62,7 @@
                         </div>
                         <div class="commentCont_profileInfo_date">{{getCommentMoment(commentReply.comment_reply_create_date)}}</div>
                       </div>
-                      <div>
+                      <div v-if="commentReply.comment_reply_auth">
                         <span>修正</span>
                         <span>削除</span>
                       </div>
@@ -70,7 +72,7 @@
                   <div class="nestedCommentCont_comment">&emsp;{{commentReply.comment_reply_content}}</div>
                 </div>
                 <!-- 대댓글 작성창 -->
-                <div class="nestedCommentCont_newcomment">
+                <div class="nestedCommentCont_newcomment" v-if="getLoginStatus">
                   <button id="writeNestedCommentBtn" v-if="comment.showReplyState" @click="comment.showReplyState=!comment.showReplyState" type="button" class="btn btn-outline-success confirm_white_btn"><b>コメント作成</b></button>
                   <div class="nestedCommentCont_write" v-if="!comment.showReplyState">
                     <textarea
@@ -108,10 +110,15 @@ export default {
       inputCommentReply : [], // 대댓글내용 (v-for의 동적 v-model)
     };
   },
+  computed:{
+    // 로그인 상태 반환
+    getLoginStatus(){
+      return this.$store.getters['isSignedIn']
+    }
+  },
   methods:{
     // 댓글용 시간 반환
     getCommentMoment(date){
-      console.log(date)
       const FROM_DATE=this.$moment(new Date()) // 현재시간
       const TO_DATE=this.$moment(date) // 비교시간
       const DAY_BETWEEN=FROM_DATE.diff(TO_DATE, 'days') // 비교일수
@@ -214,13 +221,15 @@ export default {
 }
 .commentCont_reg {
   display: flex;
-  padding-bottom: 1.5rem;
 }
 #regCommentBtn {
   margin-left: auto; /* flex의 왼쪽정렬 */
 }
 .commentCont_list_profile {
   display: flex; /* 자식 div자측정렬 */
+}
+.commentCont_list{
+  padding-top: 0.5rem;  
 }
 .commentCont_list> div{
   margin-top: 1rem;

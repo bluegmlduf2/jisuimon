@@ -6,7 +6,7 @@
         <b>{{ posts.nickname }}</b>
         <span>{{$moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</span>
       </div>
-      <div class="postCont_writer_button">
+      <div class="postCont_writer_button" v-if="posts.post_auth">
         <span>修正</span>
         <span>削除</span>
       </div>

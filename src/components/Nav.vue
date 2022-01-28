@@ -123,6 +123,7 @@ export default {
         (res) => {
           this.closeLoginForm(); // 로그인 창 닫기
           this.$message.okMessage(res,false);
+          this.$router.go(this.$router.currentRoute) // 현재페이지 리로드 (페이지초기값)
         }
       ).catch((err)=>{
         this.$message.warningMessage(err.message);
