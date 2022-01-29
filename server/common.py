@@ -120,15 +120,17 @@ class UserError(Exception):
  getUserImage
  getUrlPath
  moveImageTempToDest
+ deleteContentImage
 '''
 # 이미지 함수에 필요한 설정부분
 def imageConfig():
     # 파일 이동에 필요한 설정부분
     fileTempPath = current_app.fileTempPath  # 　임시파일위치
     fileDestPath = current_app.fileDestPath # 저장용폴더위치
-    imageForder = os.listdir(fileTempPath) # 임시파일이 위치한 폴더
+    imageTempForder = os.listdir(fileTempPath) # 임시파일이 위치한 폴더
+    imageSaveForder = os.listdir(fileDestPath) # 저장용파일이 위치한 폴더
 
-    return imageForder, fileTempPath, fileDestPath 
+    return imageTempForder, imageSaveForder, fileTempPath, fileDestPath 
 
 # 이미지파일을 base64형식변환 (섬네일사이즈)
 def imageParser(src):
@@ -180,11 +182,22 @@ def getUrlPath():
 
 # 임시이미지 파일을 저장용 폴더에 이동
 def moveImageTempToDest(imageFileNames):
-    imageForder, fileTempPath, fileDestPath = imageConfig() # 이미지 설정부분
+    imageTempForder, imageSaveForder, fileTempPath, fileDestPath  = imageConfig() # 이미지 설정부분
     # 파일 이동 실행 부분
-    for imageFile in imageForder:
+    for imageFile in imageTempForder:
         if imageFile in imageFileNames:
             shutil.move(fileTempPath + imageFile, fileDestPath + imageFile) # 파일이동
+
+# 저장용 폴더의 이미지 파일을 삭제
+def deleteContentImage(imageFileNames):
+    imageTempForder, imageSaveForder, fileTempPath, fileDestPath  = imageConfig() # 이미지 설정부분
+    # 파일 삭제 부분
+    for imageFile in imageSaveForder:
+        if imageFile in imageFileNames:
+            imagefileWithFullPath=fileDestPath + imageFile # 저장용 이미지 파일
+            # 파일이 존재할 경우 삭제
+            if os.path.isfile(imagefileWithFullPath):
+                os.remove(imagefileWithFullPath) # 파일삭제
 
 '''
  아래는 보안에 관련된 공통항목이다

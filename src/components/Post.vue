@@ -7,8 +7,8 @@
         <span>{{$moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</span>
       </div>
       <div class="postCont_writer_button" v-if="posts.post_auth">
-        <span>修正</span>
-        <span>削除</span>
+        <span @click="updatePost(posts.post_id)">修正</span>
+        <span @click="deletePost(posts.post_id)">削除</span>
       </div>
     </div>
     <div class="postCont_ingredient">
@@ -39,9 +39,11 @@
 
 <script>
 import Comment from "./Comment.vue";
+import common from "@/assets/js/common.js";
 
 export default {
   name: "Post",
+  mixins: [common],
   components: {
     Comment: Comment,
   },
@@ -61,9 +63,9 @@ export default {
         method: "get",
         sendData: { postId: this.$route.params.postId },
       };
-      
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
-      
+
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
       this.$store
         .dispatch("postDetail", payload)
         .then((result) => {
@@ -75,9 +77,43 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
     },
+    // 게시물 수정
+    updatePost() {},
+    // 게시물 삭제
+    deletePost(postId) {
+      this.$message.confirmMessage("TODO修正する？").then((res) => {
+        // 확인버튼을 눌렀을시
+        if (res.isConfirmed) {
+          const POST_ID = postId; // 게시물ID
+
+          // 입력정보를 서버전송데이터에 넣음
+          const payload = {
+            method: "delete",
+            sendData: {
+              postId: POST_ID,
+            }
+          };
+          this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+          this.$store
+            .dispatch("post", payload)
+            .then(() => {
+              this.$message.successMessage("delete").then(() => {
+                this.moveToHome() // 홈화면으로 이동
+              });
+            })
+            .catch((err) => {
+              this.$message.errorMessage(err);
+            })
+            .finally(() => {
+              this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+            });
+        }
+      });
+    }
   },
   created() {
     this.getPostDetail();
@@ -114,10 +150,10 @@ export default {
   justify-content: space-between;
   margin-bottom: 20px;
 }
-.postCont_writer_profile span{
+.postCont_writer_profile span {
   margin-left: 0.5rem;
 }
-.postCont_writer_button{
+.postCont_writer_button {
   padding: 0px;
   outline: none;
   border: none;
@@ -127,7 +163,7 @@ export default {
   color: rgb(134, 142, 150);
   font-size: 0.9rem;
 }
-.postCont_writer_button > span{
+.postCont_writer_button > span {
   margin-left: 0.5rem;
 }
 .postCont_ingredient {
@@ -175,7 +211,7 @@ export default {
 .postCont_article {
   line-height: 1.75; /* 폰트사이즈16px*1.75 */
   padding-bottom: 70px;
-  word-break:break-all; /* 가로 넓이 벗어나면 줄바꿈 */
+  word-break: break-all; /* 가로 넓이 벗어나면 줄바꿈 */
 }
 
 @media (min-width: 577px) {
@@ -183,7 +219,6 @@ export default {
   .postCont {
     padding-top: 10vh;
   }
-
 }
 
 /* 메인 레이아웃 css (부트스트랩 스마트폰 가로 기준(576px미만) 으로 작성)*/

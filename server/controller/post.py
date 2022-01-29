@@ -7,7 +7,7 @@ post_controller = Blueprint('post', __name__)
 
 @post_controller.route('/post', methods=['GET'])
 @exception_handler
-def post():
+def getPost():
     '''메인화면의 게시물 8개 가져오기'''
     if request.method == 'GET':
         args = request.args
@@ -15,10 +15,10 @@ def post():
 
         return jsonify(data), 200
 
-@post_controller.route('/post', methods=['POST'])
+@post_controller.route('/post', methods=['POST','DELETE'])
 @check_token
 @exception_handler
-def insertPost():
+def post():
     '''게시물 등록'''
     if request.method == 'POST':
         args = request.get_json()
@@ -48,6 +48,15 @@ def insertPost():
 
         '''게시물 입력'''
         postModel.insertPost(filteredArgs)
+
+        return jsonify(getMessage(601)), 200
+    
+    '''게시물 삭제'''
+    if request.method == 'DELETE':
+        args = request.get_json()
+        
+        '''게시물 삭제'''
+        postModel.deletePost(args)
 
         return jsonify(getMessage(601)), 200
 

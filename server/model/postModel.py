@@ -1,3 +1,4 @@
+from numpy import delete
 from common import *
 
 def getPosts(args):
@@ -56,9 +57,7 @@ def getPosts(args):
 
                 # 섬네일이미지변환Base64
                 data[i]['user_image'] = imageParser(userImagePath)
-                
-        except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
+
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -82,8 +81,6 @@ def getPostCount():
 
             data = conn.executeOne(sql)
 
-        except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -133,9 +130,6 @@ def getPostDetail(args):
             removePostCol = ['user_id','user_table_user_id']
             [data.pop(colNm) for colNm in removePostCol]
 
-        except UserError as e:
-            conn.rollback()
-            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -167,9 +161,6 @@ def getPostIngredient(args):
 
             data = conn.executeAll(sql, args['postId'])
 
-        except UserError as e:
-            conn.rollback()
-            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -257,9 +248,6 @@ def getPostComment(args):
                 showReplyState=True if commentReturnData[i]['comment_reply' ] else False # 대댓글이 존재하면 작성창 펼친상태 없으면 닫힌상태
                 commentReturnData[i].setdefault('showReplyState',showReplyState)# 대댓글 작성창 접고 펼치기에 필요한 키 추가
 
-        except UserError as e:
-            conn.rollback()
-            raise e
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -347,9 +335,117 @@ def insertPost(args):
             conn.executeMany(sql, ingredientList)
             
             moveImageTempToDest(imageFileNames) # 임시이미지 파일을 저장용 폴더에 이동
-        except UserError as e:
+        except Exception as e:
+            traceback.print_exc()
             conn.rollback()
-            return json.dumps({'status': False, 'message': e.msg}), 200
+            raise e
+        else:
+            conn.commit()
+        finally:
+            conn.close()
+
+def deletePost(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 게시물의 정보
+            sql = '''
+            SELECT
+                P.user_table_user_id as user_id,
+                PD.content
+            FROM
+                jisuimon.post_table AS P
+            INNER JOIN jisuimon.post_detail_table AS PD ON
+                P.post_id = PD.post_table_post_id
+            WHERE
+                P.post_id = %s;
+            '''
+
+            data = conn.executeOne(sql, args['postId'])
+            imageFileNames = imageFromContent(data['content']) # 게시글의 이미지 삭제를 이미지 추출
+            login_user = request.user  # 파이어베이스 유저정보 취득
+
+             # 로그인한 유저와 게시물 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
+            if not getUserAuth(login_user,data['user_id']) :
+                raise UserError(705)
+            
+            # 게시글의 댓글 정보
+            sql = '''
+            SELECT
+                comment_id
+            FROM
+                jisuimon.comment_table
+            WHERE
+                post_table_post_id = %s
+            '''
+            data = conn.executeOne(sql, args['postId'])
+
+            # 게시물의 댓글이 존재할때 사용
+            if data is not None:
+                # 게시글의 대댓글 삭제
+                sql = '''
+                DELETE
+                FROM
+                    jisuimon.comment_reply_table
+                WHERE
+                    comment_table_comment_id = %s;
+                '''
+                conn.execute(sql, (data['comment_id']))
+
+                # 게시글의 댓글 삭제
+                sql = '''
+                DELETE
+                FROM
+                    jisuimon.comment_table
+                WHERE
+                    post_table_post_id = %s;
+                '''
+                conn.execute(sql, (args['postId']))
+
+            # 게시글의 재료 삭제
+            sql = '''
+            DELETE
+            FROM
+                jisuimon.ingredient_table
+            WHERE
+                post_table_post_id = %s;
+            '''
+            conn.execute(sql, (args['postId']))
+
+            # 게시글의 좋아요 삭제
+            sql = '''
+            DELETE
+            FROM
+                jisuimon.post_like_table
+            WHERE
+                post_table_post_id = %s;
+            '''
+            conn.execute(sql, (args['postId']))
+
+            # 게시글의 상세정보 삭제
+            sql = '''
+            DELETE
+            FROM
+                jisuimon.post_detail_table
+            WHERE
+                post_table_post_id = %s;
+            '''
+            conn.execute(sql, (args['postId']))
+
+            # 게시글 삭제
+            sql = '''
+            DELETE
+            FROM
+                jisuimon.post_table
+            WHERE
+                post_id = %s;
+            '''
+            conn.execute(sql, (args['postId']))
+
+            # 게시글에 이미지가 존재할시 이미지 삭제
+            if imageFileNames:
+                deleteContentImage(imageFileNames) # 저장용 폴더의 이미지 파일을 삭제
+
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -376,8 +472,6 @@ def insertPostTempImage(args):
         # RGB형식으로 변경후 , 이미지 파일 저장
         image.convert('RGB').save(source)  # resize사용시 image -> resize_image
 
-    except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 200
     except Exception as e:
         traceback.print_exc()
         raise e
