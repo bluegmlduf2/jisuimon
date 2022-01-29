@@ -28,9 +28,6 @@ def insertComment(args):
             commentId = getUUID()  # 댓글의 PK
             conn.execute(
                 sql, (commentId, args['commentContent'], args['userId'], args['postId']))
-        except UserError as e:
-            conn.rollback()
-            return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -67,9 +64,7 @@ def insertCommentReply(args):
             commentReplyId = getUUID()  # 대댓글의 PK
             conn.execute(
                 sql, (commentReplyId, args['commentReplyContent'], args['commentUserId'], args['commentId']))
-        except UserError as e:
-            conn.rollback()
-            return json.dumps({'status': False, 'message': e.msg}), 200
+
         except Exception as e:
             traceback.print_exc()
             conn.rollback()

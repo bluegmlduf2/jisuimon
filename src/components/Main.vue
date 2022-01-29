@@ -90,8 +90,9 @@ export default {
     }
   },
   created(){
-    // 메인화면에서만 게시글 정보 호출
-    if(this.$route.path == "/"){
+    const IS_HOME_ROUTER = this.$route.path == "/"; // 현재 화면의 라우터가 홈라우터인지 여부
+    const IS_MAIN_PATH = !location.pathname.split('/')[2]; // 현재 화면이 홈화면인지 여부
+    if(IS_HOME_ROUTER && IS_MAIN_PATH){
       this.getPosts()
       this.getPostCount()
     }

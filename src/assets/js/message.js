@@ -2,14 +2,14 @@
 import Swal from 'sweetalert2'
 
 const successMessageList = {
-    regist: "登録しました。",
+    register: "登録しました。",
     update: "修正しました。",
     delete: "削除しました。",
 };
 
-const successMessage = (msg) =>
+const successMessage = (status = "register", msg) =>
     Swal.fire({
-        title: successMessageList.regist,
+        title: successMessageList[status],
         text: msg,
         icon: "success",
         showConfirmButton: false,

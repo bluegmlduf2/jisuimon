@@ -154,7 +154,7 @@ export default {
       this.$store
         .dispatch("comment", payload)
         .then(() => {
-          this.$message.successMessage().then(()=>{
+          this.$message.successMessage("register").then(()=>{
             this.$emit('updateCommentProps') // props 다시 받아오기 
             this.inputComment="" // 입력댓글초기화
           })
@@ -191,9 +191,9 @@ export default {
       this.$store
         .dispatch("commentReply", payload)
         .then(() => {
-          this.$message.successMessage().then(()=>{
+          this.$message.successMessage("register").then(()=>{
             this.$emit('updateCommentProps') // props 다시 받아오기 
-            this.inputComment="" // 입력댓글초기화
+            this.inputCommentReply = [] // 입력대댓글초기화
           })
         })
         .catch((err) => {

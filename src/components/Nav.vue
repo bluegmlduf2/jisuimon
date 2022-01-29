@@ -120,10 +120,14 @@ export default {
       this.$store.commit('showSpinner'); // 요청대기스피너 보기
       
       firebase.signInWithEmailAndPassword(this.userEmail, this.userPass).then(
-        (res) => {
+        async (res) => {
           this.closeLoginForm(); // 로그인 창 닫기
-          this.$message.okMessage(res,false);
-          this.$router.go(this.$router.currentRoute) // 현재페이지 리로드 (페이지초기값)
+          await this.$message.okMessage(res,false); // 로그인성공메세지
+
+          // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
+          if(this.$route.path != "/"){
+            this.$router.go(this.$router.currentRoute) 
+          }
         }
       ).catch((err)=>{
         this.$message.warningMessage(err.message);

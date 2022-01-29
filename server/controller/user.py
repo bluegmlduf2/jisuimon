@@ -7,7 +7,7 @@ user_controller = Blueprint('user', __name__)
 
 @user_controller.route('/user', methods=['POST'])
 @exception_handler
-def user():
+def getUser():
     '''회원등록'''
     if request.method == 'POST':
         args = request.get_json()
@@ -35,7 +35,7 @@ def user():
 @user_controller.route('/user', methods=['DELETE'])
 @check_token
 @exception_handler
-def deleteUser():
+def user():
     '''회원삭제'''
     if request.method == 'DELETE':
         user = request.user  # 파이어베이스 유저정보 취득

@@ -22,9 +22,7 @@ def getFood(args):
             '''
 
             data = conn.executeAll(sql, args['food_name'])
-        except UserError as e:
-            conn.rollback()
-            raise e
+
         except Exception as e:
             traceback.print_exc()
             conn.rollback()

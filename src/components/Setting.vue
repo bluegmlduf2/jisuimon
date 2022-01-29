@@ -125,7 +125,7 @@ export default {
         .dispatch("userImage", payload, true)
         .then(() => {
           this.$message
-            .successMessage("TODOプロフィール写真変更しました。")
+            .successMessage("update","TODOプロフィール写真変更しました。")
             .then(async () => {
               // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
               await firebase.auth.currentUser.reload();
@@ -153,7 +153,7 @@ export default {
             .dispatch("userImage", payload)
             .then(() => {
               this.$message
-                .successMessage("TODOプロフィール写真変更しました。")
+                .successMessage("delete","TODOプロフィール写真変更しました。")
                 .then(async () => {
                   // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
                   await firebase.auth.currentUser.reload();
@@ -241,6 +241,7 @@ export default {
             .then(() => {
               this.$message
                 .successMessage(
+                  "delete",
                   "TODO脱会処理しました。\nご利用ありがとうございました。"
                 )
                 .then(() => {

@@ -120,7 +120,7 @@
       </g>
     </svg>
     <div>
-      <router-link class="btn btn-outline-secondary" id="errorGobackBtn" to="/">
+      <router-link class="btn btn-outline-secondary" id="errorGobackBtn" to="#" @click="moveToHome">
         <b>ホームに戻る</b>
       </router-link>
     </div>
@@ -128,8 +128,11 @@
 </template>
 
 <script>
+import common from "@/assets/js/common.js";
+
 export default {
   name: "NotFound",
+  mixins: [common]
 };
 </script>
 

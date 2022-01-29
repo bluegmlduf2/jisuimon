@@ -18,8 +18,6 @@ def checkUser(args):
 
             data = conn.executeOne(sql, args['uid'])['isUser']
 
-        except UserError as e:
-            return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -45,9 +43,6 @@ def insertUser(args):
                 %s);
             '''
             conn.execute(sql, (args['uid']))
-        except UserError as e:
-            conn.rollback()
-            return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -76,9 +71,6 @@ def deleteUser(args):
             # 유저삭제(파이어베이스)
             current_app.auth.delete_user(args['uid'])
 
-        except UserError as e:
-            conn.rollback()
-            return json.dumps({'status': False, 'message': e.msg}), 200
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
@@ -111,8 +103,6 @@ def insertUserImage(args):
             args['uid'],
             photo_url='http://'+resize_image_fileNm)
 
-    except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 200
     except Exception as e:
         traceback.print_exc()
         raise e
@@ -132,8 +122,6 @@ def deleteUserImage(args):
             args['uid'],
             photo_url=deleteAttr)
 
-    except UserError as e:
-        return json.dumps({'status': False, 'message': e.msg}), 200
     except Exception as e:
         traceback.print_exc()
         raise e

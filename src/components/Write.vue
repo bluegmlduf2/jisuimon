@@ -227,7 +227,7 @@ export default {
       this.$store
         .dispatch("post", payload)
         .then(() => {
-          this.$message.successMessage()
+          this.$message.successMessage("register")
           this.moveToHome()//홈화면으로 이동
         })
         .catch((err) => {
@@ -285,10 +285,10 @@ export default {
   color: rgb(12, 166, 120);
   text-decoration: none;
   font-weight: 500;
-  height: 1.5rem;
+  /* height: 1.5rem; */
   /* font-size: 1rem; */
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.5rem;
   margin-right: 0.5rem;
   margin-bottom: 0.2rem;
 }
