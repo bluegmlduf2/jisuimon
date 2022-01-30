@@ -7,11 +7,11 @@
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <router-link class="nav-link" to="/">Home</router-link>
+          <router-link class="nav-link" to="#" @click="moveToHome">Home</router-link>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <router-link class="nav-link" to="#">Link</router-link>
-        </li>
+        </li> -->
         <!-- 로그인 모바일 메뉴 -->
         <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin">
           <router-link class="nav-link" to="#">My Post</router-link>
@@ -88,142 +88,155 @@
 
 <script>
 import common from "@/assets/js/common.js";
-import firebase from '@/firebase';
+import firebase from "@/firebase";
 
 export default {
-  name:"Nav",
+  name: "Nav",
   mixins: [common],
   data() {
     return {
-      userEmail:'',
-      userPass:'',
-      userPassConfirm:'',
-      loginShow:false, // 로그인창 표시 유무
-      signUpShow:false, // 회원가입창 표시 유무
-      validationUserEmail:false, // 이메일 유효성
-      validationUserPass:false, // 패스워드 유효성
-      afterValidation:false, // 최초 로그인부터 유효성검사
-      profileShow:true, // 프로필 표시상태
-      profileMenuShow:false // 프로필 메뉴표시상태
-    }
+      userEmail: "",
+      userPass: "",
+      userPassConfirm: "",
+      loginShow: false, // 로그인창 표시 유무
+      signUpShow: false, // 회원가입창 표시 유무
+      validationUserEmail: false, // 이메일 유효성
+      validationUserPass: false, // 패스워드 유효성
+      afterValidation: false, // 최초 로그인부터 유효성검사
+      profileShow: true, // 프로필 표시상태
+      profileMenuShow: false, // 프로필 메뉴표시상태
+    };
   },
-  created(){
+  created() {
     // TODO삭제예정(테스트유저입력용)
-    this.userEmail="blue@nate.com"
-    this.userPass="111111"
+    this.userEmail = "blue@nate.com";
+    this.userPass = "111111";
   },
   methods: {
     // 로그인
-    login(){
-      this.afterValidation=true
+    login() {
+      this.afterValidation = true;
       //TODO 1.원형프로그레스 , 유효성체크
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
-      
-      firebase.signInWithEmailAndPassword(this.userEmail, this.userPass).then(
-        async (res) => {
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+      firebase
+        .signInWithEmailAndPassword(this.userEmail, this.userPass)
+        .then(async (res) => {
           this.closeLoginForm(); // 로그인 창 닫기
-          await this.$message.okMessage(res,false); // 로그인성공메세지
+          await this.$message.okMessage(res, false); // 로그인성공메세지
 
           // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
-          if(this.$route.path != "/"){
-            this.$router.go(this.$router.currentRoute) 
+          if (this.$route.path != "/") {
+            this.$router.go(this.$router.currentRoute);
           }
-        }
-      ).catch((err)=>{
-        this.$message.warningMessage(err.message);
-      }).finally(() => {
-        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
-      });
+        })
+        .catch((err) => {
+          this.$message.warningMessage(err.message);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
     },
     // 로그아웃
-    logout(){
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
-      
-      firebase.logout().then((res) => {
-        this.$message.okMessage(res,false);
-      }).catch((err) => {
-        this.$message.warningMessage(err.message);
-      }).finally(() => {
-        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
-        this.$router.push('/')
-      });
+    logout() {
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+      firebase
+        .logout()
+        .then(async (res) => {
+          // 로그아웃 성공시 홈화면으로 이동
+          await this.$message.okMessage(res, false); // 로그아웃 메세지
+
+          // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
+          if (this.$route.path != "/") {
+            this.$router.go(this.$router.currentRoute);
+          }
+        })
+        .catch((err) => {
+          this.$message.warningMessage(err.message);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
     },
     // 회원가입
-    signup(){
-      this.afterValidation=true
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
-      
+    signup() {
+      this.afterValidation = true;
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
       //TODO 1.원형프로그레스 , 유효성체크 , 비밀번호확인창 일치체크
-      firebase.signUpWithEmailAndPassword(this.userEmail, this.userPass).then(
-        (res) => {
+      firebase
+        .signUpWithEmailAndPassword(this.userEmail, this.userPass)
+        .then((res) => {
           this.closeLoginForm(); // 로그인 창 닫기
-          this.$message.okMessage(res,false);
-        }
-      ).catch((err)=>{
-        this.$message.warningMessage(err.message);
-      }).finally(() => {
-        this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
-      });
+          this.$message.okMessage(res, false);
+        })
+        .catch((err) => {
+          this.$message.warningMessage(err.message);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
     },
     // 로그인창 표시
-    showLoginForm(){
-      this.loginShow=true; // 로그인창 표시
+    showLoginForm() {
+      this.loginShow = true; // 로그인창 표시
     },
     // 회원등록창 표시
-    showSignUpForm(){
+    showSignUpForm() {
       // 입력폼 초기화
-      this.userEmail="";
-      this.userPass="";
-      this.userPassConfirm="";
+      this.userEmail = "";
+      this.userPass = "";
+      this.userPassConfirm = "";
       // 유효성 초기화
-      this.afterValidation=false; // 유효성 검사유무
-      this.validationUserEmail=false; // 이메일 유효성
-      this.validationUserPass=false; // 패스워드 유효성
-      this.signUpShow=!this.signUpShow // 회원등록창 표시
+      this.afterValidation = false; // 유효성 검사유무
+      this.validationUserEmail = false; // 이메일 유효성
+      this.validationUserPass = false; // 패스워드 유효성
+      this.signUpShow = !this.signUpShow; // 회원등록창 표시
     },
     // 로그인창 닫기
-    closeLoginForm(){
+    closeLoginForm() {
       // 입력폼 초기화
-      this.userEmail="";
-      this.userPass="";
-      this.userPassConfirm="";
+      this.userEmail = "";
+      this.userPass = "";
+      this.userPassConfirm = "";
       // 유효성 초기화
-      this.afterValidation=false; // 유효성 검사유무
-      this.validationUserEmail=false; // 이메일 유효성
-      this.validationUserPass=false; // 패스워드 유효성
-      this.signUpShow=false; // 로그인화면 변경
-      this.loginShow=false; // 로그인창 닫기
-    }
+      this.afterValidation = false; // 유효성 검사유무
+      this.validationUserEmail = false; // 이메일 유효성
+      this.validationUserPass = false; // 패스워드 유효성
+      this.signUpShow = false; // 로그인화면 변경
+      this.loginShow = false; // 로그인창 닫기
+    },
   },
   computed: {
     // 로그인상태반환
-    isLogin(){
-      return this.$store.getters['isSignedIn']
+    isLogin() {
+      return this.$store.getters["isSignedIn"];
     },
     // 이메일 폼체크
-    validationEmailCheck(){
-      return !this.validationUserEmail&&this.afterValidation 
+    validationEmailCheck() {
+      return !this.validationUserEmail && this.afterValidation;
     },
     // 패스워드 폼체크
-    validationPassCheck(){
-      return !this.validationUserPass&&this.afterValidation 
-    }
+    validationPassCheck() {
+      return !this.validationUserPass && this.afterValidation;
+    },
   },
-  watch:{
+  watch: {
     // 이메일 유효성체크
-    userEmail(inputEmail){
-      this.validationUserEmail=this.checkEmail(inputEmail)
+    userEmail(inputEmail) {
+      this.validationUserEmail = this.checkEmail(inputEmail);
     },
     // 패스워드 유효성체크
     userPass(inputPass) {
-      this.validationUserPass=this.checkPass(inputPass)
+      this.validationUserPass = this.checkPass(inputPass);
     },
     // 비밀번호 확인란 체크
     userPassConfirm(userPassConfirm) {
-      this.validationUserPass=this.checkPass(userPassConfirm)
-    }
-  }
-}
+      this.validationUserPass = this.checkPass(userPassConfirm);
+    },
+  },
+};
 </script>
 
 <style>

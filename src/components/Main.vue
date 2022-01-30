@@ -40,63 +40,70 @@ export default {
       posts: [],
       postCnt: 8, //현재 게시물 수
       postCntAll: 0, // 총 게시물 수
-      scrollSpinner:false // 게시물 더보기 스피너
+      scrollSpinner: false, // 게시물 더보기 스피너
     };
   },
-  computed:{
+  computed: {
     // 요청대기 스피너 초기값반환
-    getSpinner(){
-      return this.$store.getters['getSpinner']
-    }
+    getSpinner() {
+      return this.$store.getters["getSpinner"];
+    },
   },
   methods: {
     // 메인게시물 호출
-    getPosts() {  
+    getPosts() {
       const payload = {
         method: "get",
         sendData: { postCnt: this.postCnt },
       };
 
       // 요청대기 스피너 보기 (초기화면만)
-      if(this.postCnt == 8){
-        this.$store.commit('showSpinner');
+      if (this.postCnt == 8) {
+        this.$store.commit("showSpinner");
       }
 
-      this.$store.dispatch('post',payload).then((result) => {
-        this.posts.push(...result.data)
-      }).catch((err) => {
-        this.$message.errorMessage(err);
-      }).finally(()=>{
-        this.scrollSpinner = false // 게시물더보기 스피너 보지않기
-        this.$store.commit('hideSpinner'); // 요청대기 스피너 보지않기
-      });
+      this.$store
+        .dispatch("post", payload)
+        .then((result) => {
+          this.posts.push(...result.data);
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.scrollSpinner = false; // 게시물더보기 스피너 보지않기
+          this.$store.commit("hideSpinner"); // 요청대기 스피너 보지않기
+        });
     },
     // 총 게시물수 가져오기
-    getPostCount(){
+    getPostCount() {
       const payload = {
-        method: "get"
+        method: "get",
       };
-      this.$store.dispatch('getPostCount',payload).then((result) => {
-        this.postCntAll=result.data.postCntAll
-      }).catch((err) => {
-        this.$message.errorMessage(err);
-      })
+      this.$store
+        .dispatch("getPostCount", payload)
+        .then((result) => {
+          this.postCntAll = result.data.postCntAll;
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        });
     },
     // 게시물 8개 더 보여주기
-    addPostCnt(){
-      this.postCnt=this.postCnt+8
-      this.scrollSpinner = true // 게시물더보기 스피너 보기
-      this.getPosts()              
+    addPostCnt() {
+      this.postCnt = this.postCnt + 8;
+      this.scrollSpinner = true; // 게시물더보기 스피너 보기
+      this.getPosts();
+    },
+  },
+  created() {
+    const IS_HOME_ROUTER = this.$route.path == "/"; // 현재 화면의 라우터가 홈라우터인지 여부
+    const IS_MAIN_PATH = !location.pathname.split("/")[2]; // 현재 화면이 홈화면인지 여부
+    if (IS_HOME_ROUTER && IS_MAIN_PATH) {
+      this.getPosts();
+      this.getPostCount();
     }
   },
-  created(){
-    const IS_HOME_ROUTER = this.$route.path == "/"; // 현재 화면의 라우터가 홈라우터인지 여부
-    const IS_MAIN_PATH = !location.pathname.split('/')[2]; // 현재 화면이 홈화면인지 여부
-    if(IS_HOME_ROUTER && IS_MAIN_PATH){
-      this.getPosts()
-      this.getPostCount()
-    }
-  }
 };
 </script>
 
@@ -114,7 +121,7 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
   transition: opacity 1s ease;
 }
 
-.fade-enter-from{
+.fade-enter-from {
   opacity: 0;
 }
 
@@ -128,7 +135,7 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
 /*-------------------------------------------
     $ Loaders 스피너 (요청대기용)
 -------------------------------------------*/
-.loader-background{
+.loader-background {
   background-color: rgba(249, 249, 249, 0.85);
   position: fixed;
   top: 0;
@@ -144,12 +151,12 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
 .regot-loader {
   font-size: 20px;
   position: fixed;
-  transform: translateX( -50% ); /** fixed의 width를 고려한 정중앙위치 */
+  transform: translateX(-50%); /** fixed의 width를 고려한 정중앙위치 */
   width: 4em;
   height: 1em;
   /* margin: 100px auto; */
-  top:50%;
-  left:50%;
+  top: 50%;
+  left: 50%;
 }
 
 .regot {
@@ -217,35 +224,44 @@ transition태그의 name=fade를 참고함. enter-active는 뷰에서제공*/
     $ Loaders 스피너 (게시물더보기용)
 -------------------------------------------*/
 .loader {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin: 3em;
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin: 3em;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
 }
 .loader,
 .loader:before,
 .loader:after {
-    animation: 1s infinite ease-in-out;
+  animation: 1s infinite ease-in-out;
 }
 .loader:before,
 .loader:after {
-    width: 100%; 
-    height: 100%;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
-.loader-black { background-color: #333; }
+.loader-black {
+  background-color: #333;
+}
 
-.loader-1 { animation-name: loader1; }
+.loader-1 {
+  animation-name: loader1;
+}
 @keyframes loader1 {
-    from { transform: scale(0); opacity: 1; }
-    to   { transform: scale(1); opacity: 0; }
+  from {
+    transform: scale(0);
+    opacity: 1;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
 }
-
 </style>

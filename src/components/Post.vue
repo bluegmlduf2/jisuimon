@@ -94,7 +94,7 @@ export default {
             method: "delete",
             sendData: {
               postId: POST_ID,
-            }
+            },
           };
           this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
@@ -102,7 +102,7 @@ export default {
             .dispatch("post", payload)
             .then(() => {
               this.$message.successMessage("delete").then(() => {
-                this.moveToHome() // 홈화면으로 이동
+                this.moveToHome(); // 홈화면으로 이동
               });
             })
             .catch((err) => {
@@ -113,7 +113,7 @@ export default {
             });
         }
       });
-    }
+    },
   },
   created() {
     this.getPostDetail();

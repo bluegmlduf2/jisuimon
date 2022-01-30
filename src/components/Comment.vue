@@ -33,7 +33,7 @@
             </div>
             <div v-if="comment.comment_auth">
               <span>修正</span>
-              <span>削除</span>
+              <span @click="deleteComment(comment.comment_id)">削除</span>
             </div>
           </div>
         </div>
@@ -97,7 +97,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Comment",
   props: {
@@ -106,104 +105,140 @@ export default {
   },
   data() {
     return {
-      inputComment : "", // 댓글내용
-      inputCommentReply : [], // 대댓글내용 (v-for의 동적 v-model)
+      inputComment: "", // 댓글내용
+      inputCommentReply: [], // 대댓글내용 (v-for의 동적 v-model)
     };
   },
-  computed:{
+  computed: {
     // 로그인 상태 반환
-    getLoginStatus(){
-      return this.$store.getters['isSignedIn']
-    }
+    getLoginStatus() {
+      return this.$store.getters["isSignedIn"];
+    },
   },
-  methods:{
+  methods: {
     // 댓글용 시간 반환
-    getCommentMoment(date){
-      const FROM_DATE=this.$moment(new Date()) // 현재시간
-      const TO_DATE=this.$moment(date) // 비교시간
-      const DAY_BETWEEN=FROM_DATE.diff(TO_DATE, 'days') // 비교일수
-      
+    getCommentMoment(date) {
+      const FROM_DATE = this.$moment(new Date()); // 현재시간
+      const TO_DATE = this.$moment(date); // 비교시간
+      const DAY_BETWEEN = FROM_DATE.diff(TO_DATE, "days"); // 비교일수
+
       // 비교일수가 1일이상일 경우에 일자까지만 표시, 1일 이내일 경우엔 현재기준으로 차이를 표시
-      if(DAY_BETWEEN){
-        return this.$moment(date.comment_reply_create_date).format("YYYY年 MM月 DD日")
-      }else{
+      if (DAY_BETWEEN) {
+        return this.$moment(date.comment_reply_create_date).format(
+          "YYYY年 MM月 DD日"
+        );
+      } else {
         return this.$moment(TO_DATE).fromNow();
       }
     },
     // 댓글등록
-    registerComment(){
-      const COMMENT_CONTENT=this.inputComment // 입력댓글
+    registerComment() {
+      const COMMENT_CONTENT = this.inputComment; // 입력댓글
 
       // 입력값의 유효성체크
       if (!COMMENT_CONTENT) {
         this.$message.warningMessage("コメントを入力してください");
-        return false
+        return false;
       }
 
       // 입력정보를 서버전송데이터에 넣음
-      const payload = { 
+      const payload = {
         method: "post",
         sendData: {
-          postId:this.postId,
-          commentContent:COMMENT_CONTENT
-        }
+          postId: this.postId,
+          commentContent: COMMENT_CONTENT,
+        },
       };
 
-      this.$store.commit('showSpinner');
+      this.$store.commit("showSpinner");
 
       this.$store
         .dispatch("comment", payload)
         .then(() => {
-          this.$message.successMessage("register").then(()=>{
-            this.$emit('updateCommentProps') // props 다시 받아오기 
-            this.inputComment="" // 입력댓글초기화
-          })
+          this.$message.successMessage("register").then(() => {
+            this.$emit("updateCommentProps"); // props 다시 받아오기
+            this.inputComment = ""; // 입력댓글초기화
+          });
         })
         .catch((err) => {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.$store.commit('hideSpinner');
+          this.$store.commit("hideSpinner");
         });
     },
+    // 댓글삭제
+    deleteComment(commentId) {
+      this.$message.confirmMessage("TODO修正する？").then((res) => {
+        // 확인버튼을 눌렀을시
+        if (res.isConfirmed) {
+          const COMMENT_ID = commentId; // 댓글ID
+
+          // 입력정보를 서버전송데이터에 넣음
+          const payload = {
+            method: "delete",
+            sendData: {
+              commentId: COMMENT_ID,
+            },
+          };
+          this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+          this.$store
+            .dispatch("comment", payload)
+            .then(() => {
+              this.$message.successMessage("delete").then(() => {
+                this.$emit("updateCommentProps"); // props 다시 받아오기
+                this.inputComment = ""; // 입력댓글초기화
+                this.inputCommentReply = []; // 입력대댓글초기화
+              });
+            })
+            .catch((err) => {
+              this.$message.errorMessage(err);
+            })
+            .finally(() => {
+              this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+            });
+        }
+      });
+    },
     // 대댓글등록
-    registerCommentReply(commentId,commentReplyContent){
-      const COMMENT_ID=commentId// 댓글ID
-      const COMMENT_REPLY_CONTENT=commentReplyContent // 대댓글내용
+    registerCommentReply(commentId, commentReplyContent) {
+      const COMMENT_ID = commentId; // 댓글ID
+      const COMMENT_REPLY_CONTENT = commentReplyContent; // 대댓글내용
 
       // 입력값의 유효성체크
       if (!COMMENT_REPLY_CONTENT) {
         this.$message.warningMessage("コメントを入力してください");
-        return false
+        return false;
       }
 
       // 입력정보를 서버전송데이터에 넣음
-      const payload = { 
+      const payload = {
         method: "post",
         sendData: {
-          commentId:COMMENT_ID,
-          commentReplyContent:COMMENT_REPLY_CONTENT
-        }
+          commentId: COMMENT_ID,
+          commentReplyContent: COMMENT_REPLY_CONTENT,
+        },
       };
 
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
       this.$store
         .dispatch("commentReply", payload)
         .then(() => {
-          this.$message.successMessage("register").then(()=>{
-            this.$emit('updateCommentProps') // props 다시 받아오기 
-            this.inputCommentReply = [] // 입력대댓글초기화
-          })
+          this.$message.successMessage("register").then(() => {
+            this.$emit("updateCommentProps"); // props 다시 받아오기
+            this.inputCommentReply = []; // 입력대댓글초기화
+          });
         })
         .catch((err) => {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -228,10 +263,10 @@ export default {
 .commentCont_list_profile {
   display: flex; /* 자식 div자측정렬 */
 }
-.commentCont_list{
-  padding-top: 0.5rem;  
+.commentCont_list {
+  padding-top: 0.5rem;
 }
-.commentCont_list> div{
+.commentCont_list > div {
   margin-top: 1rem;
 }
 .commentCont_list > div:not(:last-of-type) {
@@ -256,7 +291,7 @@ export default {
   justify-content: space-between;
   width: 100%;
 }
-.update_button_cont span{
+.update_button_cont span {
   padding: 0px;
   outline: none;
   border: none;
@@ -265,7 +300,7 @@ export default {
   cursor: pointer;
   color: rgb(134, 142, 150);
   margin-left: 0.5rem;
-  font-size: 0.8rem;;
+  font-size: 0.8rem;
 }
 .commentCont_list_content {
   padding: 1rem 0 2rem;
@@ -279,35 +314,36 @@ export default {
   cursor: pointer;
   font-size: 1rem;
 }
-.commentCont_list_show, .commentCont_list_hide{
-    position: relative;
-    top: 2px;
+.commentCont_list_show,
+.commentCont_list_hide {
+  position: relative;
+  top: 2px;
 }
-.nestedComment_show{
-    display: block;
+.nestedComment_show {
+  display: block;
 }
-.nestedComment_hidden{
-    display: none;
+.nestedComment_hidden {
+  display: none;
 }
-.nestedCommentCont_background{
+.nestedCommentCont_background {
   border: 1px solid rgba(0, 0, 0, 0.02);
   background-color: rgba(0, 0, 0, 0.016);
   padding: 1.5rem;
   border-radius: 4px;
   margin-top: 1.3125rem;
 }
-.nestedCommentCont_hr{
-  margin-bottom:1rem;
+.nestedCommentCont_hr {
+  margin-bottom: 1rem;
   border-bottom: 1px solid rgb(233, 236, 239);
 }
 .nestedCommentCont_profile {
   display: flex; /* 자식 div자측정렬,flex의 default가 행정렬 */
-  padding-bottom:1.5rem;
+  padding-bottom: 1.5rem;
 }
-.nestedCommentCont_comment{
+.nestedCommentCont_comment {
   margin-bottom: 1.7rem;
 }
-#writeNestedCommentBtn{
+#writeNestedCommentBtn {
   width: 100%;
 }
 .nestedCommentCont_write {
@@ -318,11 +354,11 @@ export default {
   border: 1px solid rgb(233, 236, 239);
   line-height: 1.75;
 }
-.nestedCommentCont_write_buttons{
+.nestedCommentCont_write_buttons {
   display: flex;
   justify-content: flex-end;
 }
-#writeNestedCommentCancelBtn{
+#writeNestedCommentCancelBtn {
   margin-right: 0.7rem;
 }
 </style>

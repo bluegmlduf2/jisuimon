@@ -4,7 +4,7 @@ from common import *
 # 라우팅 기본경로 table을 가지는 블루프린터 객체를 생성
 comment_controller = Blueprint('comment', __name__)
 
-@comment_controller.route('/comment', methods=['POST'])
+@comment_controller.route('/comment', methods=['POST','DELETE'])
 @check_token
 @exception_handler
 def comment():
@@ -28,6 +28,15 @@ def comment():
         '''댓글 입력'''
         commentModel.insertComment(filteredArgs)
         
+        return jsonify(getMessage(601)), 200
+
+    '''댓글 삭제'''
+    if request.method == 'DELETE':
+        args = request.get_json()
+        
+        '''댓글 삭제'''
+        commentModel.deleteComment(args)
+
         return jsonify(getMessage(601)), 200
 
 @comment_controller.route('/commentReply', methods=['POST'])

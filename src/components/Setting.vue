@@ -118,14 +118,14 @@ export default {
         method: "post",
         sendData: formData,
       };
-      
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
       this.$store
         .dispatch("userImage", payload, true)
         .then(() => {
           this.$message
-            .successMessage("update","TODOプロフィール写真変更しました。")
+            .successMessage("update", "TODOプロフィール写真変更しました。")
             .then(async () => {
               // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
               await firebase.auth.currentUser.reload();
@@ -136,8 +136,8 @@ export default {
           this.$message.errorMessage(err);
         })
         .finally(() => {
-          this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
-          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+          this.$refs.profileImgUploadRef.value = null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
     },
     // 유저 프로필 삭제
@@ -148,12 +148,12 @@ export default {
           const payload = {
             method: "delete",
           };
-          this.$store.commit('showSpinner'); // 요청대기스피너 보기
+          this.$store.commit("showSpinner"); // 요청대기스피너 보기
           this.$store
             .dispatch("userImage", payload)
             .then(() => {
               this.$message
-                .successMessage("delete","TODOプロフィール写真変更しました。")
+                .successMessage("delete", "TODOプロフィール写真変更しました。")
                 .then(async () => {
                   // 파이어베이스의 현재유저정보 초기화 initUser함수에 배치시 초기화느림
                   await firebase.auth.currentUser.reload();
@@ -164,8 +164,8 @@ export default {
               this.$message.errorMessage(err);
             })
             .finally(() => {
-              this.$refs.profileImgUploadRef.value=null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
-              this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+              this.$refs.profileImgUploadRef.value = null; // 동일한 이름의 파일선택시 change이벤트 발생이 안되는 버그대비
+              this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
             });
         }
       });
@@ -182,8 +182,8 @@ export default {
         nickName: this.nickNameUpdated,
       };
 
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
-      
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
       firebase
         .updateUser(UPDATE_INFO)
         .then((res) => {
@@ -195,7 +195,7 @@ export default {
         .finally(() => {
           this.nickNameClicked = !this.nickNameClicked; // 버튼상태변경
           this.initUser(); // 유저정보초기화
-          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
     },
     // 유저 비밀번호 변경
@@ -210,7 +210,7 @@ export default {
         newPassword: this.newPassUpdated,
       };
 
-      this.$store.commit('showSpinner'); // 요청대기스피너 보기
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
       firebase
         .updatePass(UPDATE_INFO)
@@ -223,7 +223,7 @@ export default {
         .finally(() => {
           this.passWordClicked = !this.passWordClicked; // 버튼상태변경
           this.initUser(); // 유저정보초기화
-          this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
     },
     // 유저삭제
@@ -234,7 +234,7 @@ export default {
           const payload = {
             method: "delete",
           };
-          this.$store.commit('showSpinner'); // 요청대기스피너 보기
+          this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
           this.$store
             .dispatch("deleteUser", payload)
@@ -246,14 +246,14 @@ export default {
                 )
                 .then(() => {
                   // 탈퇴후 홈화면으로 이동
-                  this.moveToHome()
+                  this.moveToHome();
                 });
             })
             .catch((err) => {
               this.$message.errorMessage(err);
             })
             .finally(() => {
-              this.$store.commit('hideSpinner'); // 요청대기스피너 보지않기
+              this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
             });
         }
       });
