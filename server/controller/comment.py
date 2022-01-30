@@ -39,7 +39,7 @@ def comment():
 
         return jsonify(getMessage(601)), 200
 
-@comment_controller.route('/commentReply', methods=['POST'])
+@comment_controller.route('/commentReply', methods=['POST','DELETE'])
 @check_token
 @exception_handler
 def commentReply():
@@ -60,7 +60,16 @@ def commentReply():
 
         filteredArgs['commentUserId'] = request.user['uid']  # 파이어베이스 유저정보 취득
 
-        '''댓글 입력'''
+        '''대댓글 입력'''
         commentModel.insertCommentReply(filteredArgs)
         
+        return jsonify(getMessage(601)), 200
+    
+    '''대댓글 삭제'''
+    if request.method == 'DELETE':
+        args = request.get_json()
+        
+        '''대댓글 삭제'''
+        commentModel.deleteCommentReply(args)
+
         return jsonify(getMessage(601)), 200

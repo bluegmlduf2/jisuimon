@@ -64,7 +64,7 @@
                       </div>
                       <div v-if="commentReply.comment_reply_auth">
                         <span>修正</span>
-                        <span>削除</span>
+                        <span @click="deleteCommentReply(commentReply.comment_reply_id)">削除</span>
                       </div>
                     </div>
                   </div>
@@ -237,6 +237,40 @@ export default {
         .finally(() => {
           this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
+    },
+    // 대댓글삭제
+    deleteCommentReply(commentReplyId) {
+      this.$message.confirmMessage("TODO修正する？").then((res) => {
+        // 확인버튼을 눌렀을시
+        if (res.isConfirmed) {
+          const COMMENT_REPLY_ID = commentReplyId; // 대댓글ID
+
+          // 입력정보를 서버전송데이터에 넣음
+          const payload = {
+            method: "delete",
+            sendData: {
+              commentReplyId: COMMENT_REPLY_ID,
+            },
+          };
+          this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+          this.$store
+            .dispatch("commentReply", payload)
+            .then(() => {
+              this.$message.successMessage("delete").then(() => {
+                this.$emit("updateCommentProps"); // props 다시 받아오기
+                this.inputComment = ""; // 입력댓글초기화
+                this.inputCommentReply = []; // 입력대댓글초기화
+              });
+            })
+            .catch((err) => {
+              this.$message.errorMessage(err);
+            })
+            .finally(() => {
+              this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+            });
+        }
+      });
     },
   },
 };

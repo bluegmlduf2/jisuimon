@@ -138,3 +138,43 @@ def insertCommentReply(args):
             conn.commit()
         finally:
             conn.close()
+
+def deleteCommentReply(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 대댓글의 정보
+            sql = '''
+            SELECT
+                CR.user_table_user_id as user_id
+            FROM
+                jisuimon.comment_reply_table as CR
+            WHERE
+                CR.comment_reply_id = %s;
+            '''
+
+            data = conn.executeOne(sql, args['commentReplyId'])
+            login_user = request.user  # 파이어베이스 유저정보 취득
+
+             # 로그인한 유저와 대댓글 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
+            if not getUserAuth(login_user,data['user_id']) :
+                raise UserError(705)
+            
+            # 게시글의 대댓글 삭제
+            sql = '''
+            DELETE
+            FROM
+                jisuimon.comment_reply_table
+            WHERE
+                comment_reply_id = %s;
+            '''
+            conn.execute(sql, (args['commentReplyId']))
+
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            conn.commit()
+        finally:
+            conn.close()
