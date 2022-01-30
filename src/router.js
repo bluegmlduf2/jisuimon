@@ -77,9 +77,11 @@ router.beforeEach(function (to, from, next) {
         if (currentUserStatus) {
             next()
         }else{
-            // 로그인안한 상태일 경우 경고
-            router.push('/')
-            message.infoMessage("TODO 로그인필요함");
+            // 로그인안한 상태일 경우 경고후 홈화면으로 이동
+            message.infoMessage("TODO 로그인필요함").then(() => {
+                const HOME_URL = `/${location.pathname.split("/")[1]}`;
+                location.href = HOME_URL;
+            });
         }
     }else{
         //인증이 필요없는 페이지

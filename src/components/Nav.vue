@@ -147,8 +147,11 @@ export default {
           // 로그아웃 성공시 홈화면으로 이동
           await this.$message.okMessage(res, false); // 로그아웃 메세지
 
+          // 권한이 필요한 페이지에서 로그아웃한 경우 홈으로 이동
+          if(this.$route.meta?.requiresAuth){
+            this.moveToHome();
+          }else if (this.$route.path != "/") {
           // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
-          if (this.$route.path != "/") {
             this.$router.go(this.$router.currentRoute);
           }
         })
