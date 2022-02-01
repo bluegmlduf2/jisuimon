@@ -231,6 +231,7 @@ def getPostComment(args):
             for i,comment in enumerate(commentData):
                 commentReturnData[i].setdefault('comment_reply',[])# 대댓글 추가에 필요한 키 추가
                 commentReturnData[i].setdefault('showState',False)# 댓글 접고 펼치기에 필요한 키 추가
+                commentReturnData[i].setdefault('updateState',False)# 댓글 수정창 토글기능에 필요한 키 추가
                 userImage=commentReturnData[i]['user_image'] # 유저 이미지 (댓글유저)
                 commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg) # 유저 이미지 파싱
                 commentReturnData[i]['comment_auth'] = getUserAuth(args.user,commentReturnData[i]['user_id'])# 댓글의 유저권한취득
@@ -240,6 +241,7 @@ def getPostComment(args):
                     # 댓글과 대댓글이 부모자식관계가 맞을 시 해당 부모 댓글안에 자식 대댓글 딕셔너리를 넣어줌 
                     if comment['comment_id']==commentReply['comment_table_comment_id']:
                         userReplyImage=commentReply['user_image_CR'] # 유저 이미지 (대댓글유저)
+                        commentReply['updateState']=False # 대댓글 수정창 토글기능에 필요한 키 추가
                         commentReply['user_image_CR']=imageParser(userImgPath+userReplyImage if userReplyImage else userDefaultImg) # 유저 이미지 (대댓글유저)
                         commentReply['comment_reply_auth'] = getUserAuth(args.user,commentReply['user_id_CR'])# 댓글의 유저권한취득
                         [commentReply.pop(colNmRep) for colNmRep in removeCommentReplyCol] # 불필요한 대댓글의 칼럼제거

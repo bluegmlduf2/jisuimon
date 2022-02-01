@@ -99,3 +99,9 @@
 input[type="file"] {
     display: none;
 }
+/* 공통 입력 텍스트영역 */
+.input_textarea{
+    resize: none;
+    border: 1px solid rgb(233, 236, 239);
+    line-height: 1.75;
+}

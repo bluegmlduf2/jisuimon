@@ -3,7 +3,7 @@
     <h4>{{ comment.length }}件のコメント</h4>
     <div class="commentCont_write">
       <textarea
-        class="form-control"
+        class="form-control input_textarea"
         id="regCommentTa"
         placeholder="コメントを残してください"
         rows="3"
@@ -32,14 +32,27 @@
               <div class="commentCont_profileInfo_date">{{getCommentMoment(comment.comment_create_date)}}</div>
             </div>
             <div v-if="comment.comment_auth">
-              <span>修正</span>
+              <span @click="comment.updateState=true">修正</span>
               <span @click="deleteComment(comment.comment_id)">削除</span>
             </div>
           </div>
         </div>
         <!-- 댓글 코멘트 -->
-        <div class="commentCont_list_content">
+        <div class="commentCont_list_content" v-if="comment.updateState">
+          <textarea
+            class="form-control input_textarea"
+            placeholder="コメントを残してください"
+            rows="3"
+            ref="updateCommentInput"
+            v-text="comment.comment_content"
+          />
+        </div>
+        <div class="commentCont_list_content" v-else>
           {{ comment.comment_content }}
+        </div>
+        <div class="update_buttons" v-if="comment.updateState">
+          <button class="btn btn-secondary cancel_btn" id="updateCommentCancelBtn" @click="comment.updateState=false" ><b>キャンセル</b></button>
+          <button class="btn btn-success confirm_btn" id="updateCommentConfirmBtn" @click="updateComment(comment.comment_id)"><b>コメントを修正する</b></button>
         </div>
         <div class="commentCont_list_moreComment" >
           <span v-if="comment.showState" @click="comment.showState=false" class="material-icons commentCont_list_show">remove_circle_outline</span>
@@ -63,20 +76,33 @@
                         <div class="commentCont_profileInfo_date">{{getCommentMoment(commentReply.comment_reply_create_date)}}</div>
                       </div>
                       <div v-if="commentReply.comment_reply_auth">
-                        <span>修正</span>
+                        <span @click="commentReply.updateState=true">修正</span>
                         <span @click="deleteCommentReply(commentReply.comment_reply_id)">削除</span>
                       </div>
                     </div>
                   </div>
                   <!-- 대댓글 코멘트 -->
-                  <div class="nestedCommentCont_comment">&emsp;{{commentReply.comment_reply_content}}</div>
+                  <div class="nestedCommentCont_comment" v-if="commentReply.updateState">
+                    <textarea
+                      class="form-control input_textarea"
+                      placeholder="コメントを残してください"
+                      rows="3"
+                      ref="updateCommentReplyInput"
+                      v-text="commentReply.comment_reply_content"
+                    />
+                  </div>
+                  <div class="nestedCommentCont_comment" v-else>&emsp;{{commentReply.comment_reply_content}}</div>
+                  <div class="update_buttons" v-if="commentReply.updateState">
+                    <button class="btn btn-secondary cancel_btn" id="updateNestedCommentCancelBtn" @click="commentReply.updateState=false" ><b>キャンセル</b></button>
+                    <button class="btn btn-success confirm_btn" id="updateNestedCommentConfirmBtn" @click="updateCommentReply(commentReply.comment_reply_id)"><b>コメントを修正する</b></button>
+                  </div>
                 </div>
                 <!-- 대댓글 작성창 -->
                 <div class="nestedCommentCont_newcomment" v-if="getLoginStatus">
                   <button id="writeNestedCommentBtn" v-if="comment.showReplyState" @click="comment.showReplyState=!comment.showReplyState" type="button" class="btn btn-outline-success confirm_white_btn"><b>コメント作成</b></button>
                   <div class="nestedCommentCont_write" v-if="!comment.showReplyState">
                     <textarea
-                      class="form-control"
+                      class="form-control input_textarea"
                       id="regNewCommentTa"
                       placeholder="コメントを残してください"
                       rows="3"
@@ -107,6 +133,7 @@ export default {
     return {
       inputComment: "", // 댓글내용
       inputCommentReply: [], // 대댓글내용 (v-for의 동적 v-model)
+      updateShowState: false
     };
   },
   computed: {
@@ -166,6 +193,35 @@ export default {
         .finally(() => {
           this.$store.commit("hideSpinner");
         });
+    },
+    // 댓글수정
+    updateComment(commentId) {
+      const COMMENT_ID = commentId; // 댓글ID
+
+        // 입력정보를 서버전송데이터에 넣음
+        const payload = {
+          method: "patch",
+          sendData: {
+            commentId: COMMENT_ID,
+          },
+        };
+        this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+        this.$store
+          .dispatch("comment", payload)
+          .then(() => {
+            this.$message.successMessage("update").then(() => {
+              this.$emit("updateCommentProps"); // props 다시 받아오기
+              this.inputComment = ""; // 입력댓글초기화
+              this.inputCommentReply = []; // 입력대댓글초기화
+            });
+          })
+          .catch((err) => {
+            this.$message.errorMessage(err);
+          })
+          .finally(() => {
+            this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+          });
     },
     // 댓글삭제
     deleteComment(commentId) {
@@ -238,6 +294,35 @@ export default {
           this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
     },
+    // 대댓글수정
+    updateCommentReply(commentReplyId) {
+      const COMMENT_REPLY_ID = commentReplyId; // 대댓글ID
+
+      // 입력정보를 서버전송데이터에 넣음
+      const payload = {
+        method: "patch",
+        sendData: {
+          commentReplyId: COMMENT_REPLY_ID,
+        },
+      };
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+      this.$store
+        .dispatch("commentReply", payload)
+        .then(() => {
+          this.$message.successMessage("update").then(() => {
+            this.$emit("updateCommentProps"); // props 다시 받아오기
+            this.inputComment = ""; // 입력댓글초기화
+            this.inputCommentReply = []; // 입력대댓글초기화
+          });
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
+    },
     // 대댓글삭제
     deleteCommentReply(commentReplyId) {
       this.$message.confirmMessage("TODO修正する？").then((res) => {
@@ -282,11 +367,6 @@ export default {
 }
 .commentCont_write {
   margin-bottom: 20px;
-}
-.commentCont_write #regCommentTa {
-  resize: none;
-  border: 1px solid rgb(233, 236, 239);
-  line-height: 1.75;
 }
 .commentCont_reg {
   display: flex;
@@ -383,16 +463,23 @@ export default {
 .nestedCommentCont_write {
   margin-bottom: 20px;
 }
-.nestedCommentCont_write #regNewCommentTa {
-  resize: none;
-  border: 1px solid rgb(233, 236, 239);
-  line-height: 1.75;
-}
 .nestedCommentCont_write_buttons {
   display: flex;
   justify-content: flex-end;
 }
 #writeNestedCommentCancelBtn {
+  margin-right: 0.7rem;
+}
+.update_buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+}
+.update_buttons button {
+  top: -0.7rem;
+  position: relative;
+}
+.update_buttons .cancel_btn{
   margin-right: 0.7rem;
 }
 </style>
