@@ -133,7 +133,7 @@ export default {
     return {
       inputComment: "", // 댓글내용
       inputCommentReply: [], // 대댓글내용 (v-for의 동적 v-model)
-      updateShowState: false
+      updateShowState: false,
     };
   },
   computed: {
@@ -197,31 +197,37 @@ export default {
     // 댓글수정
     updateComment(commentId) {
       const COMMENT_ID = commentId; // 댓글ID
+      const COMMENT_CONTENT = this.$refs.updateCommentInput.value; // 사용자 작성 댓글
 
-        // 입력정보를 서버전송데이터에 넣음
-        const payload = {
-          method: "patch",
-          sendData: {
-            commentId: COMMENT_ID,
-          },
-        };
-        this.$store.commit("showSpinner"); // 요청대기스피너 보기
+      // 댓글이 공백일시 유효성 검사
+      if (!COMMENT_CONTENT) {
+        this.$message.warningMessage("TODO コメントを入力してください");
+        return false;
+      }
+      // 입력정보를 서버전송데이터에 넣음
+      const payload = {
+        method: "patch",
+        sendData: {
+          commentId: COMMENT_ID,
+        },
+      };
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
-        this.$store
-          .dispatch("comment", payload)
-          .then(() => {
-            this.$message.successMessage("update").then(() => {
-              this.$emit("updateCommentProps"); // props 다시 받아오기
-              this.inputComment = ""; // 입력댓글초기화
-              this.inputCommentReply = []; // 입력대댓글초기화
-            });
-          })
-          .catch((err) => {
-            this.$message.errorMessage(err);
-          })
-          .finally(() => {
-            this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+      this.$store
+        .dispatch("comment", payload)
+        .then(() => {
+          this.$message.successMessage("update").then(() => {
+            this.$emit("updateCommentProps"); // props 다시 받아오기
+            this.inputComment = ""; // 입력댓글초기화
+            this.inputCommentReply = []; // 입력대댓글초기화
           });
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
     },
     // 댓글삭제
     deleteComment(commentId) {
@@ -297,7 +303,13 @@ export default {
     // 대댓글수정
     updateCommentReply(commentReplyId) {
       const COMMENT_REPLY_ID = commentReplyId; // 대댓글ID
+      const COMMENT_REPLY_CONTENT = this.$refs.updateCommentReplyInput.value; // 사용자 작성 대댓글
 
+      // 댓글이 공백일시 유효성 검사
+      if (!COMMENT_REPLY_CONTENT) {
+        this.$message.warningMessage("TODO コメントを入力してください");
+        return false;
+      }
       // 입력정보를 서버전송데이터에 넣음
       const payload = {
         method: "patch",
@@ -479,7 +491,7 @@ export default {
   top: -0.7rem;
   position: relative;
 }
-.update_buttons .cancel_btn{
+.update_buttons .cancel_btn {
   margin-right: 0.7rem;
 }
 </style>
