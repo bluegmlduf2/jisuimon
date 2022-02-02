@@ -209,6 +209,7 @@ export default {
         method: "patch",
         sendData: {
           commentId: COMMENT_ID,
+          commentContent: COMMENT_CONTENT
         },
       };
       this.$store.commit("showSpinner"); // 요청대기스피너 보기
@@ -315,6 +316,7 @@ export default {
         method: "patch",
         sendData: {
           commentReplyId: COMMENT_REPLY_ID,
+          commentReplyContent: COMMENT_REPLY_CONTENT,
         },
       };
       this.$store.commit("showSpinner"); // 요청대기스피너 보기

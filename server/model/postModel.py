@@ -179,13 +179,17 @@ def getPostComment(args):
             sql = '''
                  SELECT
                     C.comment_content ,
-                    CONVERT_TZ(C.comment_create_date, '+00:00', '-09:00') as comment_create_date,
+                    CONVERT_TZ(IFNULL(C.comment_update_date,C.comment_create_date) , 
+                    '+00:00', 
+                    '-09:00') as comment_create_date,
                     C.comment_id ,
                     C.user_table_user_id ,
                     C.post_table_post_id ,
                     U.user_id ,
                     CR.comment_reply_content ,
-                    CONVERT_TZ(CR.comment_reply_create_date, '+00:00', '-09:00') as comment_reply_create_date,
+                    CONVERT_TZ(IFNULL(CR.comment_reply_update_date,CR.comment_reply_create_date), 
+                    '+00:00', 
+                    '-09:00') as comment_reply_create_date,
                     CR.comment_reply_id ,
                     CR.comment_table_comment_id,
                     (SELECT user_id FROM user_table AS SU WHERE SU.user_id = CR.user_table_user_id ) AS user_id_CR
