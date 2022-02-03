@@ -4,6 +4,8 @@
     <router-view name="Card" :posts="posts" :postCnt="postCnt" :postCntAll="postCntAll" @addPostCnt="addPostCnt"/>
     <!-- Post -->
     <router-view name="Post" />
+    <!-- PostList -->
+    <router-view name="PostList" />
     <!-- Setting -->
     <router-view name="Setting" v-slot="{ Component }">
       <transition name="fade" mode="out-in">

@@ -29,6 +29,7 @@ const store = createStore({
             email: "", // 유저 이메일 정보
             status: false, // 유저 로그인 상태
             showSpinner: false, // 요청 대기 스피너
+            foodSearchStatus: false, // 음식 검색창 표시
             getRequest: (url, payload, fileUpload = false) => {
                 // Axios의 기본 정보
                 const option = {
@@ -66,6 +67,10 @@ const store = createStore({
         getSpinner(state) {
             return state.showSpinner;
         },
+        // 음식검색창표시상태
+        getFoodSearchStatus(state) {
+            return state.foodSearchStatus;
+        },
     },
     // 데이터 변경하는곳 (디버깅등을 염두해서 데이터 변경을 한곳에서 처리) , $store.commoit()
     mutations: {
@@ -84,7 +89,15 @@ const store = createStore({
         // 유저 로그인 상태 갱신
         onUserStatusChanged(state, status) {
             state.status = status;
-        }
+        },
+        // 음식검색창을 보여준다
+        showFoodSearchStatus(state){
+            state.foodSearchStatus = true;
+        },
+        // 음식검색창을 숨긴다
+        hideFoodSearchStatus(state){
+            state.foodSearchStatus = false;
+        },
     },
     // 데이터를 요청하는곳 2
     // Ajax데이터 요청등을 처리 , $store.dispatch()

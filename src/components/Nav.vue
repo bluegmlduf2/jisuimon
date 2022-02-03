@@ -13,8 +13,8 @@
           <router-link class="nav-link" to="#">Link</router-link>
         </li> -->
         <!-- 로그인 모바일 메뉴 -->
-        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin">
-          <router-link class="nav-link" to="#">My Post</router-link>
+        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin" to="/postlist">
+          <router-link class="nav-link" to="/postlist">My Post</router-link>
         </li>
         <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin" to="/setting">
           <router-link class="nav-link" to="/setting">Setting</router-link>
@@ -23,7 +23,7 @@
           <router-link class="nav-link" to="#" @click="logout">Logout</router-link>
         </li>
       </ul>
-      <form class="form-inline mt-2 mt-md-0">
+      <form class="form-inline mt-2 mt-md-0" v-if="getFoodSearchStatus">
         <input class="form-control mr-sm-4" id="searchMaterial" type="text" placeholder="食材を入力してください">
       </form>
         <!-- 로그인 메뉴 -->
@@ -35,7 +35,7 @@
           </div>
           <div class="nav_profile_list_showBg" @click="profileMenuShow=!profileMenuShow" v-if="profileMenuShow">
             <div class="nav_profile_list_show" v-if="profileMenuShow">
-              <router-link class="nav-link" to="#">My Post</router-link>
+              <router-link class="nav-link" to="/postlist">My Post</router-link>
               <router-link class="nav-link" to="/setting">Setting</router-link>
               <router-link class="nav-link" @click="logout" to="#">Logout</router-link>
             </div>
@@ -223,6 +223,10 @@ export default {
     // 패스워드 폼체크
     validationPassCheck() {
       return !this.validationUserPass && this.afterValidation;
+    },
+    // 음식검색창 상태 반환
+    getFoodSearchStatus() {
+      return this.$store.getters["getFoodSearchStatus"];
     },
   },
   watch: {
