@@ -105,3 +105,8 @@ input[type="file"] {
     border: 1px solid rgb(233, 236, 239);
     line-height: 1.75;
 }
+/* 분리기호 */
+.separator {
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
+}

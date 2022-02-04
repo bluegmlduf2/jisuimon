@@ -18,6 +18,13 @@ def getPosts(args):
                 PD.content ,
                 (
                 SELECT
+                    COUNT(C.post_table_post_id)
+                FROM
+                    jisuimon.comment_table AS C
+                WHERE
+                    C.post_table_post_id = P.post_id) AS comment_cnt ,
+                (
+                SELECT
                     COUNT(L.post_table_post_id)
                 FROM
                     jisuimon.post_like_table AS L
@@ -39,7 +46,9 @@ def getPosts(args):
             data = conn.executeAll(sql, (fromPostCnt,toPostCnt))
 
             # TODO 유저삭제하면 uid가 없는데 그에대한 대처필요
- 
+
+            removePostCol = ['user_id','user_table_user_id','update_date'] # 불필요한칼럼 (사용자정보)
+
             # 이미지->바이너리(base64)->utf-8문자열
             for i, e in enumerate(data):
                 user=getUser(e['user_id']) # 유저정보취득 (파이어베이스)
@@ -57,6 +66,71 @@ def getPosts(args):
 
                 # 섬네일이미지변환Base64
                 data[i]['user_image'] = imageParser(userImagePath)
+
+                # 불필요한 게시물의 칼럼제거
+                [data[i].pop(colNm) for colNm in removePostCol]
+
+
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            return data
+        finally:
+            conn.close()
+
+def getPostList(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 게시물 리스트 화면에 표시할 게시물 5개 가져오기 (타임존때문에 -9 시간값을 반환)
+            sql = '''
+            SELECT
+                P.post_id,
+                P.title,
+                CONVERT_TZ(P.create_date, '+00:00', '-09:00') as create_date,
+                CONVERT_TZ(P.update_date, '+00:00', '-09:00') as update_date,
+                P.user_table_user_id,
+                U.user_id ,
+                PD.content ,
+                (
+                SELECT
+                    COUNT(C.post_table_post_id)
+                FROM
+                    jisuimon.comment_table AS C
+                WHERE
+                    C.post_table_post_id = P.post_id) AS comment_cnt ,
+                (
+                SELECT
+                    COUNT(L.post_table_post_id)
+                FROM
+                    jisuimon.post_like_table AS L
+                WHERE
+                    post_table_post_id = P.post_id) AS like_cnt 
+                    /*(최초에 8행의 결과가 나온후 각 행마다 위의 서브쿼리를 실행하기때문에 post_table_post_id = P.post_id가 가능하다)*/
+            FROM
+                jisuimon.post_table AS P
+            INNER JOIN jisuimon.user_table AS U ON
+                P.user_table_user_id = U.user_id
+            INNER JOIN jisuimon.post_detail_table AS PD ON
+                P.post_id = PD.post_table_post_id
+            WHERE user_id = %s
+            ORDER BY
+                P.create_date DESC
+            LIMIT %s,%s
+            '''
+            # fromPostCnt=int(args['postCnt'])-5
+            # toPostCnt=5 # 5개씩 가져옴
+            login_user = request.user['uid']  # 파이어베이스 로그인 유저의 uid 취득
+            data = conn.executeAll(sql, (login_user,0,5))
+
+            removePostCol = ['user_id','user_table_user_id','update_date'] # 불필요한칼럼 (사용자정보)
+ 
+            # 게시물 형식변환과 불필요한 칼럼제거
+            for i, e in enumerate(data):
+                data[i]['content'] = htmlUnescape(e['content']) # 게시물 내용 변환 escapeHTML->HTML
+                [data[i].pop(colNm) for colNm in removePostCol] # 불필요한 게시물의 칼럼제거
 
         except Exception as e:
             traceback.print_exc()

@@ -4,7 +4,9 @@
     <div class="postCont_writer">
       <div class="postCont_writer_profile">
         <b>{{ posts.nickname }}</b>
-        <span>{{$moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")}}</span>
+        <span>{{
+          $moment(posts.create_date).format("YYYY年 MM月 DD日 dddd")
+        }}</span>
       </div>
       <div class="postCont_writer_button" v-if="posts.post_auth">
         <span @click="updatePost(posts.post_id)">修正</span>
@@ -13,14 +15,18 @@
     </div>
     <div class="postCont_ingredient">
       <span v-for="i in ingredient" :key="i.ingredient_id">
-      {{`${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`}}
+        {{
+          `${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`
+        }}
       </span>
     </div>
     <div class="postCont_index">
       <h3>材料詳細</h3>
       <ul v-if="listShow">
         <li v-for="i in ingredient" :key="i.ingredient_id">
-          {{`${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`}}
+          {{
+            `${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`
+          }}
         </li>
       </ul>
       <div class="postCont_index_list" @click="listShow = !listShow">
@@ -32,7 +38,11 @@
     </div>
     <div>
       <!-- @updateCommentProps : emit을 이용해서 자식(comment)이 부모(post)의 data를 초기화(렌더링없음) -->
-      <Comment :postId="posts.post_id" :comment="comment" @updateCommentProps="getPostDetail" />
+      <Comment
+        :postId="posts.post_id"
+        :comment="comment"
+        @updateCommentProps="getPostDetail"
+      />
     </div>
   </div>
 </template>
@@ -49,7 +59,6 @@ export default {
   },
   data() {
     return {
-      loading: false,
       listShow: false,
       posts: {},
       comment: {},

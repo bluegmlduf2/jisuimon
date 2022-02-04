@@ -103,9 +103,13 @@ const store = createStore({
     // Ajax데이터 요청등을 처리 , $store.dispatch()
     // 하나의 메서드로 안쓰고 메서드를 분리한 이유는 인터페이스 개념으로 url들을 파악하기 위해서
     actions: {
-        // 메인 게시물 리스트 가져오기 , 게시물 등록
+        // 메인화면 게시물 가져오기 , 게시물 등록
         post(context, payload) {
             return this.state.getRequest("/post", payload);
+        },
+        // 게시물 리스트 화면에서 게시물 가져오기
+        postList(context, payload) {
+            return this.state.getRequest("/postList", payload);
         },
         // 총 게시물 수 가져오기
         getPostCount(context, payload) {

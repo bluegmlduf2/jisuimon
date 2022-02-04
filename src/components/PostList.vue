@@ -1,33 +1,28 @@
 <template>
   <div class="post-list-cont">
-    <div class="post-list-search" >
-      <h6>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, laudantium velit </h6>
-      <input class="form-control mr-sm-4" id="searcPost" type="text" placeholder="食材を入力してください">
+    <div class="post-list-search">
+      <h6>作成した投稿から検索します</h6>
+      <input
+        class="form-control mr-sm-4"
+        id="searchPost"
+        type="text"
+        placeholder="食材を入力してください"
+      />
     </div>
-    <!-- <div class="post-list" v-for="i in 8" :key="i"> -->
-    <div class="post-list" >
+    <div class="post-list" v-for="(e, i) in postList" :key="i">
+      <!-- <div class="post-list" > -->
       <router-link to="#" class="post-list-title">
-        <h2>Lorem ipsum dolor sit amet consectetur adipisicing elit. Deserunt illo ab aspernatur numquam. Reiciendis hic ratione repudiandae unde aliquam vel numquam nemo eaque, nihil consequatur itaque</h2>
+        <h2>{{ removeHtml(e.title) }}</h2>
       </router-link>
       <p class="post-list-content">
-        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Rerum, numquam. Doloribus a repudiandae blanditiis ex accusantium cumque culpa nam, mollitia dolor, expedita, fugit reprehenderit veniam praesentium quod enim cupiditate dolorem!
-        Qui porro quas molestiae assumenda obcaecati molestias, modi error temporibus dolorem recusandae adipisci sit similique aliquid ab, deserunt corrupti debitis, tenetur vitae quisquam quis! Odio, maxime. Vero rerum libero velit.
+        {{ removeHtml(e.content) }}
       </p>
       <div class="post-list-subinfo">
-        <span class="post-list-date">2022.11.11</span>
-        <span class="post-list-comment"> 0개의댓글</span>
-      </div>
-    </div>
-    <div class="post-list" >
-      <router-link to="#" class="post-list-title">
-        <h2>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolor quia unde quaerat nemo, assumenda neque. Deleniti placeat quaerat sequi fuga, ex fugit distinctio laudantium hic, impedit maxime quod dolor officia.</h2>
-      </router-link>
-      <p class="post-list-content">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-      </p>
-      <div class="post-list-subinfo">
-        <span class="post-list-date">2022.11.11</span>
-        <span class="post-list-comment"> 0개의댓글</span>
+        <span class="post-list-date">{{
+          $moment(e.create_date).format("YYYY年 MM月 DD日 dddd")
+        }}</span>
+        <span class="separator">·</span>
+        <span class="post-list-comment"> {{ e.comment_cnt }}件のコメント</span>
       </div>
     </div>
   </div>
@@ -41,16 +36,65 @@ export default {
   mixins: [common],
   data() {
     return {
+      postList: [], // 게시물리스트
     };
   },
-  props: {
-  },
   methods: {
+    // // 게시물의 행과 열에 맞는 데이터를 반환한다
+    // getPostObj(post, i, x) {
+    //   return post[(i - 1) * 4 + x - 1];
+    // },
+    // // 무한스크롤 정의
+    // moveScroll(e) {
+    //   const { scrollHeight, scrollTop, clientHeight } =
+    //     e.target.documentElement;
+    //   const scrollPos = Math.floor(scrollTop + clientHeight);
+    //   // scrollHeight 화면바닥의px === scrollPos 스크롤위치
+    //   const isAtTheBottom = scrollHeight === scrollPos;
+    //   // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
+    //   if (isAtTheBottom) this.loadPages();
+    // },
+    // // 추가 게시물 가져오기
+    // loadPages() {
+    //   // 내려오면 api 호출하여 아래에 더 추가, total값 최대이면 호출 안함
+    //   if (this.postCnt < this.postCntAll) {
+    //     this.$emit("addPostCnt");
+    //   }
+    // },
+    // 게시물 리스트
+    getPostList() {
+      const payload = {
+        method: "get",
+        sendData: { postId: this.$route.params.postId },
+      };
+
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+      this.$store
+        .dispatch("postList", payload)
+        .then((result) => {
+          this.postList.push(...result.data); //게시물 리스트
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
+    },
   },
-
-  created(){
-
-  }
+  // 화면초기화
+  created() {
+    this.getPostList(); // 게시물 리스트 초기화
+  },
+  // // 스크롤 함수 이벤트 초기화
+  // mounted() {
+  //   window.addEventListener("scroll", this.moveScroll);
+  // },
+  // // 스크롤 함수 이벤트 해제
+  // unmounted() {
+  //   window.removeEventListener("scroll", this.moveScroll);
+  // },
 };
 </script>
 
@@ -75,7 +119,7 @@ export default {
   padding: 16px;
 }
 .post-list-search {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .post-list-search > h6 {
   margin-top: 1rem;
@@ -83,21 +127,22 @@ export default {
   margin-bottom: 0.5rem;
   color: #212529;
   overflow: hidden;
-  white-space:nowrap;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
-#searcPost {
+#searchPost {
   height: 3rem;
 }
 .post-list {
-  padding-bottom: 3rem;
+  height: 150px;
+  padding: 1.2rem 0 1rem;
+  border-top: 1px solid #f1f3f5;
 }
 .post-list-title:hover {
   text-decoration: none;
 }
 .post-list-title > h2 {
   font-size: 1.5rem;
-  margin: 0px;
   color: #212529;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -105,22 +150,21 @@ export default {
   font-weight: bold;
 }
 .post-list-content {
-  margin-bottom: 1rem;
-  margin-top: 0.5rem;
+  margin: 0.5rem 0;
   font-size: 1rem;
   color: #495057;
   text-align: left;
   overflow: hidden; /** 넘치는 글 숨김 */
   word-break: break-all; /** 글을 줄바꿈 */
-  max-height: 75px; /** 글을 최대 3줄까지 표시함 */
+  max-height: 50px; /** 글을 최대 3줄까지 표시함 */
 }
 .post-list-subinfo {
   display: flex;
-  margin-top: 1rem;
-  color: #868E96;
+  /* margin-top: 1rem; */
+  color: #868e96;
   font-size: 0.875rem;
 }
-.post-list-comment{
+.post-list-comment {
   padding-left: 10px;
 }
 </style>

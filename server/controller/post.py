@@ -15,6 +15,17 @@ def getPost():
 
         return jsonify(data), 200
 
+@post_controller.route('/postList', methods=['GET'])
+@check_token
+@exception_handler
+def getPostList():
+    '''게시물 리스트 화면의 게시물 5개 가져오기'''
+    if request.method == 'GET':
+        args = request.args
+        data = postModel.getPostList(args)
+
+        return jsonify(data), 200
+
 @post_controller.route('/post', methods=['POST','DELETE'])
 @check_token
 @exception_handler
