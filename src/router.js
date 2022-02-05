@@ -33,6 +33,9 @@ const routes = [
         components: {
             PostList: PostList,
         },
+        meta: {
+            requiresAuth: true,
+        },
     },
     {
         path: "/write",

@@ -1,13 +1,34 @@
 <template>
   <div class="post-list-cont">
     <div class="post-list-search">
-      <h6>作成した投稿から検索します</h6>
-      <input
-        class="form-control mr-sm-4"
-        id="searchPost"
-        type="text"
-        placeholder="食材を入力してください"
-      />
+      <h6>作成した投稿から食材で検索します</h6>
+      <div class="post-list-search-input">
+        <input
+          class="form-control sm-4 mr-2"
+          id="searchPost"
+          type="text"
+          ref="foodInput"
+          style="ime-mode: disabled"
+          placeholder="食材を入力してください"
+          @keyup="getFood"
+          @change="selectFood"
+          list="foodDataList"
+          :disabled="selectedFood.food_clicked"
+        />
+        <button
+          class="btn btn-sm bg-transparent material-icons"
+          type="button"
+          @click="clearFood"
+          v-if="selectedFood.food_clicked"
+        >
+          clear
+        </button>
+        <datalist id="foodDataList">
+          <option v-for="(food, i) in foodList" :key="i">
+            {{ food["food_name"] }}
+          </option>
+        </datalist>
+      </div>
     </div>
     <div class="post-list" v-for="(e, i) in postList" :key="i">
       <router-link :to="`/post/${e.post_id}`" class="post-list-title">
@@ -24,6 +45,7 @@
         <span class="post-list-comment"> {{ e.comment_cnt }}件のコメント</span>
       </div>
     </div>
+    <div v-if="postList.length == 0">投稿がありません</div>
   </div>
   <div v-if="scrollSpinner" class="loader loader-black loader-1"></div>
 </template>
@@ -40,16 +62,34 @@ export default {
       postCntAll: 0, // 총 게시물 수
       scrollSpinner: false, // 게시물 더보기 스피너
       postList: [], // 게시물리스트
+      foodList: [], // 검색한 재료리스트
+      selectedFood: {
+        // 선택중인 재료
+        food_id: null, //음식 ID
+        food_name: null, //음식 이름
+        food_clicked: false, // 음식이 선택된지 여부
+      },
     };
   },
   methods: {
     // 게시물 리스트
-    getPostList() {
-      //7049 TODO 음식명감
+    getPostList(postReload = false) {
+      // 음식명으로 검색시 기존 데이터 초기화
+      if (postReload) {
+        this.postCnt = 5;
+        this.postCntAll = 0;
+        this.postList = []; // 초기화        
+      }
+
       const payload = {
         method: "get",
         sendData: { postCnt: this.postCnt, ingredientId: "" },
       };
+
+      // 음식명으로 검색시
+      if (this.selectedFood.food_id) {
+        payload.sendData.ingredientId = this.selectedFood.food_id;
+      }
 
       // 요청대기 스피너 보기 (초기화면만)
       if (this.postCnt == 5) {
@@ -69,6 +109,58 @@ export default {
           this.scrollSpinner = false; // 게시물더보기 스피너 보지않기
           this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
+    },
+    // 재료 검색 결과리스트 가져오기
+    getFood(event) {
+      const INPUT_FOOD = event.target.value; // 입력한 재료
+      // 2글자 이상부터 검색
+      if (INPUT_FOOD.length < 2) {
+        return;
+      }
+      const payload = {
+        method: "get",
+        sendData: { food_name: INPUT_FOOD },
+      };
+      this.$store
+        .dispatch("food", payload)
+        .then((result) => {
+          this.foodList = result.data;
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        });
+    },
+    // 선택한 재료 추가
+    selectFood(event) {
+      const CLICKED_OPTION = event.target; // 선택한 재료
+
+      // 선택한 재료의 정보 가져오기
+      const SELECTED_FOOD = this.foodList.find(
+        (e) => e.food_name === CLICKED_OPTION.value
+      );
+
+      // 음식목록에서 선택한것이 아닌 일반 입력은 막기
+      if (!SELECTED_FOOD) {
+        return;
+      }
+
+      SELECTED_FOOD.food_clicked = true; // 선택중인 재료 입력창 입력금지 처리
+
+      // 선택중인 재료 임시로 넣기
+      Object.assign(this.selectedFood, SELECTED_FOOD);
+
+      // 음식명으로 검색
+      this.getPostList(true);
+    },
+    // 선택중인 재료정보 삭제
+    clearFood() {
+      this.selectedFood.food_id = null;
+      this.selectedFood.food_name = null;
+      this.selectedFood.food_clicked = false;
+      this.foodList = [];
+      this.$refs.foodInput.value = null;
+      // 음식명으로 검색
+      this.getPostList(true);
     },
     // 무한스크롤 정의
     moveScroll(e) {
@@ -136,6 +228,9 @@ export default {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.post-list-search-input {
+  display: flex;
 }
 #searchPost {
   height: 3rem;
