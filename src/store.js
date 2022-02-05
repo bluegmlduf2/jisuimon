@@ -107,9 +107,13 @@ const store = createStore({
         post(context, payload) {
             return this.state.getRequest("/post", payload);
         },
-        // 게시물 리스트 화면에서 게시물 가져오기
+        // 나의 게시물 리스트 화면에서 게시물 가져오기
         postList(context, payload) {
             return this.state.getRequest("/postList", payload);
+        },
+        // 일반 게시물 리스트 화면에서 게시물 가져오기
+        postSearch(context, payload) {
+            return this.state.getRequest("/postSearch", payload);
         },
         // 총 게시물 수 가져오기
         getPostCount(context, payload) {

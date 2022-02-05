@@ -1,46 +1,98 @@
 <template>
   <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
     <a class="navbar-brand" to="#" @click="moveToHome">自炊モン</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarCollapse"
+      aria-controls="navbarCollapse"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
-          <router-link class="nav-link" to="#" @click="moveToHome">Home</router-link>
+          <router-link class="nav-link" to="#" @click="moveToHome"
+            >Home</router-link
+          >
         </li>
         <!-- <li class="nav-item">
           <router-link class="nav-link" to="#">Link</router-link>
         </li> -->
         <!-- 로그인 모바일 메뉴 -->
-        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin" to="/postlist">
+        <li
+          class="nav-item nav_profile_mobile"
+          v-if="profileShow && isLogin"
+          to="/postlist"
+        >
           <router-link class="nav-link" to="/postlist">My Post</router-link>
         </li>
-        <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin" to="/setting">
+        <li
+          class="nav-item nav_profile_mobile"
+          v-if="profileShow && isLogin"
+          to="/setting"
+        >
           <router-link class="nav-link" to="/setting">Setting</router-link>
         </li>
         <li class="nav-item nav_profile_mobile" v-if="profileShow && isLogin">
-          <router-link class="nav-link" to="#" @click="logout">Logout</router-link>
+          <router-link class="nav-link" to="#" @click="logout"
+            >Logout</router-link
+          >
         </li>
       </ul>
       <form class="form-inline mt-2 mt-md-0" v-if="getFoodSearchStatus">
-        <input class="form-control mr-sm-4" id="searchMaterial" type="text" placeholder="食材を入力してください">
+        <input
+          class="form-control mr-sm-4"
+          id="searchMaterial"
+          type="text"
+          placeholder="食材を入力してください"
+          ref="foodInput"
+          style="ime-mode: disabled"
+          @keyup="getFood"
+          @change="selectFood"
+          list="foodDataList"
+        />
+        <datalist id="foodDataList">
+          <option v-for="(food, i) in foodList" :key="i">
+            {{ food["food_name"] }}
+          </option>
+        </datalist>
       </form>
-        <!-- 로그인 메뉴 -->
-        <button id="writePostBtn" v-if="profileShow" type="button" class="btn btn-light" @click="isLogin?$router.push('/write'):loginShow=true">{{isLogin?"New Post":"Login"}}</button>
-        <div class="nav_profile" v-if="profileShow && isLogin">
-          <div class="nav_profile_list" @click="profileMenuShow=!profileMenuShow">
-            <!-- <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" /> -->
-            <span class="material-icons nav_profile_arrow">arrow_drop_down</span>
-          </div>
-          <div class="nav_profile_list_showBg" @click="profileMenuShow=!profileMenuShow" v-if="profileMenuShow">
-            <div class="nav_profile_list_show" v-if="profileMenuShow">
-              <router-link class="nav-link" to="/postlist">My Post</router-link>
-              <router-link class="nav-link" to="/setting">Setting</router-link>
-              <router-link class="nav-link" @click="logout" to="#">Logout</router-link>
-            </div>
+      <!-- 로그인 메뉴 -->
+      <button
+        id="writePostBtn"
+        v-if="profileShow"
+        type="button"
+        class="btn btn-light"
+        @click="isLogin ? $router.push('/write') : (loginShow = true)"
+      >
+        {{ isLogin ? "New Post" : "Login" }}
+      </button>
+      <div class="nav_profile" v-if="profileShow && isLogin">
+        <div
+          class="nav_profile_list"
+          @click="profileMenuShow = !profileMenuShow"
+        >
+          <!-- <img :src="require(`@/static/img/faceMan1.jpg`)" alt="profileImg" /> -->
+          <span class="material-icons nav_profile_arrow">arrow_drop_down</span>
+        </div>
+        <div
+          class="nav_profile_list_showBg"
+          @click="profileMenuShow = !profileMenuShow"
+          v-if="profileMenuShow"
+        >
+          <div class="nav_profile_list_show" v-if="profileMenuShow">
+            <router-link class="nav-link" to="/postlist">My Post</router-link>
+            <router-link class="nav-link" to="/setting">Setting</router-link>
+            <router-link class="nav-link" @click="logout" to="#"
+              >Logout</router-link
+            >
           </div>
         </div>
+      </div>
     </div>
   </nav>
   <!-- 로그인 팝업 (TODO 나중에 컴포넌트분리필요)-->
@@ -48,31 +100,83 @@
   <div class="loginCont_showBg" v-if="loginShow">
     <div class="loginCont">
       <div class="loginCont_welcome">
-        <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="">
-        <h4>自炊モンに<br>ようこそ</h4>
+        <img :src="require(`@/assets/img/jisuimonLogo.png`)" alt="" />
+        <h4>自炊モンに<br />ようこそ</h4>
       </div>
       <div class="loginCont_login">
         <div class="loginCont_exit">
-          <span class="material-icons" id="loginClose" @click="closeLoginForm">close</span>
+          <span class="material-icons" id="loginClose" @click="closeLoginForm"
+            >close</span
+          >
         </div>
         <div class="loginCont_main">
           <div class="loginCont_body">
-            <h2><b>{{signUpShow?"会員登録":"ログイン"}}</b></h2>
-            <h4>{{signUpShow?"メールアドレスで会員登録":"メールアドレスでログイン"}}</h4>
+            <h2>
+              <b>{{ signUpShow ? "会員登録" : "ログイン" }}</b>
+            </h2>
+            <h4>
+              {{
+                signUpShow
+                  ? "メールアドレスで会員登録"
+                  : "メールアドレスでログイン"
+              }}
+            </h4>
             <div class="loginCont_body_input">
-              <input type="text" id="loginEmailInput" v-model="userEmail" 
-                class="form-control" :class="{'is-invalid': validationEmailCheck}" placeholder="メールアドレスを入力してください" required>
-              <div class="invalid-feedback" for="loginEmailInput" v-if="validationEmailCheck">メールアドレスの形式を確認してください</div>
-              <input type="password" id="loginPassWordInput" v-model="userPass"
-                class="form-control" :class="{'is-invalid': validationPassCheck}" placeholder="パスワードを入力してください" required>
-              <input type="password" id="loginPassWordInput" v-model="userPassConfirm"
-                class="form-control" :class="{'is-invalid': validationPassCheck}" v-if="signUpShow" placeholder="パスワードを再入力してください" required>
-              <div class="invalid-feedback" for="loginPassWordInput" v-if="validationPassCheck">半角英数字のみ、記号1文字以上使用、全体で8文字以上を入力してください</div>
-              <button class="btn btn-success confirm_btn" id="loginBtn" @click="signUpShow?signup():login()"><b>{{signUpShow?"会員登録":"ログイン"}}</b></button>
+              <input
+                type="text"
+                id="loginEmailInput"
+                v-model="userEmail"
+                class="form-control"
+                :class="{ 'is-invalid': validationEmailCheck }"
+                placeholder="メールアドレスを入力してください"
+                required
+              />
+              <div
+                class="invalid-feedback"
+                for="loginEmailInput"
+                v-if="validationEmailCheck"
+              >
+                メールアドレスの形式を確認してください
+              </div>
+              <input
+                type="password"
+                id="loginPassWordInput"
+                v-model="userPass"
+                class="form-control"
+                :class="{ 'is-invalid': validationPassCheck }"
+                placeholder="パスワードを入力してください"
+                required
+              />
+              <input
+                type="password"
+                id="loginPassWordInput"
+                v-model="userPassConfirm"
+                class="form-control"
+                :class="{ 'is-invalid': validationPassCheck }"
+                v-if="signUpShow"
+                placeholder="パスワードを再入力してください"
+                required
+              />
+              <div
+                class="invalid-feedback"
+                for="loginPassWordInput"
+                v-if="validationPassCheck"
+              >
+                半角英数字のみ、記号1文字以上使用、全体で8文字以上を入力してください
+              </div>
+              <button
+                class="btn btn-success confirm_btn"
+                id="loginBtn"
+                @click="signUpShow ? signup() : login()"
+              >
+                <b>{{ signUpShow ? "会員登録" : "ログイン" }}</b>
+              </button>
             </div>
           </div>
           <div class="loginCont_footer">
-            {{signUpShow?"既にメンバーの方は、":"まだメンバーでない方は、"}}
+            {{
+              signUpShow ? "既にメンバーの方は、" : "まだメンバーでない方は、"
+            }}
             <span id="moveSignUpBtn" @click="showSignUpForm">こちらから</span>
           </div>
         </div>
@@ -105,6 +209,7 @@ export default {
       afterValidation: false, // 최초 로그인부터 유효성검사
       profileShow: true, // 프로필 표시상태
       profileMenuShow: false, // 프로필 메뉴표시상태
+      foodList: [], // 검색한 재료리스트
     };
   },
   created() {
@@ -147,11 +252,11 @@ export default {
           // 로그아웃 성공시 홈화면으로 이동
           await this.$message.okMessage(res, false); // 로그아웃 메세지
 
-          // 권한이 필요한 페이지에서 로그아웃한 경우 홈으로 이동
-          if(this.$route.meta?.requiresAuth){
+          // 권한이 필요한 페이지에서 로그아웃한 경우 홈으로 이동 && 홈으로 돌아가야하는 특정화면은 홈으로 이동시킨다
+          if (this.$route.meta?.requiresAuth || this.$route.meta?.moveToHome) {
             this.moveToHome();
-          }else if (this.$route.path != "/") {
-          // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
+          } else if (this.$route.path != "/") {
+            // 메인화면 이외의 페이지에서 로그인시 해당페이지 리로드 (데이터초기화를위해,권한등)
             this.$router.go(this.$router.currentRoute);
           }
         })
@@ -209,6 +314,46 @@ export default {
       this.validationUserPass = false; // 패스워드 유효성
       this.signUpShow = false; // 로그인화면 변경
       this.loginShow = false; // 로그인창 닫기
+    },
+    // 재료 검색 결과리스트 가져오기
+    getFood(event) {
+      const INPUT_FOOD = event.target.value; // 입력한 재료
+      // 2글자 이상부터 검색
+      if (INPUT_FOOD.length < 2) {
+        return;
+      }
+      const payload = {
+        method: "get",
+        sendData: { food_name: INPUT_FOOD },
+      };
+      this.$store
+        .dispatch("food", payload)
+        .then((result) => {
+          this.foodList = result.data;
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        });
+    },
+    // 선택한 재료 추가
+    selectFood(event) {
+      const CLICKED_OPTION = event.target; // 선택한 재료
+
+      // 선택한 재료의 정보 가져오기
+      const SELECTED_FOOD = this.foodList.find(
+        (e) => e.food_name === CLICKED_OPTION.value
+      );
+
+      // 음식목록에서 선택한것이 아닌 일반 입력은 막기
+      if (!SELECTED_FOOD) {
+        return;
+      }
+
+      // 페이지 이동
+      this.$router.push({
+        path: "postsearch",
+        query: { ingredientId: SELECTED_FOOD.food_id },
+      });
     },
   },
   computed: {

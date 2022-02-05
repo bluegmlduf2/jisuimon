@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from "vue-router";
 import Post from "./components/Post.vue";
 import PostList from "./components/PostList.vue";
+import PostSearch from "./components/PostSearch.vue";
 import Card from "./components/Card.vue";
 import Comment from "./components/Comment.vue";
 import Write from "./components/Write.vue";
@@ -36,6 +37,16 @@ const routes = [
         meta: {
             requiresAuth: true,
         },
+    },
+    {
+        path: "/postsearch",
+        components: {
+            PostSearch: PostSearch,
+        },
+        meta: {
+            moveToHome: true,
+        },
+        props: true,
     },
     {
         path: "/write",
@@ -75,16 +86,16 @@ const router = createRouter({
 
 //모든 라우터 들이 실행되기 전에 실행되는 녀석을 추가 (navigation guard)
 router.beforeEach(function(to, from, next) {
-    controlPagePartStatus(to) // 화면에따라 컴포넌트의 상태를 제어함
+    controlPagePartStatus(to); // 화면에따라 컴포넌트의 상태를 제어함
     movePageAfterAuthCheck(to, next); // 페이지권한 확인후 이동
 });
 
 // 화면에따라 컴포넌트의 상태를 제어함
 function controlPagePartStatus(to) {
-    // 게시물리스트 화면표시할때 nav의 음식검색 창을 표시하지않음 
-    if (to.path=="/postlist") {
+    // 게시물리스트 화면표시할때 nav의 음식검색 창을 표시하지않음
+    if (to.path == "/postlist" || to.path == "/postsearch") {
         store.commit("hideFoodSearchStatus"); // nav의 음식검색 창을 표시안함
-    }else{
+    } else {
         store.commit("showFoodSearchStatus"); // nav의 음식검색 창을 표시
     }
 }

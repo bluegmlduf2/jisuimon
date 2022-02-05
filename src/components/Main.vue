@@ -6,6 +6,8 @@
     <router-view name="Post" />
     <!-- PostList -->
     <router-view name="PostList" />
+    <!-- PostSearch -->
+    <router-view name="PostSearch" />
     <!-- Setting -->
     <router-view name="Setting" v-slot="{ Component }">
       <transition name="fade" mode="out-in">

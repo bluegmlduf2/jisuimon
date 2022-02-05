@@ -206,6 +206,97 @@ def getPostList(args):
             conn.close()
 
 
+def getPostSearch(args):
+    conn = Connection()
+    if conn:
+        try:
+            # 게시물 리스트 화면에 표시할 게시물 5개 가져오기 (타임존때문에 -9 시간값을 반환)
+            sql = '''
+            SELECT
+                P.post_id,
+                P.title,
+                CONVERT_TZ(P.create_date, '+00:00', '-09:00') as create_date,
+                CONVERT_TZ(P.update_date, '+00:00', '-09:00') as update_date,
+                P.user_table_user_id,
+                U.user_id ,
+                PD.content ,
+                (
+                SELECT
+                    COUNT(C.post_table_post_id)
+                FROM
+                    jisuimon.comment_table AS C
+                WHERE
+                    C.post_table_post_id = P.post_id) AS comment_cnt ,
+                (
+                SELECT
+                    COUNT(L.post_table_post_id)
+                FROM
+                    jisuimon.post_like_table AS L
+                WHERE
+                    post_table_post_id = P.post_id) AS like_cnt 
+            '''
+
+            # 총 게시물의 수 취득용 쿼리
+            sqlPostCnt = '''
+                SELECT
+                COUNT(*) as postCntAll
+            '''
+
+            fromPostCnt = int(args['postCnt'])-5
+            toPostCnt = 5  # 5개씩 가져옴
+            data = None
+            postCountData = 0  # 현재 조건의 총 게시물 수
+
+            # 게시물의 조건
+            sqlWhere = '''
+            FROM
+                jisuimon.post_table AS P
+            INNER JOIN jisuimon.user_table AS U ON
+                P.user_table_user_id = U.user_id
+            INNER JOIN jisuimon.post_detail_table AS PD ON
+                P.post_id = PD.post_table_post_id
+            LEFT JOIN jisuimon.ingredient_table AS I ON
+                P.post_id = I.post_table_post_id
+            WHERE I.ingredient_id = %s
+            ORDER BY
+                P.create_date DESC
+            '''
+
+            # 게시물의 취득개수
+            sqlLimit = '''
+            LIMIT %s,%s
+            '''
+
+            # 게시물 가져오기
+            sql = sql + sqlWhere + sqlLimit
+            data = conn.executeAll(
+                sql, (args['ingredientId'], fromPostCnt, toPostCnt))
+
+            # 게시물의 총 갯수 가져오기
+            sql = sqlPostCnt + sqlWhere
+            postCountData = conn.executeOne(
+                sql, (args['ingredientId']))['postCntAll']
+
+            removePostCol = ['user_id', 'user_table_user_id',
+                             'update_date']  # 불필요한칼럼 (사용자정보)
+
+            # 게시물 형식변환과 불필요한 칼럼제거
+            for i, e in enumerate(data):
+                data[i]['content'] = htmlUnescape(
+                    e['content'])  # 게시물 내용 변환 escapeHTML->HTML
+                [data[i].pop(colNm)
+                 for colNm in removePostCol]  # 불필요한 게시물의 칼럼제거
+
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            return data, postCountData
+        finally:
+            conn.close()
+
+
 def getPostCount():
     conn = Connection()
     if conn:
