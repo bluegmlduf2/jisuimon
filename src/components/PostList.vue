@@ -10,8 +10,7 @@
       />
     </div>
     <div class="post-list" v-for="(e, i) in postList" :key="i">
-      <!-- <div class="post-list" > -->
-      <router-link to="#" class="post-list-title">
+      <router-link :to="`/post/${e.post_id}`" class="post-list-title">
         <h2>{{ removeHtml(e.title) }}</h2>
       </router-link>
       <p class="post-list-content">
@@ -26,6 +25,7 @@
       </div>
     </div>
   </div>
+  <div v-if="scrollSpinner" class="loader loader-black loader-1"></div>
 </template>
 
 <script>
@@ -36,65 +36,72 @@ export default {
   mixins: [common],
   data() {
     return {
+      postCnt: 5, //현재 게시물 수
+      postCntAll: 0, // 총 게시물 수
+      scrollSpinner: false, // 게시물 더보기 스피너
       postList: [], // 게시물리스트
     };
   },
   methods: {
-    // // 게시물의 행과 열에 맞는 데이터를 반환한다
-    // getPostObj(post, i, x) {
-    //   return post[(i - 1) * 4 + x - 1];
-    // },
-    // // 무한스크롤 정의
-    // moveScroll(e) {
-    //   const { scrollHeight, scrollTop, clientHeight } =
-    //     e.target.documentElement;
-    //   const scrollPos = Math.floor(scrollTop + clientHeight);
-    //   // scrollHeight 화면바닥의px === scrollPos 스크롤위치
-    //   const isAtTheBottom = scrollHeight === scrollPos;
-    //   // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
-    //   if (isAtTheBottom) this.loadPages();
-    // },
-    // // 추가 게시물 가져오기
-    // loadPages() {
-    //   // 내려오면 api 호출하여 아래에 더 추가, total값 최대이면 호출 안함
-    //   if (this.postCnt < this.postCntAll) {
-    //     this.$emit("addPostCnt");
-    //   }
-    // },
     // 게시물 리스트
     getPostList() {
+      //7049 TODO 음식명감
       const payload = {
         method: "get",
-        sendData: { postId: this.$route.params.postId },
+        sendData: { postCnt: this.postCnt, ingredientId: "" },
       };
 
-      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+      // 요청대기 스피너 보기 (초기화면만)
+      if (this.postCnt == 5) {
+        this.$store.commit("showSpinner");
+      }
 
       this.$store
         .dispatch("postList", payload)
         .then((result) => {
-          this.postList.push(...result.data); //게시물 리스트
+          this.postList.push(...result.data[0]); //게시물 리스트
+          this.postCntAll = result.data[1]; // 총 게시물 수
         })
         .catch((err) => {
           this.$message.errorMessage(err);
         })
         .finally(() => {
+          this.scrollSpinner = false; // 게시물더보기 스피너 보지않기
           this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
         });
+    },
+    // 무한스크롤 정의
+    moveScroll(e) {
+      const { scrollHeight, scrollTop, clientHeight } =
+        e.target.documentElement;
+      const scrollPos = Math.floor(scrollTop + clientHeight);
+      // scrollHeight 화면바닥의px === scrollPos 스크롤위치
+      const isAtTheBottom = scrollHeight === scrollPos;
+      // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
+      if (isAtTheBottom) this.loadPages();
+    },
+    // 추가 게시물 가져오기
+    loadPages() {
+      // 내려오면 api 호출하여 아래에 더 추가, total값 최대이면 호출 안함
+      if (this.postCnt < this.postCntAll) {
+        this.postCnt = this.postCnt + 5;
+        this.scrollSpinner = true; // 게시물더보기 스피너 보기
+        this.getPostList();
+      }
     },
   },
   // 화면초기화
   created() {
     this.getPostList(); // 게시물 리스트 초기화
   },
-  // // 스크롤 함수 이벤트 초기화
-  // mounted() {
-  //   window.addEventListener("scroll", this.moveScroll);
-  // },
-  // // 스크롤 함수 이벤트 해제
-  // unmounted() {
-  //   window.removeEventListener("scroll", this.moveScroll);
-  // },
+  // 스크롤 함수 이벤트 초기화
+  mounted() {
+    window.addEventListener("scroll", this.moveScroll);
+  },
+  // 스크롤 함수 이벤트 해제
+  unmounted() {
+    window.removeEventListener("scroll", this.moveScroll);
+  },
 };
 </script>
 

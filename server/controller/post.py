@@ -22,9 +22,10 @@ def getPostList():
     '''게시물 리스트 화면의 게시물 5개 가져오기'''
     if request.method == 'GET':
         args = request.args
-        data = postModel.getPostList(args)
+        postListData = postModel.getPostList(args)
 
-        return jsonify(data), 200
+        # 0:게시물정보 , 1:게시물의 수
+        return jsonify(postListData[0],postListData[1]), 200
 
 @post_controller.route('/post', methods=['POST','DELETE'])
 @check_token

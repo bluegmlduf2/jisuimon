@@ -80,6 +80,7 @@ def getPosts(args):
         finally:
             conn.close()
 
+
 def getPostList(args):
     conn = Connection()
     if conn:
@@ -109,37 +110,101 @@ def getPostList(args):
                 WHERE
                     post_table_post_id = P.post_id) AS like_cnt 
                     /*(최초에 8행의 결과가 나온후 각 행마다 위의 서브쿼리를 실행하기때문에 post_table_post_id = P.post_id가 가능하다)*/
-            FROM
-                jisuimon.post_table AS P
-            INNER JOIN jisuimon.user_table AS U ON
-                P.user_table_user_id = U.user_id
-            INNER JOIN jisuimon.post_detail_table AS PD ON
-                P.post_id = PD.post_table_post_id
-            WHERE user_id = %s
-            ORDER BY
-                P.create_date DESC
-            LIMIT %s,%s
             '''
-            # fromPostCnt=int(args['postCnt'])-5
-            # toPostCnt=5 # 5개씩 가져옴
-            login_user = request.user['uid']  # 파이어베이스 로그인 유저의 uid 취득
-            data = conn.executeAll(sql, (login_user,0,5))
 
-            removePostCol = ['user_id','user_table_user_id','update_date'] # 불필요한칼럼 (사용자정보)
- 
+            # 총 게시물의 수 취득용 쿼리
+            sqlPostCnt = '''
+            SELECT
+            COUNT(*) as postCntAll
+            '''
+
+            fromPostCnt = int(args['postCnt'])-5
+            toPostCnt = 5  # 5개씩 가져옴
+            login_user = request.user['uid']  # 파이어베이스 로그인 유저의 uid 취득
+            data = None
+            postCountData = 0  # 현재 조건의 총 게시물 수
+
+            # 음식명으로 필터 검색시
+            if args['ingredientId']:
+                # 게시물의 조건
+                sqlWhere = '''
+                FROM
+                    jisuimon.post_table AS P
+                INNER JOIN jisuimon.user_table AS U ON
+                    P.user_table_user_id = U.user_id
+                INNER JOIN jisuimon.post_detail_table AS PD ON
+                    P.post_id = PD.post_table_post_id
+                LEFT JOIN jisuimon.ingredient_table AS I ON
+                    P.post_id = I.post_table_post_id
+                WHERE user_id = %s
+                AND I.ingredient_id = %s
+                ORDER BY
+                    P.create_date DESC
+                '''
+
+                # 게시물의 취득개수
+                sqlLimit = '''
+                LIMIT %s,%s
+                '''
+
+                # 게시물 가져오기
+                sql = sql + sqlWhere + sqlLimit
+                data = conn.executeAll(
+                    sql, (login_user, args['ingredientId'], fromPostCnt, toPostCnt))
+
+                # 게시물의 총 갯수 가져오기
+                sql = sqlPostCnt + sqlWhere
+                postCountData = conn.executeOne(
+                    sql, (login_user, args['ingredientId']))['postCntAll']
+            else:
+                # 일반검색시
+                # 게시물의 조건
+                sqlWhere = '''
+                FROM
+                    jisuimon.post_table AS P
+                INNER JOIN jisuimon.user_table AS U ON
+                    P.user_table_user_id = U.user_id
+                INNER JOIN jisuimon.post_detail_table AS PD ON
+                    P.post_id = PD.post_table_post_id
+                WHERE user_id = %s
+                ORDER BY
+                    P.create_date DESC
+                '''
+
+                # 게시물의 취득개수
+                sqlLimit = '''
+                LIMIT %s,%s
+                '''
+
+                # 게시물 가져오기
+                sql = sql + sqlWhere + sqlLimit
+                data = conn.executeAll(
+                    sql, (login_user, fromPostCnt, toPostCnt))
+
+                # 게시물의 총 갯수 가져오기
+                sql = sqlPostCnt + sqlWhere
+                postCountData = conn.executeOne(
+                    sql, (login_user))['postCntAll']
+
+            removePostCol = ['user_id', 'user_table_user_id',
+                             'update_date']  # 불필요한칼럼 (사용자정보)
+
             # 게시물 형식변환과 불필요한 칼럼제거
             for i, e in enumerate(data):
-                data[i]['content'] = htmlUnescape(e['content']) # 게시물 내용 변환 escapeHTML->HTML
-                [data[i].pop(colNm) for colNm in removePostCol] # 불필요한 게시물의 칼럼제거
+                data[i]['content'] = htmlUnescape(
+                    e['content'])  # 게시물 내용 변환 escapeHTML->HTML
+                [data[i].pop(colNm)
+                 for colNm in removePostCol]  # 불필요한 게시물의 칼럼제거
 
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
             raise e
         else:
-            return data
+            return data, postCountData
         finally:
             conn.close()
+
 
 def getPostCount():
     conn = Connection()
