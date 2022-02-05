@@ -14,7 +14,11 @@
       </div>
     </div>
     <div class="postCont_ingredient">
-      <span v-for="i in ingredient" :key="i.ingredient_id">
+      <span
+        v-for="i in ingredient"
+        :key="i.ingredient_id"
+        @click="moveToPostSearch(i.ingredient_id)"
+      >
         {{
           `${i.ingredient_name}&emsp;/&nbsp;${i.ingredient_amt}${i.ingredient_unit}`
         }}
@@ -121,6 +125,14 @@ export default {
               this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
             });
         }
+      });
+    },
+    // 게시물 화면 이동 메서드
+    moveToPostSearch(ingredientId) {
+      // 페이지 이동
+      this.$router.replace({
+        path: "/postsearch",
+        query: { ingredientId: ingredientId },
       });
     },
   },
