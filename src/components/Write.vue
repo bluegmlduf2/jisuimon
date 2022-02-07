@@ -1,25 +1,87 @@
 <template>
   <div class="writeCont">
     <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="タイトルを入力してください" v-model="formData.title">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="タイトルを入力してください"
+        v-model="formData.title"
+      />
     </div>
     <div class="writeCont_materialList">
-        <span class="" v-for="(ingredient,i) in formData.ingredientList" :key="i" @click="removeIngredient(ingredient)" @mouseover="ingredient.showCancelFlg = true" @mouseleave="ingredient.showCancelFlg = false">
-          {{`${ingredient.food_name}&emsp;/&nbsp;${ingredient.food_amt}${ingredient.food_unit}&emsp;${ingredient.showCancelFlg?"✖️":""}`}}
-        </span>
+      <span
+        class=""
+        v-for="(ingredient, i) in formData.ingredientList"
+        :key="i"
+        @click="removeIngredient(ingredient)"
+        @mouseover="ingredient.showCancelFlg = true"
+        @mouseleave="ingredient.showCancelFlg = false"
+      >
+        {{
+          `${ingredient.food_name}&emsp;/&nbsp;${ingredient.food_amt}${
+            ingredient.food_unit
+          }&emsp;${ingredient.showCancelFlg ? "✖️" : ""}`
+        }}
+      </span>
     </div>
     <div class="writeCont_add_materialList mb-3 row">
-      <div class="writeCont_add_materialList_select input-group input-group-sm col-md-7">
-        <input type="text" class="form-control" placeholder="食材を選んでください" style="ime-mode: disabled" ref="foodInput" @keyup="getFood" @change="selectFood" list="foodDataList" :disabled="selectedFood.food_clicked">
-        <button class="btn btn-sm bg-transparent material-icons" type="button" @click="clearFood" v-if="selectedFood.food_clicked">clear</button>
+      <div
+        class="
+          writeCont_add_materialList_select
+          input-group input-group-sm
+          col-md-7
+        "
+      >
+        <input
+          type="text"
+          class="form-control"
+          placeholder="食材を選んでください"
+          style="ime-mode: disabled"
+          ref="foodInput"
+          @keyup="getFood"
+          @change="selectFood"
+          list="foodDataList"
+          :disabled="selectedFood.food_clicked"
+        />
+        <button
+          class="btn btn-sm bg-transparent material-icons"
+          type="button"
+          @click="clearFood"
+          v-if="selectedFood.food_clicked"
+        >
+          clear
+        </button>
         <datalist id="foodDataList">
-          <option v-for="(food,i) in foodList" :key="i" >{{food['food_name']}}</option>
+          <option v-for="(food, i) in foodList" :key="i">
+            {{ food["food_name"] }}
+          </option>
         </datalist>
       </div>
-      <div class="writeCont_add_materialList_input input-group input-group-sm col-md-4">
-        <input type="number" class="form-control" ref="foodAmout" @input="inputAmout" min="1" placeholder="数量を入力してください" >
+      <div
+        class="
+          writeCont_add_materialList_input
+          input-group input-group-sm
+          col-md-4
+        "
+      >
+        <input
+          type="number"
+          class="form-control"
+          ref="foodAmout"
+          @input="inputAmout"
+          min="1"
+          placeholder="数量を入力してください"
+        />
         <div class="input-group-append">
-          <button id="selectUnitBtn" class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">{{selectedFood.food_unit?selectedFood.food_unit:"単位選択"}}</button>
+          <button
+            id="selectUnitBtn"
+            class="btn btn-light dropdown-toggle"
+            type="button"
+            data-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ selectedFood.food_unit ? selectedFood.food_unit : "単位選択" }}
+          </button>
           <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
             <a class="dropdown-item" href="#" @click="selectUnit">個</a>
             <a class="dropdown-item" href="#" @click="selectUnit">ml</a>
@@ -27,27 +89,55 @@
             <a class="dropdown-item" href="#" @click="selectUnit">小さじ</a>
             <div role="separator" class="dropdown-divider"></div>
             <div class="input-group input-group-sm">
-              <input type="text" class="form-control" style="margin-left:5px" placeholder="直接入力" ref="foodUnit">
-              <div class="input-group-append" style="margin-right:5px">
-                <button class="btn btn-light" type="button" id="writeUnitBtn" @click="selectUnit">選択</button>
+              <input
+                type="text"
+                class="form-control"
+                style="margin-left: 5px"
+                placeholder="直接入力"
+                ref="foodUnit"
+              />
+              <div class="input-group-append" style="margin-right: 5px">
+                <button
+                  class="btn btn-light"
+                  type="button"
+                  id="writeUnitBtn"
+                  @click="selectUnit"
+                >
+                  選択
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="input-group-append input-group-sm col-md-1">
-        <button id="writeNestedCommentBtn" type="button" class="btn btn-sm btn-outline-success confirm_white_btn" @click="addIngredient"><b>追加</b></button>
+        <button
+          id="writeNestedCommentBtn"
+          type="button"
+          class="btn btn-sm btn-outline-success confirm_white_btn"
+          @click="addIngredient"
+        >
+          <b>追加</b>
+        </button>
       </div>
     </div>
-    <ckeditor id="writeCont_content" :editor="editor" v-model="formData.content" :config="editorConfig" tag-name="textarea"/>
+    <ckeditor
+      id="writeCont_content"
+      :editor="editor"
+      v-model="formData.content"
+      :config="editorConfig"
+      tag-name="textarea"
+    />
     <div class="writeCont_buttons">
       <div id="writeCont_back" @click="$router.go(-1)">
-        <span class="material-icons">
-          arrow_back
-        </span>
+        <span class="material-icons"> arrow_back </span>
       </div>
       <div class="writeCont_write">
-        <button class="btn btn-success confirm_btn" id="writeContPostBtn" @click="registerPost">
+        <button
+          class="btn btn-success confirm_btn"
+          id="writeContPostBtn"
+          @click="registerPost"
+        >
           <b>投稿する</b>
         </button>
       </div>
@@ -72,10 +162,25 @@ export default {
     return {
       editor: ClassicEditor,
       editorConfig: {
-        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', '|', 'imageUpload', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ],
-        placeholder:"あなたの料理の作り方を教えてください…　\n最初にアップデートした画像がメイン画像になります", // ckEditor의 플레이스홀더
+        toolbar: [
+          "heading",
+          "|",
+          "bold",
+          "italic",
+          "link",
+          "|",
+          "imageUpload",
+          "|",
+          "bulletedList",
+          "numberedList",
+          "|",
+          "undo",
+          "redo",
+        ],
+        placeholder:
+          "あなたの料理の作り方を教えてください…　\n最初にアップデートした画像がメイン画像になります", // ckEditor의 플레이스홀더
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
-        language: 'ja',
+        language: "ja",
       }, // Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음})
       foodList: [], // 검색한 재료리스트
       selectedFood: {
@@ -94,7 +199,34 @@ export default {
       },
     };
   },
+  created() {
+    this.initUpdateMode();
+  },
   methods: {
+    // 수정모드일때 초기화
+    async initUpdateMode() {
+      const POST_ID = this.$route.params.postId;
+      if (POST_ID) {
+        this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+        const payload = {
+          method: "get",
+          sendData: { postId: POST_ID },
+        };
+        await this.$store
+          .dispatch("postDetailUpdate", payload)
+          .then((result) => {
+            debugger;
+            // this.posts = result.data[0]; //게시물 상세정보
+            // this.ingredient = result.data[1]; //게시물 재료정보
+          })
+          .catch((err) => {
+            this.$message.errorMessage(err);
+          }).finally(()=>{
+            this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+          })
+      }
+    },
     // 이미지 업로더 어뎁터
     uploader(editor) {
       editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {

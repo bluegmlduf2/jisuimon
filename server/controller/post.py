@@ -109,6 +109,18 @@ def postDetail():
         return jsonify(detailData, commentData, ingredientData), 200
 
 
+@post_controller.route('/postDetailUpdate', methods=['GET'])
+@check_token
+@exception_handler
+def postDetailUpdate():
+    '''게시물의 수정용 상세정보'''
+    if request.method == 'GET':
+        args = request.args
+        detailData = postModel.getPostDetail(args)  # 게시물 상세정보
+        ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보
+        return jsonify(detailData, ingredientData), 200
+
+
 @post_controller.route('/imageUploadTemp', methods=['POST'])
 @exception_handler
 def imageUploadTemp():

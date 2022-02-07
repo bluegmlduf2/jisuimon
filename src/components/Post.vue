@@ -94,7 +94,17 @@ export default {
         });
     },
     // 게시물 수정
-    updatePost() {},
+    updatePost() {
+      // 수정 페이지 이동 
+      // 화면 이동시 데이터 전달에는 query , param 방식이 있다.
+      // param방식은 router.js를 props: true 로 설정해줘야한다
+      // Query방식 1.새로고침시 파라미터 유지 2.url에 전달값표시 함 (지속적정보전달)
+      // Param방식 1.새로고침시 파라미터 유지안함 2.url에 전달값표시 안함 (보안에강점)
+      this.$router.push({
+        name: "Write",
+        params: { postId: this.$route.params.postId },
+      });
+    },
     // 게시물 삭제
     deletePost(postId) {
       this.$message.confirmMessage("TODO修正する？").then((res) => {

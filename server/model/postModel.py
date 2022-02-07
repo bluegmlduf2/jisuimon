@@ -324,6 +324,7 @@ def getPostDetail(args):
     conn = Connection()
     if conn:
         try:
+            calledMethodName=inspect.stack()[1][3] # 해당 메서드를 호출한 메서드명 (컨트롤러명)
             # 게시물의 상세정보
             sql = '''
             SELECT
@@ -347,6 +348,18 @@ def getPostDetail(args):
 
             data = conn.executeOne(sql, args['postId'])
 
+            login_user = None # 로그인 유저 정보
+
+            # 게시물의 수정용 상세정보를 취득
+            if calledMethodName is "postDetailUpdate":
+                login_user = request.user  # 파이어베이스 유저정보 취득
+                # 로그인한 유저와 게시물 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
+                if not getUserAuth(login_user,data['user_id']) :
+                    raise UserError(705)
+            # 일반 게시물 상세정보를 취득
+            else:
+                login_user = args.user # 파이어베이스 유저정보 취득
+
             # 게시물 내용 변환 escapeHTML->HTML
             data['content'] = htmlUnescape(data['content'])
 
@@ -354,7 +367,7 @@ def getPostDetail(args):
             user=getUser(data['user_id']) # 유저정보취득 (파이어베이스)
             data['nickname']=user['nickname'] # 유저 닉네임
             data['user_image']=user['user_image'] # 유저 프로필이미지
-            data['post_auth']= getUserAuth(args.user,data['user_id']) # 게시물의 유저권한취득
+            data['post_auth']= getUserAuth(login_user,data['user_id']) # 게시물의 유저권한취득
             
             # 불필요한 게시물의 칼럼제거
             removePostCol = ['user_id','user_table_user_id']

@@ -123,6 +123,10 @@ const store = createStore({
         postDetail(context, payload) {
             return this.state.getRequest("/postDetail", payload);
         },
+        // 게시물 수정용 상세정보 가져오기
+        postDetailUpdate(context, payload) {
+            return this.state.getRequest("/postDetailUpdate", payload);
+        },
         // 음식리스트가져오기
         food(context, payload) {
             return this.state.getRequest("/food", payload);

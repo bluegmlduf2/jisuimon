@@ -50,12 +50,14 @@ const routes = [
     },
     {
         path: "/write",
+        name: "Write",
         components: {
             Write: Write,
         },
         meta: {
             requiresAuth: true,
         },
+        props: true,
     },
     {
         path: "/setting",
