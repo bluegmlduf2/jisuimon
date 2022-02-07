@@ -182,6 +182,7 @@ export default {
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: "ja",
       }, // Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음})
+      updateMode: false, // 페이지의 신규,수정상태 구분
       foodList: [], // 검색한 재료리스트
       selectedFood: {
         // 선택중인 재료
@@ -216,9 +217,15 @@ export default {
         await this.$store
           .dispatch("postDetailUpdate", payload)
           .then((result) => {
-            debugger;
-            // this.posts = result.data[0]; //게시물 상세정보
-            // this.ingredient = result.data[1]; //게시물 재료정보
+            this.updateMode=true; // 수정모드 
+
+            const POST_INFO = result.data[0]; //게시물 상세정보
+            this.INGREDIENT_INFO = result.data[1]; //게시물 재료정보
+
+            this.formData.title=POST_INFO['title']; // 게시물의 타이틀 초기화
+            this.formData.content=POST_INFO['content']; // 게시물의 내용 초기화
+
+            this.formData.ingredientList.push(...this.INGREDIENT_INFO); // 선택한 재료 추가
           })
           .catch((err) => {
             this.$message.errorMessage(err);
@@ -410,7 +417,7 @@ export default {
 @media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
   .writeCont {
-    padding-top: 10vh;
+    padding-top: 11vh;
   }
 }
 .writeCont_materialList {

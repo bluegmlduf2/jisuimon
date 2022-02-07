@@ -84,7 +84,7 @@ def deleteComment(args):
 
             # 로그인한 유저와 댓글 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
             if not getUserAuth(login_user, data['user_id']):
-                raise UserError(705)
+                raise UserError(802)
 
             # 대댓글에 작성자 이외의 댓글이 존재하는지 체크
             sql = '''
@@ -215,7 +215,7 @@ def deleteCommentReply(args):
 
             # 로그인한 유저와 대댓글 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
             if not getUserAuth(login_user, data['user_id']):
-                raise UserError(705)
+                raise UserError(802)
 
             # 게시글의 대댓글 삭제
             sql = '''

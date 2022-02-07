@@ -355,7 +355,7 @@ def getPostDetail(args):
                 login_user = request.user  # 파이어베이스 유저정보 취득
                 # 로그인한 유저와 게시물 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
                 if not getUserAuth(login_user,data['user_id']) :
-                    raise UserError(705)
+                    raise UserError(802)
             # 일반 게시물 상세정보를 취득
             else:
                 login_user = args.user # 파이어베이스 유저정보 취득
@@ -616,7 +616,7 @@ def deletePost(args):
 
              # 로그인한 유저와 게시물 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
             if not getUserAuth(login_user,data['user_id']) :
-                raise UserError(705)
+                raise UserError(802)
             
             # 게시글의 댓글 정보
             sql = '''

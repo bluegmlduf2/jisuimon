@@ -116,8 +116,8 @@ def postDetailUpdate():
     '''게시물의 수정용 상세정보'''
     if request.method == 'GET':
         args = request.args
-        detailData = postModel.getPostDetail(args)  # 게시물 상세정보
-        ingredientData = postModel.getPostIngredient(args)  # 게시물 재료정보
+        detailData = postModel.getPostDetail(args) # 게시물 상세정보
+        ingredientData = postModel.getPostIngredient(args) # 게시물 재료정보
         return jsonify(detailData, ingredientData), 200
 
 

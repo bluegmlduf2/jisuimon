@@ -60,12 +60,9 @@ const errorMessage = (err) => {
             return warningMessage(ERR_MESSAGE); // 경고창에 서버에서 정의한 사용자 에러메세지를 표시
         } else {
             // 서버에 정의되어있지 않은 HTTP코드가 400번대의 에러
-            const ERR_MESSAGE_400 =
-                "予期しないエラーが発生しました。<br>しばらくしてからもう一度お試しください。";
-
             return Swal.fire({
                 title: "エラー",
-                html: ERR_MESSAGE_400,
+                html: ERR_INFO.message,
                 icon: "error",
                 confirmButtonText: "確認",
             }).then(() => {
