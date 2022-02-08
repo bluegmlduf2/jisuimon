@@ -88,9 +88,20 @@ const router = createRouter({
 
 //모든 라우터 들이 실행되기 전에 실행되는 녀석을 추가 (navigation guard)
 router.beforeEach(function(to, from, next) {
+    const extUrl = to.fullPath.startsWith("/") ? to.fullPath.substring(1) : to.fullPath
+
+    if (isExternalUrl(extUrl)) {
+        window.location.href = "//"+extUrl;
+        return;
+    }
+
     controlPagePartStatus(to); // 화면에따라 컴포넌트의 상태를 제어함
     movePageAfterAuthCheck(to, next); // 페이지권한 확인후 이동
 });
+
+function isExternalUrl(input) {
+    return new RegExp("^(?:https?://|s?ftps?://)?(?!www | www\\.)[A-Za-z0-9_-]+\\.+[A-Za-z0-9.\\/%&=\\?_:;-]+$").test(input);
+}
 
 // 화면에따라 컴포넌트의 상태를 제어함
 function controlPagePartStatus(to) {
