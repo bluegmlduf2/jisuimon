@@ -181,6 +181,9 @@ export default {
           "あなたの料理の作り方を教えてください…　\n最初にアップデートした画像がメイン画像になります", // ckEditor의 플레이스홀더
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: "ja",
+        link: {
+            defaultProtocol: 'https://'
+        }
       }, // Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음})
       updateMode: false, // 페이지의 신규,수정상태 구분
       foodList: [], // 검색한 재료리스트
@@ -225,7 +228,17 @@ export default {
             this.formData.title=POST_INFO['title']; // 게시물의 타이틀 초기화
             this.formData.content=POST_INFO['content']; // 게시물의 내용 초기화
 
-            this.formData.ingredientList.push(...this.INGREDIENT_INFO); // 선택한 재료 추가
+            // 서버에서 받아온 키 명 ingredient 를 화면에서 사용하는 food로 변경
+            const FOOD_INDO=this.INGREDIENT_INFO.map(e=>{
+                return {
+                  food_id:e.ingredient_id,
+                  food_name:e.ingredient_name,
+                  food_amt:e.ingredient_amt,
+                  food_unit:e.ingredient_unit,
+                  food_clicked:false
+                }
+            })
+            this.formData.ingredientList.push(...FOOD_INDO); // 선택한 재료 추가
           })
           .catch((err) => {
             this.$message.errorMessage(err);
