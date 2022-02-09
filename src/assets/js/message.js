@@ -36,18 +36,18 @@ const confirmMessage = (msg) =>
  * 700번대 (경고창)
  * // 서버에가져온 메세지표시
  * // 페이지이동 없음
- * 
+ *
  * 700번대이외 (에러창)
  * // 클라이언트 메세지표시함 (화면에서정의한메세지)
  * // 에러페이지 이동
- * 
+ *
  * # 서버에러 500 (에러창)
  * // 클라이언트 메세지표시함 (화면에서정의한메세지)
- * // 에러페이지 이동 
+ * // 에러페이지 이동
  */
 const errorMessage = (err) => {
     const ERR_RESPONSE = err.response; // HTTP상태코드
-    const ERR_STATUS = ERR_RESPONSE.status; // HTTP상태코드
+    const ERR_STATUS = ERR_RESPONSE?.status; // HTTP상태코드
 
     // 400번 에러, 사용자 에러 처리
     if (ERR_STATUS >= 400 && ERR_STATUS < 500) {
@@ -70,7 +70,20 @@ const errorMessage = (err) => {
             });
         }
     } else if (ERR_STATUS >= 500) {
-    // 500번 에러, 서버에러
+        // 500번 에러, 서버에러
+        const ERR_MESSAGE_500 =
+            "予期しないサーバ内部エラーが発生しました。<br>しばらくしてからもう一度お試しください。";
+
+        return Swal.fire({
+            title: "エラー",
+            html: ERR_MESSAGE_500,
+            icon: "error",
+            confirmButtonText: "確認",
+        }).then(() => {
+            location.href = "/NotFound";
+        });
+    } else {
+        // 그외 화면등에서 발생하는 예기치 않은 에러..(CORS,타임아웃등)
         const ERR_MESSAGE_500 =
             "予期しないサーバ内部エラーが発生しました。<br>しばらくしてからもう一度お試しください。";
 

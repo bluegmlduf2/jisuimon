@@ -136,9 +136,9 @@
         <button
           class="btn btn-success confirm_btn"
           id="writeContPostBtn"
-          @click="registerPost"
+          @click="updateMode ? updatePost() : registerPost()"
         >
-          <b>投稿する</b>
+          <b>{{ updateMode ? "修正" : "投稿する" }}</b>
         </button>
       </div>
     </div>
@@ -182,8 +182,8 @@ export default {
         extraPlugins: [this.uploader], // ckEditor에 이미지업로드 플러그인 추가
         language: "ja",
         link: {
-            defaultProtocol: 'https://'
-        }
+          defaultProtocol: "https://",
+        },
       }, // Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음})
       updateMode: false, // 페이지의 신규,수정상태 구분
       foodList: [], // 검색한 재료리스트
@@ -217,34 +217,36 @@ export default {
           method: "get",
           sendData: { postId: POST_ID },
         };
+
         await this.$store
           .dispatch("postDetailUpdate", payload)
           .then((result) => {
-            this.updateMode=true; // 수정모드 
+            this.updateMode = true; // 수정모드
 
             const POST_INFO = result.data[0]; //게시물 상세정보
             this.INGREDIENT_INFO = result.data[1]; //게시물 재료정보
 
-            this.formData.title=POST_INFO['title']; // 게시물의 타이틀 초기화
-            this.formData.content=POST_INFO['content']; // 게시물의 내용 초기화
+            this.formData.title = POST_INFO["title"]; // 게시물의 타이틀 초기화
+            this.formData.content = POST_INFO["content"]; // 게시물의 내용 초기화
 
             // 서버에서 받아온 키 명 ingredient 를 화면에서 사용하는 food로 변경
-            const FOOD_INDO=this.INGREDIENT_INFO.map(e=>{
-                return {
-                  food_id:e.ingredient_id,
-                  food_name:e.ingredient_name,
-                  food_amt:e.ingredient_amt,
-                  food_unit:e.ingredient_unit,
-                  food_clicked:false
-                }
-            })
+            const FOOD_INDO = this.INGREDIENT_INFO.map((e) => {
+              return {
+                food_id: e.ingredient_id,
+                food_name: e.ingredient_name,
+                food_amt: e.ingredient_amt,
+                food_unit: e.ingredient_unit,
+                food_clicked: false,
+              };
+            });
             this.formData.ingredientList.push(...FOOD_INDO); // 선택한 재료 추가
           })
           .catch((err) => {
             this.$message.errorMessage(err);
-          }).finally(()=>{
-            this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
           })
+          .finally(() => {
+            this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+          });
       }
     },
     // 이미지 업로더 어뎁터
@@ -389,6 +391,38 @@ export default {
         .then(() => {
           this.$message.successMessage("register");
           this.moveToHome(); //홈화면으로 이동
+        })
+        .catch((err) => {
+          this.$message.errorMessage(err);
+        })
+        .finally(() => {
+          this.$store.commit("hideSpinner"); // 요청대기스피너 보지않기
+        });
+    },
+    // 게시글 수정
+    updatePost() {
+      // 입력값의 유효성체크
+      if (this.validation()) return;
+
+      const payload = {
+        method: "patch",
+        sendData: {},
+      };
+
+      payload.sendData = this.formData; // 입력정보를 서버전송데이터에 넣음
+      payload.sendData.postId = this.$route.params.postId; // 게시물ID를 설정
+
+      this.$store.commit("showSpinner"); // 요청대기스피너 보기
+
+      this.$store
+        .dispatch("post", payload)
+        .then(() => {
+          this.$message.successMessage("update").then(()=>{
+            this.$router.push({
+              name: "Post",
+              params: { postId: this.$route.params.postId },
+            });
+          });
         })
         .catch((err) => {
           this.$message.errorMessage(err);

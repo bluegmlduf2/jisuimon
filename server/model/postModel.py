@@ -593,6 +593,88 @@ def insertPost(args):
         finally:
             conn.close()
 
+
+def updatePost(args):
+    conn = Connection()
+    if conn:
+        try:
+            imageFileNames=imageFromContent(args['content']) # 게시글에서 이미지 추출
+
+            # 타이틀이미지가 존재할 경우 해당 이미지 사용
+            titleImage='' 
+            if imageFileNames :
+                titleImage=imageFileNames[0]
+
+            # 게시물의 정보
+            sql = '''
+                UPDATE
+                    jisuimon.post_table
+                SET
+                    title = %s,
+                    update_date = CURRENT_TIMESTAMP,
+                    title_image = %s
+                WHERE
+                    post_id = %s
+                    AND user_table_user_id = %s;
+            '''
+
+            conn.execute(sql, (args['title'],titleImage,args['postId'],args['userId']))
+
+            # 게시물의 상세정보 수정
+            sql = '''
+            UPDATE
+                jisuimon.post_detail_table
+            SET
+                content = %s
+            WHERE
+                post_table_post_id = %s;
+            '''
+
+            conn.execute(sql, (args['content'],args['postId']))
+
+            # 게시물의 재료 삭제
+            sql = '''
+            DELETE FROM jisuimon.ingredient_table
+            WHERE  post_table_post_id=%s;
+            '''
+
+            conn.execute(sql, (args['postId']))
+
+            # 게시물의 재료정보
+            sql = '''
+            INSERT
+                INTO
+                jisuimon.ingredient_table (
+                post_table_post_id,
+                ingredient_id,
+                ingredient_name,
+                ingredient_amt,
+                ingredient_unit
+                )
+            VALUES(
+                %s,
+                %s,
+                %s,
+                %s,
+                %s);
+            '''
+
+            # 재료를 한번에 입력하기 (리스트->튜플)
+            ingredientList = [(args['postId'], e['food_id'], e['food_name'],
+                               e['food_amt'], e['food_unit']) for e in args['ingredientList']]
+            conn.executeMany(sql, ingredientList)
+            
+            moveImageTempToDest(imageFileNames) # 임시이미지 파일을 저장용 폴더에 이동
+        except Exception as e:
+            traceback.print_exc()
+            conn.rollback()
+            raise e
+        else:
+            conn.commit()
+        finally:
+            conn.close()
+
+
 def deletePost(args):
     conn = Connection()
     if conn:
