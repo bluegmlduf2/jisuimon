@@ -53,9 +53,9 @@
           style="ime-mode: disabled"
           @keyup="getFood"
           @change="selectFood"
-          list="foodDataList"
+          list="foodDataListNav"
         />
-        <datalist id="foodDataList">
+        <datalist id="foodDataListNav">
           <option v-for="(food, i) in foodList" :key="i">
             {{ food["food_name"] }}
           </option>

@@ -64,7 +64,7 @@ def post():
         # xssFilter처리된 값
         # 프론트의 ckEditor에 의해 특정 html태그(script등..)가 escape되지만 보안을 위해 서버에서 한번 더 처리해줘야한다
         filteredArgs = {}
-        filteredArgs['postId'] = xssFilter(args['postId'])  # 제목
+        filteredArgs['postId'] = args['postId']  # 제목
         filteredArgs['title'] = xssFilter(args['title'])  # 제목
         filteredArgs['content'] = xssFilter(args['content'])  # 글내용
         filteredArgs['ingredientList'] = args['ingredientList']  # 재료정보

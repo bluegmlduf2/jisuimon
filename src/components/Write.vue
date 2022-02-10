@@ -186,6 +186,7 @@ export default {
         },
       }, // Ckeditor 설정 ClassicEditor.create(Ele,{여기에 들어갈 내용을 editorConfig안에 넣음})
       updateMode: false, // 페이지의 신규,수정상태 구분
+      postId: "", // 페이지의 신규,수정상태 구분
       foodList: [], // 검색한 재료리스트
       selectedFood: {
         // 선택중인 재료
@@ -209,13 +210,13 @@ export default {
   methods: {
     // 수정모드일때 초기화
     async initUpdateMode() {
-      const POST_ID = this.$route.params.postId;
-      if (POST_ID) {
+      this.postId = this.$route.params.postId;
+      if (this.postId) {
         this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
         const payload = {
           method: "get",
-          sendData: { postId: POST_ID },
+          sendData: { postId: this.postId },
         };
 
         await this.$store
@@ -410,7 +411,7 @@ export default {
       };
 
       payload.sendData = this.formData; // 입력정보를 서버전송데이터에 넣음
-      payload.sendData.postId = this.$route.params.postId; // 게시물ID를 설정
+      payload.sendData.postId = this.postId; // 게시물ID를 설정
 
       this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
@@ -420,7 +421,7 @@ export default {
           this.$message.successMessage("update").then(()=>{
             this.$router.push({
               name: "Post",
-              params: { postId: this.$route.params.postId },
+              params: { postId: this.postId },
             });
           });
         })
