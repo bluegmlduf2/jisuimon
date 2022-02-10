@@ -391,13 +391,15 @@ def getPostIngredient(args):
             sql = '''
                 SELECT
                     I.ingredient_id ,
-                    I.ingredient_name ,
+                    F.food_name as ingredient_name ,
                     I.ingredient_amt ,
                     I.ingredient_unit
                 FROM
                     jisuimon.post_table AS P
                 INNER JOIN jisuimon.ingredient_table AS I ON
                     P.post_id = I.post_table_post_id
+                INNER JOIN jisuimon.food_table AS F ON
+                    F.food_id = I.ingredient_id
                 WHERE
                     post_id = %s
                 '''
@@ -566,7 +568,6 @@ def insertPost(args):
                 jisuimon.ingredient_table (
                 post_table_post_id,
                 ingredient_id,
-                ingredient_name,
                 ingredient_amt,
                 ingredient_unit
                 )
@@ -574,12 +575,11 @@ def insertPost(args):
                 %s,
                 %s,
                 %s,
-                %s,
                 %s);
             '''
 
             # 재료를 한번에 입력하기 (리스트->튜플)
-            ingredientList = [(postId, e['food_id'], e['food_name'],
+            ingredientList = [(postId, e['food_id'],
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
             conn.executeMany(sql, ingredientList)
             
@@ -647,7 +647,6 @@ def updatePost(args):
                 jisuimon.ingredient_table (
                 post_table_post_id,
                 ingredient_id,
-                ingredient_name,
                 ingredient_amt,
                 ingredient_unit
                 )
@@ -655,12 +654,11 @@ def updatePost(args):
                 %s,
                 %s,
                 %s,
-                %s,
                 %s);
             '''
 
             # 재료를 한번에 입력하기 (리스트->튜플)
-            ingredientList = [(args['postId'], e['food_id'], e['food_name'],
+            ingredientList = [(args['postId'], e['food_id'],
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
             conn.executeMany(sql, ingredientList)
             
