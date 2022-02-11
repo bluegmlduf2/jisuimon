@@ -598,14 +598,29 @@ def updatePost(args):
     conn = Connection()
     if conn:
         try:
-            imageFileNames=imageFromContent(args['content']) # 게시글에서 이미지 추출
 
-            # 타이틀이미지가 존재할 경우 해당 이미지 사용
+            # 수정되기 전 게시물의 이미지 추출용
+            sql = '''
+                SELECT
+                    PD.content 
+                FROM
+                    jisuimon.post_table AS P
+                INNER JOIN jisuimon.post_detail_table AS PD ON
+                    P.post_id = PD.post_table_post_id
+                WHERE
+                    P.post_id = %s
+            '''
+
+            data = conn.executeOne(sql, args['postId'])
+            imageFileNamesBefore = imageFromContent(data['content']) # 수정되기 전 게시물의 이미지 추출
+            imageFileNamesAfter=imageFromContent(args['content']) # 수정된 게시글에서 이미지 추출
+
+            # 수정된 게시글에서 이미지가 존재할 경우 해당 이미지를 타이틀이미지로 사용
             titleImage='' 
-            if imageFileNames :
-                titleImage=imageFileNames[0]
+            if imageFileNamesAfter :
+                titleImage=imageFileNamesAfter[0]
 
-            # 게시물의 정보
+            # 게시물의 수정
             sql = '''
                 UPDATE
                     jisuimon.post_table
@@ -662,7 +677,12 @@ def updatePost(args):
                                e['food_amt'], e['food_unit']) for e in args['ingredientList']]
             conn.executeMany(sql, ingredientList)
             
-            moveImageTempToDest(imageFileNames) # 임시이미지 파일을 저장용 폴더에 이동
+            # 삭제된 이미지를 저장된 이미지 파일에서 삭제
+            deleteImageFileNames = [image for image in imageFileNamesBefore if image not in imageFileNamesAfter]
+            if deleteImageFileNames:
+                deleteContentImage(deleteImageFileNames) # 저장용 폴더의 이미지 파일을 삭제
+
+            moveImageTempToDest(imageFileNamesAfter) # 수정한 임시이미지 파일을 저장용 폴더에 이동
         except Exception as e:
             traceback.print_exc()
             conn.rollback()
