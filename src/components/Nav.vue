@@ -212,11 +212,6 @@ export default {
       foodList: [], // 검색한 재료리스트
     };
   },
-  created() {
-    // TODO삭제예정(테스트유저입력용)
-    this.userEmail = "0213@naver.com";
-    this.userPass = "0213@naver@com";
-  },
   methods: {
     // 로그인
     login() {

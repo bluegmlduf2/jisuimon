@@ -65,7 +65,7 @@ export default {
             // 로그인실패시
             (err) => {
                 if (err.code == "auth/user-not-found") {
-                    throw new Error("メールアドレスが一致しません");
+                    throw new Error("メールアドレスが存在しません");
                 } else if (err.code == "auth/wrong-password") {
                     throw new Error("メールアドレスまたはパスワードが正しくありません");
                 } else {
