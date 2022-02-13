@@ -108,6 +108,7 @@ function movePageAfterAuthCheck(to, next) {
     firebase.onAuth(); // app의 권한갱신과는 다르게 페이지 이동시마다 권한갱신을한다
     let currentUserStatus = store.getters["isSignedIn"];
     let requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+    closeNavBar(); // NAVBAR닫기
 
     // 인증필요페이지 구분
     if (requiresAuth) {
@@ -127,6 +128,11 @@ function movePageAfterAuthCheck(to, next) {
         //인증이 필요없는 페이지
         next();
     }
+}
+
+// NavBar 닫기
+function closeNavBar(){
+    document.querySelector("#navbarCollapse").classList.remove("show");
 }
 
 export default router;
