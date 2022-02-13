@@ -41,7 +41,6 @@ export default {
     getUserInfo(){
         const USER = this.auth.currentUser; // 파이어베이스 유저정보
         const DISP_NAME = USER.displayName ?? "USER" + USER.metadata.createdAt; // 파이어베이스 닉네임(타임스탬프)
-        //TODO PHOTO_URL를 공통으로 만들기
         const PHOTO_URL = USER.photoURL
           ? `${ROOT_URL}/userImage?filename=${USER.photoURL.replace(
               "http://",
@@ -62,15 +61,15 @@ export default {
     signInWithEmailAndPassword(email, password) {
         return signInWithEmailAndPassword(this.auth, email, password).then(
             // 로그인성공시
-            () => "TODO로그인성공",
+            () => "ようこそ自炊モンへ",
             // 로그인실패시
             (err) => {
                 if (err.code == "auth/user-not-found") {
-                    throw new Error("TODO등록한아이디없음 확인해주셈");
+                    throw new Error("メールアドレスが一致しません");
                 } else if (err.code == "auth/wrong-password") {
-                    throw new Error("TODO패스워드틀림 확인해주셈");
+                    throw new Error("メールアドレスまたはパスワードが正しくありません");
                 } else {
-                    throw new Error("TODO로그인실패");
+                    throw new Error("ログインに失敗しました。しばらく経ってからログインしてください");
                 }
             }
         );
@@ -84,11 +83,10 @@ export default {
                 (userCredential) => userCredential.user,
                 // 회원가입실패시
                 (err) => {
-                    //TODO 실패시 서버의 uid삭제
                     if (err.code == "auth/email-already-in-use") {
-                        throw new Error("TODO이미사용중인아이디임");
+                        throw new Error("入力いただいたメールアドレスでは、既にご登録がございます");
                     } else {
-                        throw new Error("TODO회원등록실패");
+                        throw new Error("登録に失敗しました。しばらく時間をおいて再度お試しください");
                     }
                 }
             )
@@ -106,9 +104,9 @@ export default {
                 if (current_user) {
                     await deleteUser(current_user);
                 }
-                throw new Error("TODO 에러메세지.." + ERR_MESSAGE);
+                throw new Error(ERR_MESSAGE);
             })
-            .then(() => "TODO회원등록성공");
+            .then(() => "会員登録しました");
     },
     // 로그아웃
     // 로그아아웃을 성공하면 세션스토리지의 JWT를 삭제하고 vuex에 유저정보갱신기능을 실행해서 유저상태를 로그아웃으로 만든다
@@ -118,10 +116,10 @@ export default {
                 sessionStorage.removeItem("jwt"); // ID토큰을 세션스토리지에 삭제
                 store.commit("onAuthEmailChanged", ""); // 이메일 저장 삭제
                 store.commit("onUserStatusChanged", false); // 로그인 NG
-                return "TODO로그아웃성공";
+                return "ログアウトしました";
             })
             .catch(() => {
-                throw new Error("TODO로그아웃안됨");
+                throw new Error("ログアウト失敗しました。しばらく時間をおいて再度お試しください");
             });
     },
     // 유저정보갱신
@@ -137,9 +135,9 @@ export default {
                 break;
         }
         return updateProfile(this.auth.currentUser, USER_INFO)
-            .then(() => "TODO갱신성공")
+            .then(() => "会員情報を更新しました")
             .catch(() => {
-                throw new Error("TODO갱신실패");
+                throw new Error("会員情報を更新に失敗しました");
             });
     },
     // 유저비밀번호갱신
@@ -161,9 +159,9 @@ export default {
             // 토큰 정보 갱신
             await this.onAuth();
 
-            return "TODO비밀번호변경성공";
+            return "パスワードを変更しました";
         } catch (err) {
-            throw new Error("TODO현재비밀번호맞지않음갱신실패");
+            throw new Error("パスワード更新に失敗しました");
         }
     },
     //로그인상태갱신,JWT의 상태갱신

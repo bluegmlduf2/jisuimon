@@ -97,7 +97,8 @@ def getMessage(code, param=None):
         707: f"他のユーザーから登録された{param}が存在しますので削除できませんでした",
         # 실패 (서버)
         801: "予期しないエラーが発生しました。<br>しばらくしてからもう一度お試しください。",
-        802: "ユーザー権限を確認してください"
+        802: "ユーザー権限を確認してください",
+        803: "存在しない投稿です"
     }
     return {
         "code": code,
@@ -235,7 +236,7 @@ def getUUID():
 def getUser(uid):
      # 파이어베이스 유저정보
     userInfo={
-        'nickname':None,
+        'nickname':'脱退したユーザー',
         'user_image':None
     }
 

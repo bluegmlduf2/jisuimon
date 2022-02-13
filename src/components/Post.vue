@@ -107,7 +107,7 @@ export default {
     },
     // 게시물 삭제
     deletePost(postId) {
-      this.$message.confirmMessage("TODO修正する？").then((res) => {
+      this.$message.confirmMessage("投稿を削除しますか?").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
           const POST_ID = postId; // 게시물ID

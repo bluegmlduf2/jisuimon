@@ -123,8 +123,11 @@
 </template>
 
 <script>
+import common from "@/assets/js/common.js";
+
 export default {
   name: "Comment",
+  mixins: [common],
   props: {
     comment: Object,
     postId: String,
@@ -168,6 +171,14 @@ export default {
         return false;
       }
 
+      // 글자수 유효성검사
+      if (!this.checkLength(COMMENT_CONTENT, 1000)) {
+        this.$message.warningMessage(
+          `コメントは最大${1000}文字まで入力できます`
+        );
+        return;
+      }
+
       // 입력정보를 서버전송데이터에 넣음
       const payload = {
         method: "post",
@@ -201,9 +212,18 @@ export default {
 
       // 댓글이 공백일시 유효성 검사
       if (!COMMENT_CONTENT) {
-        this.$message.warningMessage("TODO コメントを入力してください");
+        this.$message.warningMessage("コメントを入力してください");
         return false;
       }
+
+      // 글자수 유효성검사
+      if (!this.checkLength(COMMENT_CONTENT, 1000)) {
+        this.$message.warningMessage(
+          `コメントは最大${1000}文字まで入力できます`
+        );
+        return;
+      }
+
       // 입력정보를 서버전송데이터에 넣음
       const payload = {
         method: "patch",
@@ -232,7 +252,7 @@ export default {
     },
     // 댓글삭제
     deleteComment(commentId) {
-      this.$message.confirmMessage("TODO修正する？").then((res) => {
+      this.$message.confirmMessage("コメントを削除しますか?").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
           const COMMENT_ID = commentId; // 댓글ID
@@ -275,6 +295,14 @@ export default {
         return false;
       }
 
+      // 글자수 유효성검사
+      if (!this.checkLength(COMMENT_REPLY_CONTENT, 1000)) {
+        this.$message.warningMessage(
+          `コメントは最大${1000}文字まで入力できます`
+        );
+        return;
+      }
+
       // 입력정보를 서버전송데이터에 넣음
       const payload = {
         method: "post",
@@ -308,9 +336,18 @@ export default {
 
       // 댓글이 공백일시 유효성 검사
       if (!COMMENT_REPLY_CONTENT) {
-        this.$message.warningMessage("TODO コメントを入力してください");
+        this.$message.warningMessage("コメントを入力してください");
         return false;
       }
+
+      // 글자수 유효성검사
+      if (!this.checkLength(COMMENT_REPLY_CONTENT, 1000)) {
+        this.$message.warningMessage(
+          `コメントは最大${1000}文字まで入力できます`
+        );
+        return;
+      }
+
       // 입력정보를 서버전송데이터에 넣음
       const payload = {
         method: "patch",
@@ -339,7 +376,7 @@ export default {
     },
     // 대댓글삭제
     deleteCommentReply(commentReplyId) {
-      this.$message.confirmMessage("TODO修正する？").then((res) => {
+      this.$message.confirmMessage("コメントを削除しますか?").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
           const COMMENT_REPLY_ID = commentReplyId; // 대댓글ID
@@ -432,6 +469,7 @@ export default {
 }
 .commentCont_list_content {
   padding: 1rem 0 2rem;
+  word-break: break-all;
 }
 .commentCont_list_moreComment {
   padding-bottom: 1.5rem;
@@ -470,6 +508,7 @@ export default {
 }
 .nestedCommentCont_comment {
   margin-bottom: 1.7rem;
+  word-break: break-all;
 }
 #writeNestedCommentBtn {
   width: 100%;

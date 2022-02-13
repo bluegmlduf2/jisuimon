@@ -95,7 +95,7 @@
       </div>
     </div>
   </nav>
-  <!-- 로그인 팝업 (TODO 나중에 컴포넌트분리필요)-->
+  <!-- 로그인 팝업 -->
   <!-- <div class="loginCont_showBg"> -->
   <div class="loginCont_showBg" v-if="loginShow">
     <div class="loginCont">
@@ -162,7 +162,7 @@
                 for="loginPassWordInput"
                 v-if="validationPassCheck"
               >
-                半角英数字のみ、記号1文字以上使用、全体で8文字以上を入力してください
+                半角英数字、記号1文字以上使用、全体で8文字以上を入力してください
               </div>
               <button
                 class="btn btn-success confirm_btn"
@@ -214,14 +214,40 @@ export default {
   },
   created() {
     // TODO삭제예정(테스트유저입력용)
-    this.userEmail = "blue@nate.com";
-    this.userPass = "111111";
+    this.userEmail = "0213@naver.com";
+    this.userPass = "0213@naver@com";
   },
   methods: {
     // 로그인
     login() {
       this.afterValidation = true;
-      //TODO 1.원형프로그레스 , 유효성체크
+
+      // 메일과 비밀번호의 유효성 확인
+      this.validationUserEmail = this.checkEmail(this.userEmail);
+      this.validationUserPass = this.checkPass(this.userPass);
+
+      // 메일형식 유효성
+      if (!this.validationUserEmail) {
+        this.$message.warningMessage("メールアドレスの形式を確認してください");
+        return;
+      }
+
+      // 글자수 유효성
+      if (!this.checkLength(this.userEmail, 200)) {
+        this.$message.warningMessage(
+          `メールアドレスは最大${200}文字まで入力できます`
+        );
+        return;
+      }
+
+      // 비밀번호 유효성
+      if (!this.validationUserPass) {
+        this.$message.warningMessage(
+          "半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+        );
+        return;
+      }
+
       this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
       firebase
@@ -270,9 +296,43 @@ export default {
     // 회원가입
     signup() {
       this.afterValidation = true;
+
+      // 메일과 비밀번호의 유효성 확인
+      this.validationUserEmail = this.checkEmail(this.userEmail);
+      this.validationUserPass =
+        this.checkPass(this.userPass) && this.checkPass(this.userPassConfirm);
+
+      // 메일형식 유효성
+      if (!this.validationUserEmail) {
+        this.$message.warningMessage("メールアドレスの形式を確認してください");
+        return;
+      }
+
+      // 글자수 유효성검사
+      if (!this.checkLength(this.userEmail, 200)) {
+        this.$message.warningMessage(
+          `メールアドレスは最大${200}文字まで入力できます`
+        );
+        return;
+      }
+
+      // 비밀번호유효성
+      if (!this.validationUserPass) {
+        this.$message.warningMessage(
+          "半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+        );
+        return;
+      }
+
+      // 비밀번호 일치확인
+      if (this.userPass != this.userPassConfirm) {
+        this.validationUserPass = false;
+        this.$message.warningMessage("再入力のパスワードが一致しません");
+        return;
+      }
+
       this.$store.commit("showSpinner"); // 요청대기스피너 보기
 
-      //TODO 1.원형프로그레스 , 유효성체크 , 비밀번호확인창 일치체크
       firebase
         .signUpWithEmailAndPassword(this.userEmail, this.userPass)
         .then((res) => {
@@ -318,8 +378,8 @@ export default {
     // 재료 검색 결과리스트 가져오기
     getFood(event) {
       const INPUT_FOOD = event.target.value; // 입력한 재료
-      // 2글자 이상부터 검색
-      if (INPUT_FOOD.length < 2) {
+      // 2글자부터 30글자까지 검색
+      if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
         return;
       }
       const payload = {

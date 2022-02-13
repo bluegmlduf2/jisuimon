@@ -128,8 +128,8 @@ export default {
     // 재료 검색 결과리스트 가져오기
     getFood(event) {
       const INPUT_FOOD = event.target.value; // 입력한 재료
-      // 2글자 이상부터 검색
-      if (INPUT_FOOD.length < 2) {
+      // 2글자부터 30글자까지 검색
+      if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
         return;
       }
       const payload = {

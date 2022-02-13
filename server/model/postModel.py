@@ -348,10 +348,14 @@ def getPostDetail(args):
 
             data = conn.executeOne(sql, args['postId'])
 
+            # 존재하지않는게시물일때 에러반환
+            if data is None:
+                raise UserError(803)
+                
             login_user = None # 로그인 유저 정보
 
             # 게시물의 수정용 상세정보를 취득
-            if calledMethodName is "postDetailUpdate":
+            if calledMethodName == "postDetailUpdate":
                 login_user = request.user  # 파이어베이스 유저정보 취득
                 # 로그인한 유저와 게시물 작성 유저가 일치하지 않을 경우 예외처리 (부정접근처리)
                 if not getUserAuth(login_user,data['user_id']) :

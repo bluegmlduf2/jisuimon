@@ -259,10 +259,12 @@ export default {
     // 재료 검색 결과리스트 가져오기
     getFood(event) {
       const INPUT_FOOD = event.target.value; // 입력한 재료
-      // 2글자 이상부터 검색
-      if (INPUT_FOOD.length < 2) {
+
+      // 2글자부터 30글자까지 검색
+      if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
         return;
       }
+
       const payload = {
         method: "get",
         sendData: { food_name: INPUT_FOOD },
@@ -418,7 +420,7 @@ export default {
       this.$store
         .dispatch("post", payload)
         .then(() => {
-          this.$message.successMessage("update").then(()=>{
+          this.$message.successMessage("update").then(() => {
             this.$router.push({
               name: "Post",
               params: { postId: this.postId },
@@ -456,6 +458,24 @@ export default {
         return true;
       }
 
+      // 글자수 유효성
+      if (!this.checkLength(TITLE, 100)) {
+        this.$message.warningMessage(
+          `タイトルは最大${100}文字まで入力できます`
+        );
+        return true;
+      }
+
+      const CONTENT_WITHOUT_HTML = document.querySelector(
+        ".ck-editor__editable"
+      ).textContent;
+      // 글자수 유효성
+      if (!this.checkLength(CONTENT_WITHOUT_HTML, 20000)) {
+        this.$message.warningMessage(
+          `コンテンツは最大${20000}文字まで入力できます`
+        );
+        return true;
+      }
       return false;
     },
   },

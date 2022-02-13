@@ -40,6 +40,10 @@ export default {
             const REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/
             const isPass= REGEX.test(str) ? true : false ;
             return isPass;
-        }
+        },
+        // 문자열 크기 체크
+        checkLength(str, len) {
+            return str.length > len ? false : true;
+        },
     },
 };
