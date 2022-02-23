@@ -13,7 +13,8 @@ from firebase_admin import credentials, auth
 
 dict_confmode = {
     'test': 'setting.TestMode',
-    'dev': 'setting.DevMode'
+    'dev': 'setting.DevMode',
+    'pro': 'setting.InitConf'
 }
 
 # Application Factories (it can have instances of the application with different settings)
@@ -43,9 +44,12 @@ def create_app(config_mode="test"):
     app.urlTempPath = '/static/temp/' # 임시 파일위치 (url반환용)
     app.urlDestPath = '/static/contentImg/' # 이미지 파일위치 (url반환용)
     app.urlDestDefaultPath = '/static/contentImg/defaultImg/' # 타이틀 이미지 기본파일위치 (url반환용)
+    
+    # 개발모드일시 flask웹서버를 사용하기때문에 cors가 발생함 이를 방지하기 위해 아래의 cors설정추가
+    if config_mode != 'pro':
+        CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
 
     #CORS(app,resources={r'*': {'origins': "*"}},supports_credentials=True)
-    CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
     # API server ,View server 다른 도메인에서 사용할때 발생하는 에러 방지
     # console.log(location.origin) : 클라이언트의 오리진확인가능
     # origin이란 특정 페이지에 접근할 때 사용되는 URL의 Scheme(프로토콜), host(도메인), 포트를 말한다
