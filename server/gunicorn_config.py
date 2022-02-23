@@ -1,4 +1,4 @@
-bind = 'http://xx.xxx.xxx.xxx:5000/jisuimon'
+bind = '127.0.0.1:5000'
 backlog = 2048
 
 workers = 8
