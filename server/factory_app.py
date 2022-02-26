@@ -46,8 +46,9 @@ def create_app(config_mode="test"):
     app.urlDestDefaultPath = '/static/contentImg/defaultImg/' # 타이틀 이미지 기본파일위치 (url반환용)
     
     # 개발모드일시 flask웹서버를 사용하기때문에 cors가 발생함 이를 방지하기 위해 아래의 cors설정추가
+    # CORS로 추가해야하는 URL의 확인은 크롬 디버깅툴에서 REQUEST실패한 헤더의 ORGIN을 넣어주면 헤당 ORIGIN은 요청을 허용한다는 의미가된다
     if config_mode == 'pro':
-        CORS(app,resources={r'*': {'origins': ['https://jisuimon.cf:5443/']}},supports_credentials=True)
+        CORS(app,resources={r'*': {'origins': "https://jisuimon.cf"}},supports_credentials=True)
     else:
         CORS(app,resources={r'*': {'origins': ['http://localhost:8080']}},supports_credentials=True)
 
