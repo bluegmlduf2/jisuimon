@@ -178,10 +178,12 @@ def getUserImage(userImage):
 def getUrlPath():
     url = request.host_url  # 홈 URL
     
-    # 개발환경용 url 설정
+    # 개발환경용 static url과 배포환경용 static url의 설정
     if current_app.env == 'development':
         url = "http://localhost:5000"
-    
+    elif current_app.env == 'production':
+        url = "https://jisuimon.cf"
+
     return url
 
 # 임시이미지 파일을 저장용 폴더에 이동

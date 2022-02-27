@@ -48,6 +48,7 @@ const confirmMessage = (msg) =>
 const errorMessage = (err) => {
     const ERR_RESPONSE = err.response; // HTTP상태코드
     const ERR_STATUS = ERR_RESPONSE?.status; // HTTP상태코드
+    const HOME_URL =location.pathname.split("/")[1] // 홈URL
 
     // 400번 에러, 사용자 에러 처리
     if (ERR_STATUS >= 400 && ERR_STATUS < 500) {
@@ -66,7 +67,7 @@ const errorMessage = (err) => {
                 icon: "error",
                 confirmButtonText: "確認",
             }).then(() => {
-                location.href = "/NotFound";
+                location.href = `${HOME_URL}/NotFound`;
             });
         }
     } else if (ERR_STATUS >= 500) {
@@ -80,7 +81,7 @@ const errorMessage = (err) => {
             icon: "error",
             confirmButtonText: "確認",
         }).then(() => {
-            location.href = "/NotFound";
+            location.href = `${HOME_URL}/NotFound`;
         });
     } else {
         // 그외 화면등에서 발생하는 예기치 않은 에러..(CORS,타임아웃등)
@@ -93,7 +94,7 @@ const errorMessage = (err) => {
             icon: "error",
             confirmButtonText: "確認",
         }).then(() => {
-            location.href = "/NotFound";
+            location.href = `${HOME_URL}/NotFound`;
         });
     }
 };
