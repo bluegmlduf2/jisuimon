@@ -244,18 +244,16 @@ export default {
   padding-bottom: 70px;
   word-break: break-all; /* 가로 넓이 벗어나면 줄바꿈 */
 }
+/** 이미지가 가로 길이를 초과할 경우, 가로 길이를 꽉 채운100%로 표시된다. 가로 길이 이하일땐 이미지 크기대로 표시 */
+.postCont_article img {
+  max-width: 100%;
+  height: auto;
+}
 
 @media (min-width: 577px) {
   /* 현재 넓이가 577px이상 */
   .postCont {
     padding-top: 10vh;
-  }
-}
-
-/* 메인 레이아웃 css (부트스트랩 스마트폰 가로 기준(576px미만) 으로 작성)*/
-@media (max-width: 576.98px) {
-  .postCont_article img {
-    width: 100%;
   }
 }
 </style>
