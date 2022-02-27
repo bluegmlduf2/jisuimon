@@ -182,7 +182,7 @@ def getUrlPath():
     if current_app.env == 'development':
         url = "http://localhost:5000"
     elif current_app.env == 'production':
-        url = "https://jisuimon.cf"
+        url = "https://jisuimon.cf:5443"
 
     return url
 
