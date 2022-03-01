@@ -162,7 +162,7 @@
                 for="loginPassWordInput"
                 v-if="validationPassCheck"
               >
-                半角英数字、記号1文字以上使用、全体で8文字以上を入力してください
+                半角英数字、記号1文字以上使用、全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &
               </div>
               <button
                 class="btn btn-success confirm_btn"
@@ -238,7 +238,7 @@ export default {
       // 비밀번호 유효성
       if (!this.validationUserPass) {
         this.$message.warningMessage(
-          "半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+          "半角英数字、記号1文字以上使用<br>全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &",'html'
         );
         return;
       }
@@ -314,7 +314,7 @@ export default {
       // 비밀번호유효성
       if (!this.validationUserPass) {
         this.$message.warningMessage(
-          "半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+          "半角英数字、記号1文字以上使用<br>全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &",'html'
         );
         return;
       }

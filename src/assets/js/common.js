@@ -37,7 +37,7 @@ export default {
         },
         // 비밀번호 양식체크 (최소 8글자,문자하나,숫자하나,특문하나)
         checkPass(str) {
-            const REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/
+            const REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&])[A-Za-z\d$@!%*#?&]{8,}$/
             const isPass= REGEX.test(str) ? true : false ;
             return isPass;
         },

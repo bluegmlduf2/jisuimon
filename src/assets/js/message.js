@@ -98,10 +98,10 @@ const errorMessage = (err) => {
     }
 };
 
-const warningMessage = (msg) =>
+const warningMessage = (msg,msgType='text') =>
     Swal.fire({
         title: "お知らせ",
-        text: msg,
+        [msgType]: msg,
         icon: "warning",
         confirmButtonText: "閉じる",
     });

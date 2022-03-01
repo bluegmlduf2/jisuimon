@@ -96,7 +96,7 @@
         />
       </div>
       <div class="setting_desc">
-        半角英数字、記号1文字以上使用、全体で8文字以上を入力してください
+        半角英数字、記号1文字以上使用、全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &
       </div>
     </div>
     <!-- 탈퇴처리 -->
@@ -286,21 +286,21 @@ export default {
       // 비밀번호의 유효성 확인
       if (!this.checkPass(this.currentPassUpdated)) {
         this.$message.warningMessage(
-          "現在のパスワードを半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+          "現在のパスワードを半角英数字、記号1文字以上使用<br>全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &",'html'
         );
         return;
       }
       // 비밀번호의 유효성 확인
       if (!this.checkPass(this.newPassUpdated)) {
         this.$message.warningMessage(
-          "新しいパスワードを半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+          "新しいパスワードを半角英数字、記号1文字以上使用<br>全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &",'html'
         );
         return;
       }
       // 비밀번호의 유효성 확인
       if (!this.checkPass(this.newPassConfirmUpdated)) {
         this.$message.warningMessage(
-          "再入力パスワードを半角英数字、記号1文字以上使用、全体で8文字以上を入力してください"
+          "再入力パスワードを半角英数字、記号1文字以上使用<br>全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &",'html'
         );
         return;
       }
