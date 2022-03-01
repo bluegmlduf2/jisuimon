@@ -359,6 +359,8 @@ export default {
     },
     // 로그인창 닫기
     closeLoginForm() {
+      // NavBar 닫기
+      document.querySelector("#navbarCollapse").classList.remove("show");
       // 입력폼 초기화
       this.userEmail = "";
       this.userPass = "";
