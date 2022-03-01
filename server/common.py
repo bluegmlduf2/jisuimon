@@ -238,7 +238,7 @@ def getUUID():
 def getUser(uid):
      # 파이어베이스 유저정보
     userInfo={
-        'nickname':'脱退したユーザー',
+        'nickname':'退会したユーザー',
         'user_image':None
     }
 

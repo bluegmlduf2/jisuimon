@@ -102,13 +102,13 @@
     <!-- 탈퇴처리 -->
     <div class="settingCont_deleteUser">
       <div class="setting_input">
-        <div class="setting_label">脱退処理</div>
+        <div class="setting_label">退会処理</div>
         <div id="" class="delete_btn" type="button" @click="deleteUser">
-          <b>脱退</b>
+          <b>退会</b>
         </div>
       </div>
       <div class="setting_desc">
-        脱退したらアカウントを元に戻すことが出来ません
+        退会したらアカウントを元に戻すことが出来ません
       </div>
     </div>
   </main>
@@ -340,7 +340,7 @@ export default {
     },
     // 유저삭제
     deleteUser() {
-      this.$message.confirmMessage("脱退しますか?").then((res) => {
+      this.$message.confirmMessage("退会しますか?").then((res) => {
         // 확인버튼을 눌렀을시
         if (res.isConfirmed) {
           const payload = {
@@ -354,7 +354,7 @@ export default {
               this.$message
                 .successMessage(
                   "delete",
-                  "脱退処理しました。\nご利用ありがとうございました。"
+                  "退会処理しました。\nご利用ありがとうございました。"
                 )
                 .then(() => {
                   // 탈퇴후 홈화면으로 이동
