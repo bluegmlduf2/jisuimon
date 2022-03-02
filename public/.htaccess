@@ -1,5 +1,0 @@
-# 원래라면 rewrite_mod 사용만으로 충분함(해당프로젝트 없으면 에러 발생하기 때문에 추가)
-Options -MultiViews
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [QSA,L]
