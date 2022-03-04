@@ -7,7 +7,7 @@ class Connection:
                                   user='',
                                   password='',
                                   db='',
-                                  charset='utf8')
+                                  charset='utf8mb4')
         #DB의 커서 선언
         self.cursor = self.db.cursor(pymysql.cursors.DictCursor)
 
