@@ -29,14 +29,20 @@ def exception_handler(func):
     @wraps(func)  # func.doc 과 같은 값을 잃어버리지 않도록 설정
     def inner_func():
         try:
-            print("##### 메소드 시작 => ("+func.__name__+")#####")
+            # 로그 기록
+            print("##### 컨트롤러 메소드 시작 => ("+func.__name__+")#####")
+            print("##### 컨트롤러 시작 시간 => ("+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')+")#####")
+            print("##### 접속자 IP주소 => ("+request.remote_addr+")#####\n")
+
             start = time.time()
 
             result = func()  # 인자로 전달받은 func 호출 / result는 func()의 반환값
 
             end = time.time()
-            print("##### 메소드 종료 #####")
-            print("소요시간: %5f" % (end-start))
+            
+            print("\n##### 컨트롤러 종료 시간 => ("+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')+")#####")
+            print("##### 컨트롤러 메소드 종료 => ("+func.__name__+")#####")
+            print("##### 컨트롤러 소요시간: %5f" % (end-start)+"#####")
         except UserError as e:
             # 사용자에러 처리
             return jsonify(e.errorInfo), 400
