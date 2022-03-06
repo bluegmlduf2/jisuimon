@@ -172,6 +172,10 @@ def imageUploadTemp():
         # 빈파일체크
         if size == 0:
             raise UserError(703)
+        
+        # 5MB 이상 업로드 방지
+        if size > 5242880:
+            raise UserError(708)
 
         # 임시파일이미지
         args = {

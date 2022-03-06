@@ -48,7 +48,7 @@ export default class UploadAdapter {
             
             // 400번 에러, 사용자 에러 처리
             if (xhr.status >= 400 && xhr.status < 500) {
-                message.warningMessage(response.message)
+                message.warningMessage(response.message,'html')
                 reject()
             }
             // 500번 에러, 서버에러
