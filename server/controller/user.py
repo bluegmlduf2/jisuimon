@@ -83,6 +83,10 @@ def userImage():
         # 빈파일체크
         if size == 0:
             raise UserError(703)
+        
+        # 5MB 이상 업로드 방지
+        if size > 5242880:
+            raise UserError(708)
 
         args = request.user  # 파이어베이스 유저정보 취득
         args['file'] = f  # 유저 프로필 이미지
