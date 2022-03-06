@@ -45,8 +45,6 @@ def getPosts(args):
             toPostCnt=8 # 8개씩 가져옴
             data = conn.executeAll(sql, (fromPostCnt,toPostCnt))
 
-            # TODO 유저삭제하면 uid가 없는데 그에대한 대처필요
-
             removePostCol = ['user_id','user_table_user_id','update_date'] # 불필요한칼럼 (사용자정보)
 
             # 이미지->바이너리(base64)->utf-8문자열
