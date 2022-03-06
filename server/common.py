@@ -32,7 +32,7 @@ def exception_handler(func):
             # 로그 기록
             print("##### 컨트롤러 메소드 시작 => ("+func.__name__+")#####")
             print("##### 컨트롤러 시작 시간 => ("+datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')+")#####")
-            print("##### 접속자 IP주소 => ("+request.remote_addr+")#####\n")
+            print("##### 접속자 IP주소 => ("+request.environ['REMOTE_ADDR']+")#####\n")
 
             start = time.time()
 
