@@ -126,6 +126,7 @@
                 type="text"
                 id="loginEmailInput"
                 v-model="userEmail"
+                @keypress="loginEnter($event)"
                 class="form-control"
                 :class="{ 'is-invalid': validationEmailCheck }"
                 placeholder="メールアドレスを入力してください"
@@ -142,6 +143,7 @@
                 type="password"
                 id="loginPassWordInput"
                 v-model="userPass"
+                @keypress="loginEnter($event)"
                 class="form-control"
                 :class="{ 'is-invalid': validationPassCheck }"
                 placeholder="パスワードを入力してください"
@@ -412,6 +414,13 @@ export default {
         query: { ingredientId: SELECTED_FOOD.food_id },
       });
     },
+    // 아이디 패스워드 입력창에서 엔터 입력시 로그인처리
+    loginEnter(event){
+      // 입력한 키가 엔터(13)일 경우 로그인진행
+      if (event.which === 13){
+       this.login()
+      }
+    }
   },
   computed: {
     // 로그인상태반환
