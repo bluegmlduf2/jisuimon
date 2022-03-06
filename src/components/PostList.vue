@@ -169,8 +169,10 @@ export default {
       const scrollPos = Math.floor(scrollTop + clientHeight);
       // scrollHeight 화면바닥의px === scrollPos 스크롤위치
       const isAtTheBottom = scrollHeight === scrollPos;
+      // 화면에 스피너가 존재여부 (연속스크롤시 두번실행되는 에러에 대처)
+      const spinner=document.querySelector('div.loader.loader-black.loader-1');
       // 스크롤이 화면 최하단일 경우 추가게시물 호출 함수 실행
-      if (isAtTheBottom) this.loadPages();
+      if (isAtTheBottom && !spinner) this.loadPages();
     },
     // 추가 게시물 가져오기
     loadPages() {

@@ -307,6 +307,8 @@ def getPostCount():
                 COUNT(*) as postCntAll
             FROM
                 jisuimon.post_table AS P
+            INNER JOIN jisuimon.user_table AS U ON
+                P.user_table_user_id = U.user_id
             '''
 
             data = conn.executeOne(sql)
