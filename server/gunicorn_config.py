@@ -4,7 +4,7 @@ backlog = 2048
 workers = 8
 worker_class = 'sync'
 worker_connections = 1000
-timeout = 30
+timeout = 120 # 이미지 업로드시 타임아웃되어서 에러가 뜨기 때문에 30->120초 수정
 keepalive = 2
 
 umask = 0
