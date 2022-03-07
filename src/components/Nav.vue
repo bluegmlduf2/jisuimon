@@ -96,7 +96,6 @@
     </div>
   </nav>
   <!-- 로그인 팝업 -->
-  <!-- <div class="loginCont_showBg"> -->
   <div class="loginCont_showBg" v-if="loginShow">
     <div class="loginCont">
       <div class="loginCont_welcome">

@@ -35,6 +35,8 @@
         <input
           type="text"
           class="form-control"
+          id="foodNameInput"
+          :class="{ 'is-invalid': validationFoodCheck }"
           placeholder="食材を選んでください"
           style="ime-mode: disabled"
           ref="foodInput"
@@ -43,6 +45,13 @@
           list="foodDataList"
           :disabled="selectedFood.food_clicked"
         />
+        <div
+          class="invalid-feedback"
+          for="foodNameInput"
+          v-if="validationFoodCheck"
+        >
+          食材をリストから選んでください
+        </div>
         <button
           class="btn btn-sm bg-transparent material-icons"
           type="button"
@@ -82,7 +91,7 @@
           >
             {{ selectedFood.food_unit ? selectedFood.food_unit : "単位選択" }}
           </button>
-          <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left">
+          <div class="dropdown-menu dropdown-menu-left dropdown-menu-lg-left">
             <a class="dropdown-item" href="#" @click="selectUnit">個</a>
             <a class="dropdown-item" href="#" @click="selectUnit">ml</a>
             <a class="dropdown-item" href="#" @click="selectUnit">大さじ</a>
@@ -202,6 +211,7 @@ export default {
         content: "", // 글내용
         ingredientList: [], // 추가한 재료
       },
+      validationFoodCheck: false, // 음식명 길이 유효성
     };
   },
   created() {
@@ -260,6 +270,11 @@ export default {
     getFood(event) {
       const INPUT_FOOD = event.target.value; // 입력한 재료
 
+      // 선택된 음식리스트가 없으면 경고표시
+      if(!this.foodList.length){
+        this.validationFoodCheck = true; // 음식 미선택 경고표시
+      }
+
       // 2글자부터 30글자까지 검색
       if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
         this.foodList = []; // 백스페이스로 돌아오면 검색한 결과가 남는 에러발생
@@ -300,6 +315,8 @@ export default {
         this.clearFood();
         return;
       }
+
+      this.validationFoodCheck = false; // 음식 미선택 경고 표시안함
 
       SELECTED_FOOD.food_clicked = true; // 선택중인 재료 입력창 입력금지 처리
 
@@ -546,5 +563,9 @@ export default {
 #writeUnitBtn {
   background-color: #fff;
   border: 1px solid #ced4da;
+}
+/* 음식미입력시 경고 아이콘 위치 변경 */
+.form-control.is-invalid {
+  background-position: right calc(0.375em + 1.5rem) center !important;
 }
 </style>
