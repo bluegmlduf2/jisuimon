@@ -10,7 +10,7 @@
           ref="foodInput"
           style="ime-mode: disabled"
           placeholder="食材を入力してください"
-          @keyup="getFood"
+          @input="getFood"
           @change="selectFood"
           list="foodDataList"
           :disabled="selectedFood.food_clicked"
@@ -130,6 +130,7 @@ export default {
       const INPUT_FOOD = event.target.value; // 입력한 재료
       // 2글자부터 30글자까지 검색
       if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
+        this.foodList = []; // 백스페이스로 돌아오면 검색한 결과가 남는 에러발생
         return;
       }
       const payload = {

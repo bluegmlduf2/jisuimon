@@ -38,7 +38,7 @@
           placeholder="食材を選んでください"
           style="ime-mode: disabled"
           ref="foodInput"
-          @keyup="getFood"
+          @input="getFood"
           @change="selectFood"
           list="foodDataList"
           :disabled="selectedFood.food_clicked"
@@ -262,6 +262,7 @@ export default {
 
       // 2글자부터 30글자까지 검색
       if (INPUT_FOOD.length < 2 || INPUT_FOOD.length > 31) {
+        this.foodList = []; // 백스페이스로 돌아오면 검색한 결과가 남는 에러발생
         return;
       }
 
