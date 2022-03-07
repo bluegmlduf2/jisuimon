@@ -61,7 +61,7 @@ export default {
     signInWithEmailAndPassword(email, password) {
         return signInWithEmailAndPassword(this.auth, email, password).then(
             // 로그인성공시
-            () => "ようこそ自炊モンへ",
+            () => "ようこそ<br>自炊モンへ",
             // 로그인실패시
             (err) => {
                 if (err.code == "auth/user-not-found") {
