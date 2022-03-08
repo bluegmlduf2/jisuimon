@@ -93,8 +93,9 @@
             {{ selectedFood.food_unit ? selectedFood.food_unit : "単位選択" }}
           </button>
           <div class="dropdown-menu dropdown-menu-left dropdown-menu-lg-left">
-            <a class="dropdown-item" href="#" @click="selectUnit">個</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">g</a>
             <a class="dropdown-item" href="#" @click="selectUnit">ml</a>
+            <a class="dropdown-item" href="#" @click="selectUnit">個</a>
             <a class="dropdown-item" href="#" @click="selectUnit">大さじ</a>
             <a class="dropdown-item" href="#" @click="selectUnit">小さじ</a>
             <div role="separator" class="dropdown-divider"></div>
