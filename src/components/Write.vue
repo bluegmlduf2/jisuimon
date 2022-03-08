@@ -41,6 +41,7 @@
           style="ime-mode: disabled"
           ref="foodInput"
           @input="getFood"
+          @touchend="getFood"
           @change="selectFood"
           list="foodDataList"
           :disabled="selectedFood.food_clicked"
