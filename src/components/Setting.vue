@@ -56,10 +56,10 @@
       <div class="setting_desc">表示されるニックネームです</div>
     </div>
     <!-- 패스워드 -->
+    <form>
     <div class="settingCont_passwordCont">
       <div class="setting_input">
         <h3 class="setting_label">パスワード</h3>
-        <form>
         <input
           type="password"
           class="setting_cont form-control"
@@ -68,7 +68,6 @@
           placeholder="現在のパスワード"
           autocomplete="on"
         />
-        </form>
         <div
           class="setting_update update_btn only"
           v-if="!passWordClicked"
@@ -83,7 +82,6 @@
         >
           <b>保存</b>
         </div>
-        <form>
         <input
           type="password"
           class="setting_cont only form-control"
@@ -100,12 +98,12 @@
           placeholder="新しいパスワード再入力"
           autocomplete="on"
         />
-        </form>
       </div>
       <div class="setting_desc">
         半角英数字、記号1文字以上使用、全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &
       </div>
     </div>
+    </form>
     <!-- 탈퇴처리 -->
     <div class="settingCont_deleteUser">
       <div class="setting_input">
@@ -441,7 +439,7 @@ export default {
 
 .setting_cont {
   /* 항상 70%를 유지하지만 최대 1px~224px까지만 커진다 */
-  width: 53%;
+  width: 50%;
   margin-left: 1.5%;
   margin-right: 1.5%;
   max-width: 277px;
@@ -457,19 +455,19 @@ export default {
 }
 
 .setting_update {
-  width: 17%;
+  width: 20%;
   text-align: center;
 }
 
 .setting_update.only {
-  margin-left: 56%;
+  margin-left: 53%;
 }
 
 .setting_desc {
   display: block;
   margin-top: 0.835rem;
   color: rgb(134, 142, 150);
-  font-size: 0.835rem;
+  font-size: 0.78rem;
 }
 
 /* 닉네임 */
