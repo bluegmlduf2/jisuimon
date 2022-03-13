@@ -587,7 +587,7 @@ export default {
   right: 0;
   bottom: 0; /* 모달배경을 꽉차게설정 top~bottom 0 설정이유 */
   width: 100%;
-  z-index: 9999;
+  z-index: 9998;
   display: flex; /* 아래는 플렉스를 이용한 가운데 정렬 */
   justify-content: center;
   align-items: center;
@@ -598,6 +598,7 @@ export default {
   animation: 0.4s ease-in-out 0s 1 normal forwards running hwrkPK;
   box-shadow: rgb(0 0 0 / 9%) 0px 2px 12px 0px;
   display: flex;
+  z-index: 9999;
 }
 .loginCont_welcome {
   width: 216px;
@@ -696,6 +697,7 @@ export default {
 
 .loginCont_footer {
   text-align: right;
+  font-size: 0.9rem;
 }
 
 #moveSignUpBtn {
