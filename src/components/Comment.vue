@@ -445,7 +445,7 @@ export default {
   object-fit: cover;
 }
 .commentCont_profileInfo {
-  padding-left: 0.75rem;
+  padding-left: 0.7rem;
 }
 .commentCont_profileInfo_date {
   font-size: 0.75rem;

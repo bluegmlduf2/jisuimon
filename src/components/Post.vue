@@ -250,10 +250,11 @@ export default {
   height: auto;
 }
 
-@media (min-width: 577px) {
-  /* 현재 넓이가 577px이상 */
-  .postCont {
-    padding-top: 10vh;
+@media (max-width: 576px) {
+  /* 현재 넓이가 577px까지 */
+  .postCont_writer_profile span {
+    display: block;
+    margin-left: 0;
   }
 }
 </style>
