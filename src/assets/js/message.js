@@ -18,7 +18,7 @@ const successMessage = (status = "register", msg) =>
 
 const okMessage = (msg) =>
     Swal.fire({
-        html: `<h2>${msg}</h2>`,
+        html: `<h3>${msg}</h3>`,
         icon: "success",
         showConfirmButton: false,
         timer: 1500,
