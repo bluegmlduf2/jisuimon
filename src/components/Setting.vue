@@ -59,13 +59,16 @@
     <div class="settingCont_passwordCont">
       <div class="setting_input">
         <h3 class="setting_label">パスワード</h3>
+        <form>
         <input
           type="password"
           class="setting_cont form-control"
           v-if="passWordClicked"
           v-model="currentPassUpdated"
           placeholder="現在のパスワード"
+          autocomplete="on"
         />
+        </form>
         <div
           class="setting_update update_btn only"
           v-if="!passWordClicked"
@@ -80,12 +83,14 @@
         >
           <b>保存</b>
         </div>
+        <form>
         <input
           type="password"
           class="setting_cont only form-control"
           v-if="passWordClicked"
           v-model="newPassUpdated"
           placeholder="新しいパスワード"
+          autocomplete="on"
         />
         <input
           type="password"
@@ -93,7 +98,9 @@
           v-if="passWordClicked"
           v-model="newPassConfirmUpdated"
           placeholder="新しいパスワード再入力"
+          autocomplete="on"
         />
+        </form>
       </div>
       <div class="setting_desc">
         半角英数字、記号1文字以上使用、全体で8文字以上を入力してください<br>※ 記号 : @ $ ! % * # ? &
@@ -427,7 +434,7 @@ export default {
 .setting_label {
   color: rgb(52, 58, 64);
   margin: 0px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   width: 27%;
   font-weight: bold;
 }

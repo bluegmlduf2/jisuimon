@@ -138,6 +138,7 @@
               >
                 メールアドレスの形式を確認してください
               </div>
+              <form>
               <input
                 type="password"
                 id="loginPassWordInput"
@@ -147,6 +148,7 @@
                 :class="{ 'is-invalid': validationPassCheck }"
                 placeholder="パスワードを入力してください"
                 required
+                autocomplete="on"
               />
               <input
                 type="password"
@@ -157,7 +159,9 @@
                 v-if="signUpShow"
                 placeholder="パスワードを再入力してください"
                 required
+                autocomplete="on"
               />
+              </form>
               <div
                 class="invalid-feedback"
                 for="loginPassWordInput"
