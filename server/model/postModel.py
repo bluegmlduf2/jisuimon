@@ -63,7 +63,7 @@ def getPosts(args):
                 userImagePath = getUserImage(e['user_image'])
 
                 # 섬네일이미지변환Base64
-                data[i]['user_image'] = imageParser(userImagePath)
+                data[i]['user_image'] = imageParser(userImagePath,24)
 
                 # 불필요한 게시물의 칼럼제거
                 [data[i].pop(colNm) for colNm in removePostCol]
@@ -486,7 +486,7 @@ def getPostComment(args):
                 commentReturnData[i].setdefault('showState',False)# 댓글 접고 펼치기에 필요한 키 추가
                 commentReturnData[i].setdefault('updateState',False)# 댓글 수정창 토글기능에 필요한 키 추가
                 userImage=commentReturnData[i]['user_image'] # 유저 이미지 (댓글유저)
-                commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg) # 유저 이미지 파싱
+                commentReturnData[i]['user_image']=imageParser(userImgPath+userImage if userImage else userDefaultImg,40) # 유저 이미지 파싱
                 commentReturnData[i]['comment_auth'] = getUserAuth(args.user,commentReturnData[i]['user_id'])# 댓글의 유저권한취득
                 [commentReturnData[i].pop(colNm) for colNm in removeCommentCol] # 불필요한 댓글의 칼럼제거
                 # 대댓글(자식)
@@ -495,7 +495,7 @@ def getPostComment(args):
                     if comment['comment_id']==commentReply['comment_table_comment_id']:
                         userReplyImage=commentReply['user_image_CR'] # 유저 이미지 (대댓글유저)
                         commentReply['updateState']=False # 대댓글 수정창 토글기능에 필요한 키 추가
-                        commentReply['user_image_CR']=imageParser(userImgPath+userReplyImage if userReplyImage else userDefaultImg) # 유저 이미지 (대댓글유저)
+                        commentReply['user_image_CR']=imageParser(userImgPath+userReplyImage if userReplyImage else userDefaultImg,40) # 유저 이미지 (대댓글유저)
                         commentReply['comment_reply_auth'] = getUserAuth(args.user,commentReply['user_id_CR'])# 댓글의 유저권한취득
                         [commentReply.pop(colNmRep) for colNmRep in removeCommentReplyCol] # 불필요한 대댓글의 칼럼제거
                         commentReturnData[i]['comment_reply'].append(commentReply) # 댓글에 해당하는 대댓글 추가
