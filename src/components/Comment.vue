@@ -25,8 +25,8 @@
             <img :src="`${comment.user_image}`" alt="profileImg">
           </div>
           <div class="commentCont_profileInfo update_button_cont">
-            <div>
-              <div class="commentCont_profileInfo_name">
+            <div class="commentCont_profileInfo_name_cont">
+              <div>
                 <b>{{ comment.nickname }}</b>
               </div>
               <div class="commentCont_profileInfo_date">{{getCommentMoment(comment.comment_create_date)}}</div>
@@ -69,7 +69,7 @@
                       <img :src="`${commentReply.user_image_CR}`" alt="profileImg">
                     </div>
                     <div class="commentCont_profileInfo update_button_cont">
-                      <div>
+                      <div class="commentReplyCont_profileInfo_name_cont">
                         <div class="commentCont_profileInfo_name">
                           <b>{{ commentReply.nickname_CR }}</b>
                         </div>
@@ -534,5 +534,19 @@ export default {
 }
 .update_buttons .cancel_btn {
   margin-right: 0.7rem;
+}
+.commentCont_profileInfo_name_cont{
+  max-width: 140px;
+}
+/* 메인 레이아웃 css (부트스트랩 스마트폰 가로 기준(576px미만) 으로 작성)*/
+@media (max-width: 576.98px) {
+  .commentReplyCont_profileInfo_name_cont{
+    max-width: 110px;
+  }
+  .commentCont_profileInfo_name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>

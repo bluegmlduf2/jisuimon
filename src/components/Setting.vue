@@ -432,7 +432,7 @@ export default {
 .setting_label {
   color: rgb(52, 58, 64);
   margin: 0px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   width: 27%;
   font-weight: bold;
 }
